@@ -1,0 +1,10 @@
+{
+    "name": "fridge-news",
+    "dependencies": {
+        "express": "",
+        "file-system": "^2.2.2"
+    },
+    "scripts": {
+        "test": "standard"
+    }
+}

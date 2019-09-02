@@ -1,0 +1,7 @@
+default:
+    image:
+        name: "node:carbon-alpine"
+test:
+    script:
+    - node test.js
+      echo hello
