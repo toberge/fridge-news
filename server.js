@@ -6,6 +6,14 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
+/* possible better thing:
+ * app.configure(function(){
+ * app.use(express.bodyParser());
+ * app.use(app.router);
+ * });
+ * ...and port can be defined better, of course
+ */
+
 const fs = require('file-system');
 const conf = JSON.parse(fs.readFileSync('db.json', 'utf8'));
 
@@ -112,6 +120,6 @@ app.get('/users', (req, res) => {
     }); // end getCOnnection
 });
 
-console.log(conf.host);
+console.log(`Server starting.\nUsing DB at ${conf.host}.`);
 
 let server = app.listen(8080);
