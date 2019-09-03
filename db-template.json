@@ -1,6 +1,8 @@
 {
+    "connectionLimit": 4,
     "host": "mysql-ait.stud.idi.ntnu.no",
     "user": "username",
     "password": "password",
-    "database": "username"
+    "database": "username",
+    "debug": false
 }

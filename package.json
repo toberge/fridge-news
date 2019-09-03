@@ -1,7 +1,9 @@
 {
     "name": "fridge-news",
     "dependencies": {
-        "express": "",
+        "express": "^4.17.1",
+        "mysql": "",
+        "body-parser": "",
         "file-system": "^2.2.2"
     },
     "scripts": {
