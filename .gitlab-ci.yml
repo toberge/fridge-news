@@ -3,6 +3,11 @@ image: node:latest
 #services:
 #    - mysql:latest
 
+stages:
+    - build
+    - test
+    - deploy
+
 build:
     stage: build
     script:
@@ -17,4 +22,10 @@ test:
     stage: test
     script:
     - node test.js
-    - echo hello
+    - ls node_modules
+
+deploy:
+    stage: deploy
+    script:
+    - echo '"deploying"...'
+
