@@ -1,13 +1,27 @@
 {
-    "name": "fridge-news",
-    "dependencies": {
-        "bcryptjs": "",
-        "body-parser": "",
-        "express": "^4.17.1",
-        "file-system": "^2.2.2",
-        "mysql2": "^1.7.0"
-    },
-    "scripts": {
-        "test": "standard"
-    }
+  "name": "fridge-news",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "file-system": "^2.2.2",
+    "mysql2": "^1.7.0"
+  },
+  "scripts": {
+    "test": "standard; ./tests/*-test.bash",
+    "start": "node server.js"
+  },
+  "description": "",
+  "version": "1.0.0",
+  "main": "module.js",
+  "devDependencies": {
+    "standard": "^14.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.stud.idi.ntnu.no:toberge/fridge-news.git"
+  },
+  "keywords": [],
+  "author": "Tore Bergebakken",
+  "license": "ISC"
 }

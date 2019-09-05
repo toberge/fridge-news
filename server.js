@@ -3,7 +3,8 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const mysql = require('mysql2/promise');
 const fs = require('file-system');
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+// TODO replace with bcrypt? Seems -js had last release 3 years ago...
 
 const app = express();
 app.use(bodyParser.json());
