@@ -1,10 +1,11 @@
 {
     "name": "fridge-news",
     "dependencies": {
-        "express": "^4.17.1",
-        "mysql": "",
+        "bcryptjs": "",
         "body-parser": "",
-        "file-system": "^2.2.2"
+        "express": "^4.17.1",
+        "file-system": "^2.2.2",
+        "mysql2": "^1.7.0"
     },
     "scripts": {
         "test": "standard"

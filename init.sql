@@ -15,7 +15,9 @@ CREATE TABLE articles(
 
 CREATE TABLE users(
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(30)
+    name VARCHAR(30) UNIQUE NOT NULL,
+    password VARCHAR(255) /*NOT NULL*/,
+    INDEX user_name(name)
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 CREATE TABLE ratings(
@@ -53,6 +55,12 @@ CREATE TABLE comments(
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 INSERT INTO articles(title, media, content, importance, category) VALUES
-                    ('Title', NULL, 'Text is very <em>italic</em>', 2, 'død');
-INSERT INTO users(name) VALUES ('Donaldo Ducke');
-INSERT INTO ratings(article_id, user_id, value) VALUES (1, 1, 2);
+                    ('Title', NULL, 'Text is very <em>italic</em>', 1, 'død');
+INSERT INTO users(name) VALUES
+            ('Thonk Face'),
+            ('Alfred Barskknaus'),
+            ('Donaldo Ducke');
+INSERT INTO ratings(article_id, user_id, value) VALUES
+                      (1,         1,       2),
+                      (1,         2,       3),
+                      (1,         3,       5);
