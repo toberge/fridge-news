@@ -4,6 +4,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "express-session": "^1.16.2",
     "file-system": "^2.2.2",
     "mysql2": "^1.7.0"
   },
@@ -11,7 +12,7 @@
     "test": "standard; ./tests/*-test.bash",
     "start": "node server.js"
   },
-  "description": "",
+  "description": "Simple backend for serving fresh news from the fridge",
   "version": "1.0.0",
   "main": "module.js",
   "devDependencies": {
@@ -23,5 +24,8 @@
   },
   "keywords": [],
   "author": "Tore Bergebakken",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "test": "tests"
+  }
 }

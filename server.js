@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const session = require('express-session'); // TODO use this
 const bodyParser = require("body-parser");
 const mysql = require('mysql2/promise');
 const fs = require('file-system');
@@ -8,14 +9,6 @@ const bcrypt = require('bcryptjs');
 
 const app = express();
 app.use(bodyParser.json());
-
-/* possible better thing:
- * app.configure(function(){
- * app.use(express.bodyParser());
- * app.use(app.router);
- * });
- * ...and port can be defined better, of course
- */
 
 const conf = JSON.parse(fs.readFileSync('db.json', 'utf8'));
 const pool = mysql.createPool({
@@ -26,40 +19,40 @@ const pool = mysql.createPool({
 });
 
 
-
-const getRows = async (enpoint, query) => {
+const getRows = async (endpoint, query) => {
     try {
         let connection = await pool.getConnection();
         let [rows, fields] = await connection.query(query);
         connection.release();
         return rows;
     } catch (e) {
-        console.error(`SQL query ${enpoint} failed with ${e.code}`, e);
+        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
         throw e;
     }
 };
 
-const resources = [
-    { endpoint: '/articles', query: 'SELECT * FROM articles' },
-    { endpoint: '/frontpage', query: 'SELECT * FROM articles_view' },
-    { endpoint: '/users', query: 'SELECT * FROM users' },
+const multiRowResources = [
+    { endpoint: '/articles', query: 'SELECT * FROM articles_view' },
+    { endpoint: '/front_page', query: 'SELECT * FROM front_page' },
+    { endpoint: '/news_feed', query: 'SELECT * FROM news_feed' },
+    { endpoint: '/users', query: 'SELECT user_id, name FROM users' },
 ];
 
-for (const item of resources) {
+for (const item of multiRowResources) {
     const { endpoint, query } = item;
-    app.get(endpoint, async (req, res, next) => {
-        console.log(`Got ${endpoint} request`);
+    app.get(endpoint, async (req, res/*, next*/) => {
+        console.log(`Got GET request at ${endpoint}`);
         try {
             const rows = await getRows(endpoint, query);
-            console.log(rows);
-            res.json(rows);
+            console.log(`${rows.length} rows found`);
+            res.status(200).json(rows);
         } catch (e) {
-            console.error(`Error occured during ${endpoint}:`, e);
-            next(e);
+            console.trace(e, `Error occurred during ${endpoint}:`);
+            res.status(503).send('GET request failed');
+            //next(e);
         }
     });
 }
-
 
 
 const addUser = async ({name, password}) => {
@@ -79,41 +72,54 @@ app.post('/users', async (req, res, next) => {
     console.log(`Got POST request to add ${req.body.name} to users`);
     try {
         const user = await addUser({ name: req.body.name, password: req.body.password });
-        res.send('POST successful');
+        res.status(201).send('POST successful');
     } catch (e) {
-        //console.error(e, 'Error occured during /users/:id');
-        console.trace();
+        console.trace(e, 'Error occured during /users/:id');
         //res.json({ error: 'failed to establish DB connection' });
         //this will eventually be handled by your error handling middleware
-        next(e);
+        res.json({ error: e.toString()}); // todo RLY?
+        //next(e);
     }
 });
 
-const fetchUser = async ({id}) => {
+
+const getRow = async (endpoint, query, {id}) => {
     try {
         let connection = await pool.getConnection();
-        let [rows, fields] = await connection.execute('SELECT user_id, name FROM users WHERE user_id = ?', [id]);
+        let [rows, fields] = await connection.execute(query, [id]);
         connection.release();
         return rows;
     } catch (e) {
-        console.error(e, `getUser failed with ${e.code}`);
+        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
         throw e;
     }
 };
 
-app.get('/users/:id', async (req, res, next) => {
-    try {
-        const user = await fetchUser({ id: req.params.id });
-        console.log("hello " + user);
-        res.json(user);
-    } catch (e) {
-        console.error(e, 'Error occured during /users/:id');
-        //res.json({ error: 'failed to establish DB connection' });
-        //this will eventually be handled by your error handling middleware
-        next(e);
-    }
-});
+const singleRowResources = [
+    { endpoint: '/users/:id', query: 'SELECT user_id, name FROM users WHERE user_id = ?' },
+    { endpoint: '/articles/:id', query: 'SELECT * FROM articles_view WHERE article_id = ?' },
+];
 
+for (const resource of singleRowResources) {
+    const { endpoint, query } = resource;
+    app.get(endpoint, async (req, res, next) => {
+        try {
+            console.log(`Got GET request at ${endpoint}`);
+            const rows = await getRow(endpoint, query, { id: req.params.id });
+            console.log((rows.length === 1)? 'Found one row at ' : 'Found nothing at ' + endpoint);
+            if (rows.length === 0) {
+                res.status(404).json({ error: 'GET request failed, invalid ID' });
+            } else {
+                res.status(200).json(rows);
+            }
+        } catch (e) {
+            console.error(e, 'Error occured during /users/:id');
+            res.status(404).json({ error: 'GET failed' });
+            //next(e);
+        }
+    });
+
+}
 
 console.log(`Server starting.\nUsing DB at ${conf.host}.`);
 

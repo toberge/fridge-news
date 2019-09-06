@@ -27,7 +27,7 @@ CREATE TABLE ratings(
     CONSTRAINT PRIMARY KEY comment_pk(article_id, user_id)
 );
 
-DROP VIEW IF EXISTS articles_view;
+DROP VIEW IF EXISTS articles_view, front_page, news_feed;
 
 CREATE VIEW articles_view AS(
     SELECT articles.article_id,
@@ -37,12 +37,33 @@ CREATE VIEW articles_view AS(
            upload_time,
            importance,
            category,
-           AVG(ratings.value) AS rating
-    FROM articles, ratings
-    WHERE articles.article_id = ratings.article_id
-      AND articles.importance = 1
+           IF(AVG(ratings.value) IS NOT NULL,
+              AVG(ratings.value), /*ELSE*/ 4) AS rating
+    FROM articles LEFT JOIN ratings
+                         ON(articles.article_id = ratings.article_id)
     GROUP BY articles.article_id
-    ORDER BY upload_time DESC
+    ORDER BY upload_time DESC,
+             importance ASC,
+             rating DESC
+);
+
+CREATE VIEW front_page AS(
+    SELECT * FROM articles_view
+    WHERE importance = 1
+    ORDER BY upload_time DESC,
+             rating DESC
+);
+
+CREATE VIEW news_feed AS(
+    SELECT article_id,
+           title,
+           media,
+           upload_time,
+           importance
+    FROM articles
+    ORDER BY upload_time DESC,
+             importance ASC
+    LIMIT 20
 );
 
 CREATE TABLE comments(
@@ -55,11 +76,15 @@ CREATE TABLE comments(
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 INSERT INTO articles(title, media, content, importance, category) VALUES
-                    ('Title', NULL, 'Text is very <em>italic</em>', 1, 'død');
+                    ('Title', NULL, 'Text is very <em>italic</em>', 1, 'død'),
+                    ('Lorem ipsum', NULL, 'Lorem ipsum dolor sit amet', 2, 'innenriks'),
+                    ('Emptiness Intrudes', NULL, 'The fridge is empty and no more news will be served', 1, 'død');
+
 INSERT INTO users(name) VALUES
             ('Thonk Face'),
             ('Alfred Barskknaus'),
             ('Donaldo Ducke');
+
 INSERT INTO ratings(article_id, user_id, value) VALUES
                       (1,         1,       2),
                       (1,         2,       3),
