@@ -10,6 +10,21 @@ const bcrypt = require('bcryptjs');
 const app = express();
 app.use(bodyParser.json());
 
+// from express-session's thing
+const sess = {
+    secret: 'Let the Dragon ride again on the winds of time',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {}
+};
+
+if (app.get('env') === 'production') {
+    app.set('trust proxy', 1); // trust first proxy
+    sess.cookie.secure = true; // serve secure cookies
+}
+
+app.use(session(sess));
+
 const conf = JSON.parse(fs.readFileSync('db.json', 'utf8'));
 const pool = mysql.createPool({
     ...conf,
@@ -130,6 +145,67 @@ app.post('/users', async (req, res, next) => {
         //next(e);
     }
 });
+
+/*----------------- LOGIN -----------------*/
+
+const authPost = (req, res, next) => {
+    if (req.session) {
+        return next();
+    } else {
+        return res.status(401).json({ message: 'User not logged in; cannot access resource' });
+    }
+}
+
+const authLogin = (req, res, next) => {
+    if (req.session) {
+        return next();
+    } else {
+        return res.status(401).json({ message: 'User not logged in; cannot access resource' });
+    }
+}
+
+app.get('/logout', function (req, res) {
+    req.session.destroy();
+    res.json({ message: 'Logged out' });
+});
+
+const getUserByName = async ({name}) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute('SELECT user_id, name, password FROM users WHERE name = ?', [name]);
+        connection.release();
+        return rows;
+    } catch (e) {
+        console.error(`Failed to execute query during login, with ${e.code}`, e);
+        throw e;
+    }
+}
+
+// check req.session.userId against user_id in, say, article entry to verify that the user can update this one?
+
+app.post('/login', async (req, res) => {
+    const { password, name } = req.body;
+    console.log(`Got login request for user ${name}`);
+    try {
+        const rows = await getUserByName({ name: name });
+        if (rows.length === 1) {
+            console.log(rows);
+            const user = rows[0];
+            if (password && await bcrypt.compare(password, user.password)) {
+                req.session.user = name;
+                req.session.userId = user.user_id;
+                res.status(201).send('Login successful');
+            } else {
+                res.status(401).json({ error: 'Login failed, wrong credentials' });
+            }
+        }
+    } catch (e) {
+        console.trace(e, 'Error occured during login');
+        //res.json({ error: 'failed to establish DB connection' });
+        //this will eventually be handled by your error handling middleware
+        res.json({ error: 'Error occured during login'});
+    }
+})
 
 console.log(`Server starting.\nUsing DB at ${conf.host}.`);
 
