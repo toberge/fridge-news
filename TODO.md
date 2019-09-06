@@ -1,10 +1,16 @@
 TODO
 ----------
 
+##Full list of REST endpoints/resources:
+
 + articles
     + GET ✔
+    + GET front page ✔
+    + GET news feed ✔
+    + POST
 + articles/:id
     + GET ✔
+    + UPDATE?
     + DELETE
 + articles/:id/comments
     + GET

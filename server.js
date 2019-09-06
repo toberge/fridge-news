@@ -18,6 +18,7 @@ const pool = mysql.createPool({
     debug: false
 });
 
+/*----------------- GET ROWS -----------------*/
 
 const getRows = async (endpoint, query) => {
     try {
@@ -54,6 +55,54 @@ for (const item of multiRowResources) {
     });
 }
 
+/*----------------- GET ONE ROW -----------------*/
+
+const getRow = async (endpoint, query, {id}) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute(query, [id]);
+        connection.release();
+        return rows;
+    } catch (e) {
+        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
+        throw e;
+    }
+};
+
+// wrapping regex in () after id name specifies what paths to accept
+// which means /users/:id(\d+) only accepts numbers, directing /users/olegunnar to the error page
+// I somehow managed to get it to accept usernames with %20 but the group needs to be (%20 w/o the last )
+// see https://www.npmjs.com/package/path-to-regexp for info
+// "All parameters can have a custom regexp, which overrides the default match ([^/]+)."
+// --> do I need to prohibit / ? nah.
+const singleRowResources = [
+    { endpoint: '/users/:id(\\d+)', query: 'SELECT user_id, name FROM users WHERE user_id = ?' },
+    { endpoint: '/users/:id([\\w|(%20]+)', query: 'SELECT user_id, name FROM users WHERE name = ?' }, // TODO is this needed?
+    { endpoint: '/articles/:id(\\d+)', query: 'SELECT * FROM articles_view WHERE article_id = ?' },
+];
+
+for (const resource of singleRowResources) {
+    const { endpoint, query } = resource;
+    app.get(endpoint, async (req, res, next) => {
+        try {
+            console.log(`Got GET request at ${endpoint}`);
+            const rows = await getRow(endpoint, query, { id: req.params.id });
+            console.log(`${(rows.length === 1)? 'Found one row at' : 'Found nothing at'} ${endpoint}`);
+            if (rows.length === 0) {
+                res.status(404).json({ error: 'GET request failed, invalid ID' });
+            } else {
+                res.status(200).json(rows);
+            }
+        } catch (e) {
+            console.error(e, 'Error occured during /users/:id');
+            res.status(404).json({ error: 'GET failed' });
+            //next(e);
+        }
+    });
+
+}
+
+/*----------------- POST REQUESTS -----------------*/
 
 const addUser = async ({name, password}) => {
     try {
@@ -81,45 +130,6 @@ app.post('/users', async (req, res, next) => {
         //next(e);
     }
 });
-
-
-const getRow = async (endpoint, query, {id}) => {
-    try {
-        let connection = await pool.getConnection();
-        let [rows, fields] = await connection.execute(query, [id]);
-        connection.release();
-        return rows;
-    } catch (e) {
-        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
-        throw e;
-    }
-};
-
-const singleRowResources = [
-    { endpoint: '/users/:id', query: 'SELECT user_id, name FROM users WHERE user_id = ?' },
-    { endpoint: '/articles/:id', query: 'SELECT * FROM articles_view WHERE article_id = ?' },
-];
-
-for (const resource of singleRowResources) {
-    const { endpoint, query } = resource;
-    app.get(endpoint, async (req, res, next) => {
-        try {
-            console.log(`Got GET request at ${endpoint}`);
-            const rows = await getRow(endpoint, query, { id: req.params.id });
-            console.log((rows.length === 1)? 'Found one row at ' : 'Found nothing at ' + endpoint);
-            if (rows.length === 0) {
-                res.status(404).json({ error: 'GET request failed, invalid ID' });
-            } else {
-                res.status(200).json(rows);
-            }
-        } catch (e) {
-            console.error(e, 'Error occured during /users/:id');
-            res.status(404).json({ error: 'GET failed' });
-            //next(e);
-        }
-    });
-
-}
 
 console.log(`Server starting.\nUsing DB at ${conf.host}.`);
 
