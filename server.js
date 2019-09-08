@@ -132,7 +132,7 @@ const addUser = async ({name, password}) => {
     }
 };
 
-app.post('/users', async (req, res, next) => {
+app.post('/users', async (req, res) => {
     console.log(`Got POST request to add ${req.body.name} to users`);
     try {
         const user = await addUser({ name: req.body.name, password: req.body.password });
@@ -142,7 +142,6 @@ app.post('/users', async (req, res, next) => {
         //res.json({ error: 'failed to establish DB connection' });
         //this will eventually be handled by your error handling middleware
         res.json({ error: e.toString()}); // todo RLY?
-        //next(e);
     }
 });
 
@@ -152,7 +151,7 @@ const authPost = (req, res, next) => {
     if (req.session) {
         return next();
     } else {
-        return res.status(401).json({ message: 'User not logged in; cannot access resource' });
+        return res.status(401).json({ error: 'User not logged in; cannot access resource' });
     }
 }
 
@@ -160,7 +159,7 @@ const authLogin = (req, res, next) => {
     if (req.session) {
         return next();
     } else {
-        return res.status(401).json({ message: 'User not logged in; cannot access resource' });
+        return res.status(401).json({ error: 'User not logged in; cannot access resource' });
     }
 }
 
@@ -201,9 +200,7 @@ app.post('/login', async (req, res) => {
         }
     } catch (e) {
         console.trace(e, 'Error occured during login');
-        //res.json({ error: 'failed to establish DB connection' });
-        //this will eventually be handled by your error handling middleware
-        res.json({ error: 'Error occured during login'});
+        res.status(401).json({ error: 'Error occured during login'});
     }
 })
 
