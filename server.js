@@ -54,8 +54,7 @@ const multiRowResources = [
     { endpoint: '/users', query: 'SELECT user_id, name FROM users' },
 ];
 
-for (const item of multiRowResources) {
-    const { endpoint, query } = item;
+for (const { endpoint, query } of multiRowResources) {
     app.get(endpoint, async (req, res/*, next*/) => {
         console.log(`Got GET request at ${endpoint}`);
         try {
@@ -96,8 +95,7 @@ const singleRowResources = [
     { endpoint: '/articles/:id(\\d+)', query: 'SELECT * FROM articles_view WHERE article_id = ?' },
 ];
 
-for (const resource of singleRowResources) {
-    const { endpoint, query } = resource;
+for (const { endpoint, query } of singleRowResources) {
     app.get(endpoint, async (req, res, next) => {
         try {
             console.log(`Got GET request at ${endpoint}`);
