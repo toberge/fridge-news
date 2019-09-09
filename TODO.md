@@ -1,13 +1,13 @@
 TODO
 ----------
 
-##Full list of REST endpoints/resources:
+## Full list of REST endpoints/resources:
 
 + articles
     + GET ✔
     + GET front page ✔
     + GET news feed ✔
-    + POST
+    + POST ✔
 + articles/:id
     + GET ✔
     + UPDATE?
@@ -19,10 +19,24 @@ TODO
     + GET
     + UPDATE?
     + DELETE
-    
++ articles/:id/ratings
+    + POST
+
+
 + users
     + GET ✔
     + POST ✔
 + users/:id
     + GET ✔
     + DELETE
+
+
++ login
+    + POST ✔
++ logout
+    + GET ✔ (?)
++ auth middleware
+    + is logged in ✔ (?)
+    + is author of
+        + article
+        + comment

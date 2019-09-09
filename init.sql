@@ -2,10 +2,12 @@ DROP TABLE IF EXISTS articles, users, ratings, comments;
 
 CREATE TABLE articles(
     article_id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(30) NOT NULL,
+    user_id INT NOT NULL REFERENCES users(user_id),
+    title VARCHAR(40) NOT NULL,
     media VARCHAR(2083),
     content TEXT NOT NULL,
-    upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
     importance INT NOT NULL DEFAULT 1,
     category ENUM('innenriks', 'utenriks', 'død') NOT NULL,
     /*CONSTRAINT PRIMARY KEY article_pk(upload_time, title),*/
@@ -31,10 +33,12 @@ DROP VIEW IF EXISTS articles_view, front_page, news_feed;
 
 CREATE VIEW articles_view AS(
     SELECT articles.article_id,
+           articles.user_id,
            title,
            media,
            content,
            upload_time,
+           update_time,
            importance,
            category,
            IF(AVG(ratings.value) IS NOT NULL,
@@ -71,16 +75,18 @@ CREATE TABLE comments(
     user_id INT REFERENCES users(user_id),
     title VARCHAR(30),
     content TEXT,
-    upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT PRIMARY KEY comment_pk(article_id, user_id)
+    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT PRIMARY KEY comment_pk(article_id, user_id, upload_time)
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
-INSERT INTO articles(title, media, content, importance, category) VALUES
-                    ('Title', NULL, 'Text is very <em>italic</em>', 1, 'død'),
-                    ('Lorem ipsum', NULL, 'Lorem ipsum dolor sit amet', 2, 'innenriks'),
-                    ('Emptiness Intrudes', NULL, 'The fridge is empty and no more news will be served', 1, 'død');
+INSERT INTO articles(user_id, title, media, content, importance, category) VALUES
+                    (1, 'Title', NULL, 'Text is very <em>italic</em>', 1, 'død'),
+                    (1, 'Lorem ipsum', NULL, 'Lorem ipsum dolor sit amet', 2, 'innenriks'),
+                    (1, 'Emptiness Intrudes', NULL, 'The fridge is empty and no more news will be served', 1, 'død');
 
 INSERT INTO users(name) VALUES
+            ('Admin'),
             ('Thonk Face'),
             ('Alfred Barskknaus'),
             ('Donaldo Ducke');

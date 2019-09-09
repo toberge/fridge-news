@@ -33,6 +33,74 @@ const pool = mysql.createPool({
     debug: false
 });
 
+/*----------------- LOGIN -----------------*/
+
+const authLogin = (req, res, next) => {
+    if (req.session && req.session.user) {
+        return next();
+    } else {
+        return res.status(401).json({ error: 'User not logged in; cannot access resource' });
+    }
+}
+
+const authOwnsArticle = async (req, res, next) => {
+    if (req.session) {
+        try {
+            if (req.session.userId === await singleRowQuery( 'SELECT user_id FROM articles WHERE article_id = ?', [ req.params.id ]).user_id) {
+                return next();
+            } else {
+                return res.status(401).json({ error: 'User is not author of article' });
+            }
+        } catch (e) {
+            console.trace('Error occured during author check');
+            return res.status(400).json({ error: 'Could not check if user is author' })
+        }
+    } else {
+        return res.status(401).json({ error: 'User not logged in or is not author of article' });
+    }
+}
+
+app.get('/logout', function (req, res) {
+    req.session.destroy();
+    res.json({ message: 'Logged out' });
+});
+
+const getUserByName = async ({name}) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute('SELECT user_id, name, password FROM users WHERE name = ?', [name]);
+        connection.release();
+        return rows;
+    } catch (e) {
+        console.error(`Failed to execute query during login, with ${e.code}`, e);
+        throw e;
+    }
+}
+
+// check req.session.userId against user_id in, say, article entry to verify that the user can update this one?
+
+app.post('/login', async (req, res) => {
+    if (!req.body.name || !req.body.password)return res.status(400).json({ error: 'Insufficient data in request body' });
+    const { password, name } = req.body;
+    console.log(`Got login request for user ${name}`);
+    try {
+        const rows = await getUserByName({ name: name });
+        if (rows.length === 1) {
+            const user = rows[0];
+            if (password && await bcrypt.compare(password, user.password)) {
+                req.session.user = name;
+                req.session.userId = user.user_id;
+                res.status(201).send('Login successful');
+            } else {
+                res.status(401).json({ error: 'Login failed, wrong credentials' });
+            }
+        }
+    } catch (e) {
+        console.trace('Error occured during login', e);
+        res.status(401).json({ error: 'Error occured during login'});
+    }
+});
+
 /*----------------- GET ROWS -----------------*/
 
 const getRows = async (endpoint, query) => {
@@ -82,6 +150,31 @@ const getRow = async (endpoint, query, {id}) => {
         throw e;
     }
 };
+
+const singleRowQuery = async (query, ...params) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute(query, params);
+        connection.release();
+        return rows[0];
+    } catch (e) {
+        console.error(e, `SQL query ${query} failed with ${e.code}`);
+        throw e;
+    }
+};
+
+const updateQuery = async (query, ...params) => {
+    let connection = null;
+    try {
+        connection = await pool.getConnection();
+        return await connection.execute(query, params);
+    } catch (e) {
+        console.error(e, `SQL query ${query} failed with ${e.code}`);
+        throw e;
+    } finally {
+        if (connection) connection.release();
+    }
+}
 
 // wrapping regex in () after id name specifies what paths to accept
 // which means /users/:id(\d+) only accepts numbers, directing /users/olegunnar to the error page
@@ -143,65 +236,23 @@ app.post('/users', async (req, res) => {
     }
 });
 
-/*----------------- LOGIN -----------------*/
-
-const authPost = (req, res, next) => {
-    if (req.session) {
-        return next();
-    } else {
-        return res.status(401).json({ error: 'User not logged in; cannot access resource' });
-    }
-}
-
-const authLogin = (req, res, next) => {
-    if (req.session) {
-        return next();
-    } else {
-        return res.status(401).json({ error: 'User not logged in; cannot access resource' });
-    }
-}
-
-app.get('/logout', function (req, res) {
-    req.session.destroy();
-    res.json({ message: 'Logged out' });
-});
-
-const getUserByName = async ({name}) => {
+app.post('/articles', authLogin, async (req, res) => {
+    if (!req.body.title) return res.status(400).json({ error: 'Insufficient data in request body' });
+    const { title, media, content, importance, category } = req.body;
+    console.log(`Got POST request from ${req.session.user} to add ${title} as article`)
     try {
-        let connection = await pool.getConnection();
-        let [rows, fields] = await connection.execute('SELECT user_id, name, password FROM users WHERE name = ?', [name]);
-        connection.release();
-        return rows;
-    } catch (e) {
-        console.error(`Failed to execute query during login, with ${e.code}`, e);
-        throw e;
-    }
-}
-
-// check req.session.userId against user_id in, say, article entry to verify that the user can update this one?
-
-app.post('/login', async (req, res) => {
-    const { password, name } = req.body;
-    console.log(`Got login request for user ${name}`);
-    try {
-        const rows = await getUserByName({ name: name });
-        if (rows.length === 1) {
-            console.log(rows);
-            const user = rows[0];
-            if (password && await bcrypt.compare(password, user.password)) {
-                req.session.user = name;
-                req.session.userId = user.user_id;
-                res.status(201).send('Login successful');
-            } else {
-                res.status(401).json({ error: 'Login failed, wrong credentials' });
-            }
+        if (await updateQuery('INSERT INTO articles(user_id, title, media, content, importance, category) VALUES(?, ?, ?, ?, ?, ?)',
+                        req.session.userId, title, media, content, importance, category)) {
+            res.status(201).json({ message: 'POST successful'});
+        } else {
+            res.status(400).json({ message: 'Could not POST article'})
         }
     } catch (e) {
-        console.trace(e, 'Error occured during login');
-        res.status(401).json({ error: 'Error occured during login'});
+        console.trace('Failed to POST article');
+        res.status(400).json({ error: 'Failed to POST article' });
     }
-})
-
-console.log(`Server starting.\nUsing DB at ${conf.host}.`);
+});
 
 let server = app.listen(8080);
+
+console.log(`Server started.\nUsing DB at ${conf.host}.`);
