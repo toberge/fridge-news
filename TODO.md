@@ -11,17 +11,22 @@ TODO
 + articles/:id
     + GET ✔
     + UPDATE?
-    + DELETE
+    + DELETE?
 + articles/:id/comments
-    + GET
-    + POST
+    + GET ✔
+    + POST ✔
 + articles/:id/comments/:user_id
     + GET
     + UPDATE?
-    + DELETE
+    + DELETE?
 + articles/:id/ratings
-    + POST
+    + POST ✔
++ articles/:id/ratings/:id
+    + GET
+    + PUT ✔
 
++ categories/:name
+    + GET ✔
 
 + users
     + GET ✔

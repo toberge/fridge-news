@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const session = require('express-session'); // TODO use this
+const session = require('express-session'); // TODO don't actually use this next time, use JWT stuffs
 const bodyParser = require("body-parser");
 const mysql = require('mysql2/promise');
 const fs = require('file-system');
@@ -32,6 +32,45 @@ const pool = mysql.createPool({
     waitForConnections: true,
     debug: false
 });
+
+/*----------------- SQL shortcuts -----------------*/
+
+const singleRowQuery = async (query, ...params) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute(query, params);
+        connection.release();
+        return rows[0];
+    } catch (e) {
+        console.error(e, `SQL query ${query} failed with ${e.code}`);
+        throw e;
+    }
+};
+
+const multiRowQuery = async (query, ...params) => {
+    try {
+        let connection = await pool.getConnection();
+        let [rows, fields] = await connection.execute(query, params);
+        connection.release();
+        return rows;
+    } catch (e) {
+        console.error(e, `SQL query ${query} failed with ${e.code}`);
+        throw e;
+    }
+};
+
+const updateQuery = async (query, ...params) => {
+    let connection = null;
+    try {
+        connection = await pool.getConnection();
+        return await connection.execute(query, params);
+    } catch (e) {
+        console.error(e, `SQL query ${query} failed with ${e.code}`);
+        throw e;
+    } finally {
+        if (connection) connection.release();
+    }
+}
 
 /*----------------- LOGIN -----------------*/
 
@@ -123,7 +162,7 @@ const multiRowResources = [
 ];
 
 for (const { endpoint, query } of multiRowResources) {
-    app.get(endpoint, async (req, res/*, next*/) => {
+    app.get(endpoint, async (req, res) => {
         console.log(`Got GET request at ${endpoint}`);
         try {
             const rows = await getRows(endpoint, query);
@@ -132,10 +171,33 @@ for (const { endpoint, query } of multiRowResources) {
         } catch (e) {
             console.trace(e, `Error occurred during ${endpoint}:`);
             res.status(503).send('GET request failed');
-            //next(e);
         }
     });
 }
+
+app.get('/categories/:name([\\w]+)', async (req, res) => {
+    console.log(`Got GET request at /categories/:name`);
+    try {
+        const rows = await multiRowQuery('SELECT * FROM articles_view WHERE category = ?', req.params.name);
+        console.log(`${rows.length} rows found`);
+        res.status(200).json(rows);
+    } catch (e) {
+        console.trace(e, `Error occurred during category search`);
+        res.status(503).send('GET request failed');
+    }
+});
+
+app.get('/articles/:id(\\d+)/comments', async (req, res) => {
+    console.log(`Got GET request at ${req.path}`);
+    try {
+        const rows = await multiRowQuery('SELECT * FROM comments WHERE article_id = ?', req.params.id);
+        console.log(`${rows.length} rows found`);
+        res.status(200).json(rows);
+    } catch (e) {
+        console.trace(e, `Error occurred while fetching comments`);
+        res.status(503).send('GET request failed');
+    }
+});
 
 /*----------------- GET ONE ROW -----------------*/
 
@@ -151,31 +213,6 @@ const getRow = async (endpoint, query, {id}) => {
     }
 };
 
-const singleRowQuery = async (query, ...params) => {
-    try {
-        let connection = await pool.getConnection();
-        let [rows, fields] = await connection.execute(query, params);
-        connection.release();
-        return rows[0];
-    } catch (e) {
-        console.error(e, `SQL query ${query} failed with ${e.code}`);
-        throw e;
-    }
-};
-
-const updateQuery = async (query, ...params) => {
-    let connection = null;
-    try {
-        connection = await pool.getConnection();
-        return await connection.execute(query, params);
-    } catch (e) {
-        console.error(e, `SQL query ${query} failed with ${e.code}`);
-        throw e;
-    } finally {
-        if (connection) connection.release();
-    }
-}
-
 // wrapping regex in () after id name specifies what paths to accept
 // which means /users/:id(\d+) only accepts numbers, directing /users/olegunnar to the error page
 // I somehow managed to get it to accept usernames with %20 but the group needs to be (%20 w/o the last )
@@ -189,20 +226,19 @@ const singleRowResources = [
 ];
 
 for (const { endpoint, query } of singleRowResources) {
-    app.get(endpoint, async (req, res, next) => {
+    app.get(endpoint, async (req, res) => {
         try {
             console.log(`Got GET request at ${endpoint}`);
             const rows = await getRow(endpoint, query, { id: req.params.id });
             console.log(`${(rows.length === 1)? 'Found one row at' : 'Found nothing at'} ${endpoint}`);
-            if (rows.length === 0) {
+            if (rows.length !== 1) {
                 res.status(404).json({ error: 'GET request failed, invalid ID' });
             } else {
-                res.status(200).json(rows);
+                res.status(200).json(rows[0]);
             }
         } catch (e) {
             console.error(e, 'Error occured during /users/:id');
             res.status(404).json({ error: 'GET failed' });
-            //next(e);
         }
     });
 
@@ -252,6 +288,63 @@ app.post('/articles', authLogin, async (req, res) => {
         res.status(400).json({ error: 'Failed to POST article' });
     }
 });
+
+app.post('/articles/:id(\\d+)/comments', authLogin, async (req, res) => {
+    if (!req.body.title || !req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
+    const { title, content } = req.body;
+    console.log(`Got POST request from ${req.session.user} to add ${title} as comment to article ${req.params.id}`)
+    try {
+        if (await updateQuery('INSERT INTO comments(article_id, user_id, title, content) VALUES(?, ?, ?, ?)',
+                        req.params.id, req.session.userId, title, content)) {
+            res.status(201).json({ message: 'POST successful'});
+        } else {
+            res.status(400).json({ message: 'Could not POST comment'})
+        }
+    } catch (e) {
+        console.trace('Failed to POST comment');
+        res.status(400).json({ error: 'Failed to POST comment' });
+    }
+});
+
+// will fail if used as update
+app.post('/articles/:id(\\d+)/ratings', authLogin, async (req, res) => {
+    if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
+    console.log(`Got POST request from ${req.session.user} to rate article ${req.params.id} a ${req.body.value} out of 5`)
+    try {
+        if (await updateQuery('INSERT INTO ratings(article_id, user_id, value) VALUES(?, ?, ?)',
+            req.params.id, req.session.userId, req.body.value)) {
+            res.status(201).json({ message: 'POST successful'});
+        } else {
+            res.status(400).json({ message: 'Could not POST rating'})
+        }
+    } catch (e) {
+        console.trace('Failed to POST rating');
+        res.status(400).json({ error: 'Failed to POST rating' });
+    }
+});
+
+// uhhhhhh should I revert to just POST?
+app.put('/articles/:articleId(\\d+)/ratings/:userId(\\d+)', authLogin, async (req, res) => {
+    // the session has number, param has string
+    if (req.session.userId != req.params.userId) return res.status(400).json({ error: 'Cannot change another user\'s rating' });
+    if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
+    console.log(`Got UPDATE request from ${req.session.user} to change rating for article ${req.params.articleId} to ${req.body.value} out of 5`)
+    try {
+        if (await updateQuery('UPDATE ratings SET value = ? WHERE article_id = ? AND user_id = ?',
+            req.body.value, req.params.articleId, req.params.userId)) {
+            res.status(201).json({ message: 'UPDATE successful'});
+        } else {
+            res.status(400).json({ message: 'Could not UPDATE rating'})
+        }
+    } catch (e) {
+        console.trace('Failed to UPDATE rating');
+        res.status(400).json({ error: 'Failed to UPDATE rating' });
+    }
+});
+
+
+
+/*----------------- THAT'S IT -----------------*/
 
 let server = app.listen(8080);
 
