@@ -15,8 +15,8 @@ TODO
 + articles/:id/comments
     + GET ✔
     + POST ✔
-+ articles/:id/comments/:user_id
-    + GET
++ articles/:id/comments/:comment_id
+    + GET ✔
     + UPDATE?
     + DELETE?
 + articles/:id/ratings

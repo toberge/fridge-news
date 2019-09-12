@@ -36,26 +36,32 @@ const pool = mysql.createPool({
 /*----------------- SQL shortcuts -----------------*/
 
 const singleRowQuery = async (query, ...params) => {
+    let connection = null;
     try {
-        let connection = await pool.getConnection();
+        connection = await pool.getConnection();
         let [rows, fields] = await connection.execute(query, params);
-        connection.release();
+        //connection.release();
         return rows[0];
     } catch (e) {
         console.error(e, `SQL query ${query} failed with ${e.code}`);
         throw e;
+    } finally {
+        if (connection) connection.release();
     }
 };
 
 const multiRowQuery = async (query, ...params) => {
+    let connection = null;
     try {
-        let connection = await pool.getConnection();
+        connection = await pool.getConnection();
         let [rows, fields] = await connection.execute(query, params);
-        connection.release();
+        //connection.release();
         return rows;
     } catch (e) {
         console.error(e, `SQL query ${query} failed with ${e.code}`);
         throw e;
+    } finally {
+        if (connection) connection.release();
     }
 };
 
@@ -133,6 +139,8 @@ app.post('/login', async (req, res) => {
             } else {
                 res.status(401).json({ error: 'Login failed, wrong credentials' });
             }
+        } else {
+            res.status(401).json({ error: 'Login failed, wrong credentials' });
         }
     } catch (e) {
         console.trace('Error occured during login', e);
@@ -141,18 +149,6 @@ app.post('/login', async (req, res) => {
 });
 
 /*----------------- GET ROWS -----------------*/
-
-const getRows = async (endpoint, query) => {
-    try {
-        let connection = await pool.getConnection();
-        let [rows, fields] = await connection.query(query);
-        connection.release();
-        return rows;
-    } catch (e) {
-        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
-        throw e;
-    }
-};
 
 const multiRowResources = [
     { endpoint: '/articles', query: 'SELECT * FROM articles_view' },
@@ -165,7 +161,7 @@ for (const { endpoint, query } of multiRowResources) {
     app.get(endpoint, async (req, res) => {
         console.log(`Got GET request at ${endpoint}`);
         try {
-            const rows = await getRows(endpoint, query);
+            const rows = await multiRowQuery(query);
             console.log(`${rows.length} rows found`);
             res.status(200).json(rows);
         } catch (e) {
@@ -175,7 +171,7 @@ for (const { endpoint, query } of multiRowResources) {
     });
 }
 
-app.get('/categories/:name([\\w]+)', async (req, res) => {
+app.get('/categories/:name', async (req, res) => { // removed ([\w]+)
     console.log(`Got GET request at /categories/:name`);
     try {
         const rows = await multiRowQuery('SELECT * FROM articles_view WHERE category = ?', req.params.name);
@@ -201,18 +197,6 @@ app.get('/articles/:id(\\d+)/comments', async (req, res) => {
 
 /*----------------- GET ONE ROW -----------------*/
 
-const getRow = async (endpoint, query, {id}) => {
-    try {
-        let connection = await pool.getConnection();
-        let [rows, fields] = await connection.execute(query, [id]);
-        connection.release();
-        return rows;
-    } catch (e) {
-        console.error(e, `SQL query at ${endpoint} failed with ${e.code}`);
-        throw e;
-    }
-};
-
 // wrapping regex in () after id name specifies what paths to accept
 // which means /users/:id(\d+) only accepts numbers, directing /users/olegunnar to the error page
 // I somehow managed to get it to accept usernames with %20 but the group needs to be (%20 w/o the last )
@@ -229,20 +213,42 @@ for (const { endpoint, query } of singleRowResources) {
     app.get(endpoint, async (req, res) => {
         try {
             console.log(`Got GET request at ${endpoint}`);
-            const rows = await getRow(endpoint, query, { id: req.params.id });
-            console.log(`${(rows.length === 1)? 'Found one row at' : 'Found nothing at'} ${endpoint}`);
+            const row = await singleRowQuery(query, req.params.id);
+            if (row) {
+                console.log(`Found something at ${endpoint}`);
+                res.status(200).json(row);
+            } else {
+                res.status(404).json({ error: 'GET request failed, invalid ID' });
+            }
+            /*console.log(`${(rows.length === 1)? 'Found one row at' : 'Found nothing at'} ${endpoint}`);
             if (rows.length !== 1) {
                 res.status(404).json({ error: 'GET request failed, invalid ID' });
             } else {
                 res.status(200).json(rows[0]);
-            }
+            }*/
         } catch (e) {
-            console.error(e, 'Error occured during /users/:id');
+            console.error(e, 'Error occured during ${endpoint}');
             res.status(404).json({ error: 'GET failed' });
         }
     });
-
 }
+
+app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
+    try {
+        console.log(`Got GET request at ${req.path}`);
+        // TODO it do not be like this
+        const row = await singleRowQuery('SELECT * FROM comments WHERE /*article_id = ? AND*/ comment_id = ?', /*req.params.articleId,*/ req.params.commentId);
+        if (row) {
+            console.log(`Found a comment`);
+            res.status(200).json(row);
+        } else {
+            res.status(404).json({ error: 'GET request failed, invalid ID' });
+        }
+    } catch (e) {
+        console.error(e, 'Error occured during ');
+        res.status(404).json({ error: 'GET failed' });
+    }
+});
 
 /*----------------- POST REQUESTS -----------------*/
 
