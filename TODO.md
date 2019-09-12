@@ -10,14 +10,14 @@ TODO
     + POST ✔
 + articles/:id
     + GET ✔
-    + UPDATE?
+    + PUT?
     + DELETE?
 + articles/:id/comments
     + GET ✔
     + POST ✔
 + articles/:id/comments/:comment_id
     + GET ✔
-    + UPDATE?
+    + PUT?
     + DELETE?
 + articles/:id/ratings
     + POST ✔

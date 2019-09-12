@@ -240,7 +240,6 @@ for (const { endpoint, query } of singleRowResources) {
 app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
     try {
         console.log(`Got GET request at ${req.path}`);
-        // TODO it do not be like this
         const row = await singleRowQuery('SELECT * FROM comments WHERE /*article_id = ? AND*/ comment_id = ?', /*req.params.articleId,*/ req.params.commentId);
         if (row) {
             console.log(`Found a comment`);
@@ -274,6 +273,12 @@ app.post('/users', async (req, res) => {
     try {
         const user = await addUser({ name: req.body.name, password: req.body.password });
         res.status(201).send('POST successful');
+        // okay, don't forget bcrypting next time you change this!
+        /*if (await updateQuery('INSERT INTO users(name, password) VALUES (?, ?)', req.body.name, req.body.password)) {
+            res.status(201).send('POST successful');
+        } else {
+            res.status(400).json({ error: 'Failed to POST user' });
+        }*/
     } catch (e) {
         console.trace(e, 'Error occured during /users/:id');
         //res.json({ error: 'failed to establish DB connection' });
