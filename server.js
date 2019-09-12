@@ -338,7 +338,6 @@ app.post('/articles/:id(\\d+)/ratings', authLogin, async (req, res) => {
     }
 });
 
-// uhhhhhh should I revert to just POST?
 app.put('/articles/:articleId(\\d+)/ratings/:userId(\\d+)', authLogin, async (req, res) => {
     // the session has number, param has string
     if (req.session.userId != req.params.userId) return res.status(400).json({ error: 'Cannot change another user\'s rating' });
