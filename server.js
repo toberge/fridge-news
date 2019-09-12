@@ -105,9 +105,13 @@ const authOwnsArticle = async (req, res, next) => {
     }
 }
 
-app.get('/logout', function (req, res) {
-    req.session.destroy();
-    res.json({ message: 'Logged out' });
+app.post('/logout', function (req, res) {
+    if (req.session.userId) {
+        req.session.destroy();
+        res.status(201).json({ message: 'Logged out' });
+    } else {
+        res.status(401).json({ error: 'Was not logged in in the first place' });
+    }
 });
 
 const getUserByName = async ({name}) => {

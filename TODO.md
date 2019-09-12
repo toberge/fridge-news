@@ -39,7 +39,7 @@ TODO
 + login
     + POST ✔
 + logout
-    + GET ✔ (?)
+    + POST ✔
 + auth middleware
     + is logged in ✔ (?)
     + is author of
