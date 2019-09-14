@@ -1,47 +1,28 @@
 image: node:latest
 
-#services:
-#    - mysql:latest
-#variables:
-#    # Configure mysql environment variables (https://hub.docker.com/_/mysql/)
-#    MYSQL_DATABASE: "fridge"
-#    MYSQL_ROOT_PASSWORD: "fish"
+services:
+    - mysql:latest
+variables:
+    MYSQL_DATABASE: "fridge"
+    MYSQL_ROOT_PASSWORD: "fish"
 
 stages:
     - build
     - test
     - deploy
 
-
-#connect:
-#    stage: build
-#    image: mysql
-#    script:
-#    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-
-
 build:
     stage: build
     script:
-    - npm install
+      - npm install
     artifacts:
         paths:
         - node_modules
 
-
 test:
     stage: test
     script:
-    # a lil' hack for now
-    # at the moment, not much of this will work.
-    - sudo apt install -y jq
-    - cp db-test.json db.json
-    - node server.js &> log.txt &
-    - ./tests/*-test.bash
-    - kill -9 $(jobs -p)
-    - cat log.txt
-    # log as artifact?
-
+        - node test
 
 deploy:
     stage: deploy

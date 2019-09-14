@@ -25,7 +25,7 @@ if (app.get('env') === 'production') {
 
 app.use(session(sess));
 
-const conf = JSON.parse(fs.readFileSync('db.json', 'utf8'));
+const conf = JSON.parse(fs.readFileSync('database/properties.json', 'utf8'));
 const pool = mysql.createPool({
     ...conf,
     connectionLimit: 9,
