@@ -76,7 +76,7 @@ const updateQuery = async (query, ...params) => {
     } finally {
         if (connection) connection.release();
     }
-}
+};
 
 /*----------------- LOGIN -----------------*/
 
@@ -86,7 +86,7 @@ const authLogin = (req, res, next) => {
     } else {
         return res.status(401).json({ error: 'User not logged in; cannot access resource' });
     }
-}
+};
 
 const authOwnsArticle = async (req, res, next) => {
     if (req.session) {
@@ -103,7 +103,7 @@ const authOwnsArticle = async (req, res, next) => {
     } else {
         return res.status(401).json({ error: 'User not logged in or is not author of article' });
     }
-}
+};
 
 app.post('/logout', function (req, res) {
     if (req.session.userId) {
@@ -124,7 +124,7 @@ const getUserByName = async ({name}) => {
         console.error(`Failed to execute query during login, with ${e.code}`, e);
         throw e;
     }
-}
+};
 
 // check req.session.userId against user_id in, say, article entry to verify that the user can update this one?
 

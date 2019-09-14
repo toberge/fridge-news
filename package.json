@@ -9,14 +9,15 @@
     "mysql2": "^1.7.0"
   },
   "scripts": {
-    "test": "standard; ./tests/*-test.bash",
+    "test": "semistandard && mocha",
     "start": "node server.js"
   },
   "description": "Simple backend for serving fresh news from the fridge",
   "version": "1.0.0",
-  "main": "module.js",
+  "main": "server.js",
   "devDependencies": {
-    "standard": "^14.1.0"
+    "mocha": "^6.2.0",
+    "semistandard": "^14.1.0"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,6 @@
   "author": "Tore Bergebakken",
   "license": "ISC",
   "directories": {
-    "test": "tests"
+    "test": "test"
   }
 }
