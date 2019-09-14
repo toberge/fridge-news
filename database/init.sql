@@ -1,16 +1,15 @@
 DROP TABLE IF EXISTS articles, users, ratings, comments;
 
 CREATE TABLE articles(
-    article_id INT AUTO_INCREMENT PRIMARY KEY,
+    article_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(user_id),
-    title VARCHAR(40) NOT NULL,
+    title VARCHAR(64) NOT NULL,
     media VARCHAR(2083),
     content TEXT NOT NULL,
-    upload_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    importance ENUM('1', '2') NOT NULL DEFAULT '2',
-    category ENUM('culture', 'science', 'politics', 'bad stuff', 'død') NOT NULL,
-    /*CONSTRAINT PRIMARY KEY article_pk(upload_time, title),*/
+    importance TINYINT NOT NULL DEFAULT 2,
+    category ENUM('news', 'culture', 'science', 'politics', 'bad stuff') NOT NULL,
     INDEX article_title_time(title, upload_time),
     INDEX article_importance_time(importance, upload_time),
     INDEX article_category_time(upload_time, importance, category)
@@ -20,6 +19,7 @@ CREATE TABLE users(
     user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) UNIQUE NOT NULL,
     password VARCHAR(255) /*NOT NULL*/,
+    admin BOOLEAN NOT NULL DEFAULT 0,
     INDEX user_name(name)
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
@@ -29,6 +29,21 @@ CREATE TABLE ratings(
     value INT NOT NULL,
     CONSTRAINT PRIMARY KEY comment_pk(article_id, user_id)
 );
+
+CREATE TABLE comments(
+    comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    article_id INT NOT NULL REFERENCES articles(article_id),
+    user_id INT NOT NULL REFERENCES users(user_id),
+    title VARCHAR(30) NOT NULL,
+    content TEXT NOT NULL,
+    upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    INDEX comment_article_index(article_id),
+    INDEX comment_user_index(user_id),
+    INDEX comment_article_time_index(article_id, upload_time),
+    INDEX comment_article_time_title_index(article_id, upload_time, title)
+) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
+
 
 DROP VIEW IF EXISTS articles_view, front_page, news_feed;
 
@@ -62,34 +77,3 @@ CREATE VIEW news_feed AS(
              importance ASC
     LIMIT 20
 );
-
-CREATE TABLE comments(
-    comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    article_id INT NOT NULL REFERENCES articles(article_id),
-    user_id INT NOT NULL REFERENCES users(user_id),
-    title VARCHAR(30) NOT NULL,
-    content TEXT NOT NULL,
-    upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    update_time DATETIME ON UPDATE CURRENT_TIMESTAMP
-    /*CONSTRAINT PRIMARY KEY comment_pk(article_id, user_id, upload_time)*/
-) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
-
-INSERT INTO articles(user_id, title, media, content, importance, category) VALUES
-                    (1, 'Title', NULL, 'Text is very <em>italic</em>', 1, 'død'),
-                    (1, 'Lorem ipsum', NULL, 'Lorem ipsum dolor sit amet', 2, 'culture'),
-                    (1, 'Emptiness Intrudes', NULL, 'The fridge is empty and no more news will be served', 1, 'død');
-
-INSERT INTO users(name) VALUES
-            ('Admin'),
-            ('Thonk Face'),
-            ('Alfred Barskknaus'),
-            ('Donaldo Ducke');
-
-INSERT INTO ratings(article_id, user_id, value) VALUES
-                      (1,         1,       2),
-                      (1,         2,       3),
-                      (1,         3,       5);
-
-INSERT INTO comments(article_id, user_id, title, content) VALUES
-                    (1, 1, 'Title', 'Some text'),
-                    (3, 3, 'Too Bad', 'It\'s all way too bad');

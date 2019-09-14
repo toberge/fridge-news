@@ -167,7 +167,11 @@ for (const { endpoint, query } of multiRowResources) {
         try {
             const rows = await multiRowQuery(query);
             console.log(`${rows.length} rows found`);
-            res.status(200).json(rows);
+            if (rows.length > 0) {
+                res.status(200).json(rows);
+            } else {
+                res.status(503).json({ error: `Nothing found at ${endpoint}, is the database down?` });
+            }
         } catch (e) {
             console.trace(e, `Error occurred during ${endpoint}:`);
             res.status(503).send('GET request failed');
@@ -180,7 +184,11 @@ app.get('/categories/:name', async (req, res) => { // removed ([\w]+)
     try {
         const rows = await multiRowQuery('SELECT * FROM articles_view WHERE category = ?', req.params.name);
         console.log(`${rows.length} rows found`);
-        res.status(200).json(rows);
+        if (rows.length > 0) {
+            res.status(200).json(rows);
+        } else {
+            res.status(404).json({ error: 'No such category or no articles in category' });
+        }
     } catch (e) {
         console.trace(e, `Error occurred during category search`);
         res.status(503).send('GET request failed');
@@ -192,6 +200,7 @@ app.get('/articles/:id(\\d+)/comments', async (req, res) => {
     try {
         const rows = await multiRowQuery('SELECT * FROM comments WHERE article_id = ?', req.params.id);
         console.log(`${rows.length} rows found`);
+        // gotta send the data even if there is none, let the client handle it
         res.status(200).json(rows);
     } catch (e) {
         console.trace(e, `Error occurred while fetching comments`);
@@ -360,6 +369,6 @@ app.put('/articles/:articleId(\\d+)/ratings/:userId(\\d+)', authLogin, async (re
 
 /*----------------- THAT'S IT -----------------*/
 
-let server = app.listen(8080);
+const server = app.listen(8080);
 
 console.log(`Server started.\nUsing DB at ${conf.host}.`);
