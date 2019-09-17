@@ -158,8 +158,8 @@ app.post('/login', async (req, res) => {
 
 const multiRowResources = [
   { endpoint: '/articles', query: 'SELECT * FROM articles_view' },
-  { endpoint: '/front_page', query: 'SELECT * FROM front_page' },
-  { endpoint: '/news_feed', query: 'SELECT * FROM news_feed' },
+  { endpoint: '/articles/front_page', query: 'SELECT * FROM front_page' },
+  { endpoint: '/articles/news_feed', query: 'SELECT * FROM news_feed' },
   { endpoint: '/users', query: 'SELECT user_id, name FROM users' }
 ];
 
@@ -181,7 +181,7 @@ for (const { endpoint, query } of multiRowResources) {
   });
 }
 
-app.get('/categories/:name', async (req, res) => { // removed ([\w]+)
+app.get('/articles/categories/:name', async (req, res) => { // removed ([\w]+)
   console.log('Got GET request at /categories/:name');
   try {
     const rows = await multiRowQuery('SELECT * FROM articles_view WHERE category = ?', req.params.name);

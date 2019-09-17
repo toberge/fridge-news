@@ -5,9 +5,13 @@ TODO
 
 + articles
     + GET ✔
-    + GET front page ✔
-    + GET news feed ✔
     + POST ✔
++ articles/front_page
+    + GET ✔
++ articles/news_feed
+    + GET ✔
++ articles/categories/:name
+    + GET ✔
 + articles/:id
     + GET ✔
     + PUT?
@@ -17,16 +21,14 @@ TODO
     + POST ✔
 + articles/:id/comments/:comment_id
     + GET ✔
-    + PUT?
-    + DELETE?
+    + PUT
+    + DELETE
 + articles/:id/ratings
     + POST ✔
 + articles/:id/ratings/:id
     + GET
     + PUT ✔
-
-+ categories/:name
-    + GET ✔
+    + DELETE
 
 + users
     + GET ✔
@@ -34,7 +36,6 @@ TODO
 + users/:id
     + GET ✔
     + DELETE
-
 
 + login
     + POST ✔
@@ -45,3 +46,10 @@ TODO
     + is author of
         + article
         + comment
+
+## Other tasks
+
++ session cookie --> token for authentication
++ split DB queries into DAOs
++ actually write tests
++ frontend at a later point
