@@ -1,0 +1,13 @@
+[ignore]
+
+[include]
+server.js
+test/*.js
+database/*.js
+[libs]
+
+[lints]
+
+[options]
+
+[strict]

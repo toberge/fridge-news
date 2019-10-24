@@ -1,24 +1,33 @@
 {
   "name": "fridge-news",
   "dependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/node": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-flow": "^7.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "file-system": "^2.2.2",
     "mysql2": "^1.7.0"
+
   },
   "scripts": {
     "test": "semistandard && mocha",
-    "start": "node server.js"
+    "start": "nodemon --exec babel-node server.js"
   },
   "description": "Simple backend for serving fresh news from the fridge",
   "version": "1.0.0",
   "main": "server.js",
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint-config-standard": "^13.0.1",
+    "flow-bin": "^0.109.0",
     "mocha": "^6.2.0",
-    "semistandard": "^14.1.0"
+    "nodemon": "^1.19.3",
+    "semistandard": "^14.2.0"
   },
   "repository": {
     "type": "git",

@@ -33,6 +33,63 @@ const pool = mysql.createPool({
   debug: false
 });
 
+/* TODO the mess */
+
+const ArticleDAO = require('./database/ArticleDAO');
+let articleDAO = new ArticleDAO(pool);
+
+const performSingleRowQuery = async (res, func, context: string, ...params) => {
+  func(...params)
+    .then(rows => {
+      if (rows) {
+        res.status(200).json(rows);
+      } else {
+        res.send(404).json({ error: `GET request failed, invalid ID for ${context}`});
+      }
+    })
+    .catch(e => {
+      console.error(e, `Error occured while fetching ${context}`);
+      res.status(404).json({ error: 'GET failed', details: e.toString() });
+    });
+};
+
+app.get('/articles', (req, res) => {
+
+  articleDAO.getAll()
+    .then(rows => {
+      if (rows) {
+        res.status(200).json(rows);
+      } else {
+        res.send(501);
+      }
+    })
+    .catch(e => {
+      console.trace(e);
+      res.status(501).json({ error: 'blablabla', details: e });
+    });
+});
+
+const things = [
+  articleDAO.getOne
+]
+app.get('/articles/:id(\\d+)', async (req, res) => {
+  /*try {
+    const rows = await things[0](req.params.id);
+    console.log(rows);
+    if (rows) {
+      res.status(200).json(rows);
+    } else {
+      res.send(501);
+    }
+  } catch (e) {
+    console.trace(e);
+    res.status(501).json({ error: 'blablabla', details: e.toString() });
+  }*/
+  performSingleRowQuery(res, articleDAO.getOne, 'articles', parseInt(req.params.id))
+})
+
+/* TODO end of mess... */
+
 /* ----------------- SQL shortcuts ----------------- */
 
 const singleRowQuery = async (query, ...params) => {
@@ -157,7 +214,7 @@ app.post('/login', async (req, res) => {
 /* ----------------- GET ROWS ----------------- */
 
 const multiRowResources = [
-  { endpoint: '/articles', query: 'SELECT * FROM articles_view' },
+  //{ endpoint: '/articles', query: 'SELECT * FROM articles_view' },
   { endpoint: '/articles/front_page', query: 'SELECT * FROM front_page' },
   { endpoint: '/articles/news_feed', query: 'SELECT * FROM news_feed' },
   { endpoint: '/users', query: 'SELECT user_id, name FROM users' }
@@ -168,6 +225,8 @@ for (const { endpoint, query } of multiRowResources) {
     console.log(`Got GET request at ${endpoint}`);
     try {
       const rows = await multiRowQuery(query);
+      // TODO remove plz
+      console.log(pool);
       console.log(`${rows.length} rows found`);
       if (rows.length > 0) {
         res.status(200).json(rows);
