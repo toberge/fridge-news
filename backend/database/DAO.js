@@ -18,7 +18,7 @@ module.exports = class DAO {
     let connection = null, result = null;
     try {
       connection = await this.getConnection();
-      result = await connection.execute(sql);
+      result = await connection.query(sql);
     } catch (e) {
       throw e;
     } finally {

@@ -6,6 +6,9 @@ variables:
     MYSQL_DATABASE: "fridge"
     MYSQL_ROOT_PASSWORD: "fish"
 
+before_script:
+    - npm install -g flow-bin
+
 stages:
     - test
     - build
@@ -15,6 +18,7 @@ test_backend:
     stage: test
     script:
         - cd backend
+        - npm install
         - npm test
         - flow check server.js database/*.js
 
@@ -22,6 +26,7 @@ test_frontend:
     stage: test
     script:
         - cd frontend
+        - npm install
         - npm test
         - flow check src
 

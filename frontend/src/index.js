@@ -82,17 +82,26 @@ class FrontPage extends Component {
   }
 }
 
+class Error404 extends Component {
+  render() {
+    return (
+      <main>
+        <h1>404 error</h1>
+      </main>
+    );
+  }
+}
+
 const root = document.getElementById('root');
 if (root)
   ReactDOM.render(
     <HashRouter>
       <Menu />
-      <main>
-        <Route exact path="/" component={FrontPage} />
-        {/*<Route path="/articles" component={ArticlesSomething}/>*/}
-        <Route exact path="/articles/write" component={ArticleEditor} />
-        <Route exact path="/articles/:id(\d+)" component={ArticleViewer} />
-      </main>
+      <Route exact path="/" component={FrontPage} />
+      {/*<Route path="/articles" component={ArticlesSomething}/>*/}
+      <Route exact path="/articles/write" component={ArticleEditor} />
+      <Route exact path="/articles/:id(\d+)" component={ArticleViewer} />
+      {/*<Route component={Error404}/>*/}
       <Footer />
     </HashRouter>,
     root

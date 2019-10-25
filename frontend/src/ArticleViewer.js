@@ -3,10 +3,14 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import MarkdownRenderer from 'react-markdown-renderer';
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 import { Article } from './Article';
-import { articleService } from './Services';
+import { articleService } from './services';
 
 export class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
+  comment: string;
+
   render() {
     const {
       title,
@@ -21,9 +25,11 @@ export class ArticleViewer extends Component<{ match: { params: { id: number } }
       rating
     } = articleService.currentArticle;
     return (
+      <main className="mx-auto" style={{width: '50em'}}>
       <article>
         <header>
-          <h2>{title}</h2>
+          <h1>{title}</h1>
+
           <p className="ingress">
             <em>{ingress}</em>
           </p>
@@ -39,6 +45,20 @@ export class ArticleViewer extends Component<{ match: { params: { id: number } }
         </figure>
         <MarkdownRenderer markdown={text} />
         {/*comments TODO*/}
+        <section className="details">
+          <dl className="dateline">
+            <dt>Author:</dt>
+            <dd>{author}</dd>
+            <dt>Published:</dt>
+            <dd>{date.toLocaleString()}</dd>
+            <dt>Rated:</dt>
+            <dd>
+              <meter value={rating} max={5} min={1} />
+              <br />
+              {` (${rating} out of 5)`}
+            </dd>
+          </dl>
+        </section>
         <section className="comments">
           <h2>Comments</h2>
           <div className="comment">
@@ -62,24 +82,24 @@ export class ArticleViewer extends Component<{ match: { params: { id: number } }
             </p>
           </div>
           <h2>Leave your own comment</h2>
-          <p>
-            <label htmlFor="comment-text">Comment:</label>
-            <br />
-            <textarea
-              id="comment-text"
-              cols="80"
-              rows="10"
-              aria-label="Comment:"
-            ></textarea>
+          <form>
+            <div className="form-group">
+            <SimpleMDE onChange={this.handleMarkdownChange} label="Comment:" options={{spellChecker: false}} />
+            </div>
             <br />
             <button id="comment-submit">Submit</button>
-          </p>
+          </form>
         </section>
       </article>
+      </main>
     );
   }
 
   mounted(): void {
     articleService.getArticle();
+  }
+
+  handleMarkdownChange(value: string) {
+    this.comment = value;
   }
 }

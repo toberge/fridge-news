@@ -6,6 +6,7 @@ import { sharedComponentData } from 'react-simplified';
 
 class ArticleService {
   currentArticle: Article = new Article(
+    1,
     'Fridge Found Floating in Space',
     `After its long flight through the rings of Saturn, a fridge of mysterious
               origin was caught by a spacewalking astronaut on the ISS and brought to

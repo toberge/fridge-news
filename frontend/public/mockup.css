@@ -32,7 +32,7 @@
         padding: 0 1%;
     }
 
-    nav ul {
+    .navbar ul {
         flex-direction: row;
     }
 
@@ -64,7 +64,7 @@
     /* TODO avoid !important */
     /* TODO add hamborger */
 
-    nav ul {
+    .navbar ul {
         flex-direction: column;
     }
 
@@ -88,7 +88,7 @@
         background-color: var(--focused-background);
     }
 
-    nav #icon {
+    .navbar #icon {
         display: none;
     }
 }*/
@@ -103,6 +103,7 @@ body {
 }
 
 
+h1,
 h2,
 h3 {
     text-align: center;
@@ -136,7 +137,7 @@ figure img {
     font-weight: bold;
 }
 
-button {
+#comment-submit {
     background-color: var(--button-background);
     color: var(--button-text);
     border: 0.2rem;
@@ -151,7 +152,7 @@ button {
     transition: all .25s ease;
 }
 
-button:focus, button:hover {
+#comment-submit:focus, #comment-submit:hover {
     background-color: var(--button-focus);
     outline: none;
 }
@@ -184,7 +185,7 @@ a {
 }
 
 /* credz: https://jsfiddle.net/joshnh/srNVQ/ */
-nav ul {
+.navbar ul {
     background: var(--section-background);
     /*font-size: 0;*/
     list-style: none;
@@ -196,7 +197,7 @@ nav ul {
     display: flex;
 }
 
-nav li {
+.navbar li {
     margin: 0;
     padding: 0;
 }
@@ -205,11 +206,11 @@ nav li {
     background: var(--logo-background);
 }
 
-nav .separator {
+.navbar .separator {
     flex: auto;
 }
 
-nav a {
+.navbar a {
     background: var(--section-background);
     color: var(--section-text);
     display: block;
@@ -225,14 +226,14 @@ nav a {
     border: transparent solid 3px;
 }
 
-nav li:hover a,
-nav li a:focus {
+.navbar li:hover a,
+.navbar li a:focus {
     background: var(--focused-background);
     outline: none;
     border: solid 3px;
 }
 
-nav li a.active {
+.navbar li a.active {
     background: var(--active-background);
     color: var(--active-text);
 }

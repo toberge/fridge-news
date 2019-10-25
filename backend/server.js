@@ -1,5 +1,7 @@
+// @flow
 'use strict';
 const express = require('express');
+const path = require('path');
 const session = require('express-session'); // TODO don't actually use this next time, use JWT stuffs
 const bodyParser = require('body-parser');
 const mysql = require('mysql2/promise');
@@ -7,7 +9,9 @@ const fs = require('file-system');
 const bcrypt = require('bcryptjs');
 // TODO replace with bcrypt? Seems -js had last release 3 years ago...
 
+const publicPath = path.join(__dirname, '/../../client/public');
 const app = express();
+app.use(express.static(publicPath));
 app.use(bodyParser.json());
 
 // from express-session's thing
@@ -225,8 +229,6 @@ for (const { endpoint, query } of multiRowResources) {
     console.log(`Got GET request at ${endpoint}`);
     try {
       const rows = await multiRowQuery(query);
-      // TODO remove plz
-      console.log(pool);
       console.log(`${rows.length} rows found`);
       if (rows.length > 0) {
         res.status(200).json(rows);
