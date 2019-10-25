@@ -1,6 +1,6 @@
-db.json
-**/database/properties.json
-package-lock.json
+backend/database/properties.json
+**/package-lock.json
 **/node_modules
 .idea/**
 *.iml
+frontend/build

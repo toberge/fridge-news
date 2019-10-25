@@ -7,22 +7,28 @@ variables:
     MYSQL_ROOT_PASSWORD: "fish"
 
 stages:
-    - build
     - test
+    - build
     - deploy
+
+test_backend:
+    stage: test
+    script:
+        - cd backend
+        - npm test
+        - flow check server.js database/*.js
+
+test_frontend:
+    stage: test
+    script:
+        - cd frontend
+        - npm test
+        - flow check src
 
 build:
     stage: build
     script:
-      - npm install
-    artifacts:
-        paths:
-        - node_modules
-
-test:
-    stage: test
-    script:
-        - npm run test
+      - echo '"building"...'
 
 deploy:
     stage: deploy
