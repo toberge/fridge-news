@@ -31,11 +31,6 @@ app.use(session(sess));
 
 app.set('access-control-allow-origin', 'http://localhost:8080');
 
-app.get('/bollocks', (req, res) => {
-  console.log(req.headers);
-  res.send('hello');
-});
-
 const conf = JSON.parse(fs.readFileSync('database/properties.json', 'utf8'));
 const pool = mysql.createPool({
   ...conf,
