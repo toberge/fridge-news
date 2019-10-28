@@ -5,23 +5,21 @@ import { Component } from 'react-simplified';
 import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import { Article } from './Article';
-import { articleService } from './services';
+import { Article } from '../../utils/Article';
+import { articleService } from '../../services';
 
-export class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
+export default class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
   comment: string;
 
   render() {
     const {
       title,
-      ingress,
+      authorID,
       picturePath,
       pictureAlt,
       pictureCapt,
       text,
-      author,
-      category,
-      date,
+      uploadTime,
       rating
     } = articleService.currentArticle;
     return (
@@ -29,28 +27,27 @@ export class ArticleViewer extends Component<{ match: { params: { id: number } }
       <article>
         <header>
           <h1>{title}</h1>
-
-          <p className="ingress">
-            <em>{ingress}</em>
-          </p>
         </header>
-        <figure>
-          <img src={picturePath} alt={pictureAlt} />
-          <figcaption>
-            <p>
-              <em>Image:</em>
-              {' ' + pictureCapt}
-            </p>
-          </figcaption>
-        </figure>
+        { picturePath && pictureAlt && pictureCapt ?
+          <figure>
+            <img src={picturePath} alt={pictureAlt} />
+            <figcaption>
+              <p>
+                <em>Image:</em>
+                {' ' + pictureCapt}
+              </p>
+            </figcaption>
+          </figure>
+          : null
+        }
         <MarkdownRenderer markdown={text} />
         {/*comments TODO*/}
         <section className="details">
           <dl className="dateline">
             <dt>Author:</dt>
-            <dd>{author}</dd>
+            <dd>{authorID}</dd>
             <dt>Published:</dt>
-            <dd>{date.toLocaleString()}</dd>
+            <dd>{uploadTime.toLocaleString()}</dd>
             <dt>Rated:</dt>
             <dd>
               <meter value={rating} max={5} min={1} />
@@ -96,7 +93,8 @@ export class ArticleViewer extends Component<{ match: { params: { id: number } }
   }
 
   mounted(): void {
-    articleService.getArticle();
+    articleService.getArticle(this.props.match.params.id)
+      .catch(e => console.error(e));
   }
 
   handleMarkdownChange(value: string) {

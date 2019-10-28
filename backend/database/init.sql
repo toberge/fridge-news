@@ -4,7 +4,9 @@ CREATE TABLE articles(
     article_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(user_id),
     title VARCHAR(64) NOT NULL,
-    media VARCHAR(2083),
+    picture_path VARCHAR(2083),
+    picture_alt VARCHAR(64),
+    picture_caption VARCHAR(64),
     content TEXT NOT NULL,
     upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
@@ -45,7 +47,7 @@ CREATE TABLE comments(
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 
-DROP VIEW IF EXISTS articles_view, front_page, news_feed;
+DROP VIEW IF EXISTS articles_view, articles_condensed, front_page, news_feed;
 
 CREATE VIEW articles_view AS(
     SELECT articles.*,
@@ -59,8 +61,24 @@ CREATE VIEW articles_view AS(
              rating DESC
 );
 
+CREATE VIEW articles_condensed AS(
+    SELECT article_id,
+           title,
+           picture_path,
+           picture_alt,
+           category
+    FROM articles_view
+    ORDER BY upload_time DESC,
+             importance ASC,
+             rating DESC
+);
+
 CREATE VIEW front_page AS(
-    SELECT * FROM articles_view
+    SELECT article_id,
+           title,
+           picture_path,
+           picture_alt
+    FROM articles_view
     WHERE importance = 1
     ORDER BY upload_time DESC,
              rating DESC
@@ -69,9 +87,9 @@ CREATE VIEW front_page AS(
 CREATE VIEW news_feed AS(
     SELECT article_id,
            title,
-           media,
-           upload_time,
-           importance
+           picture_path,
+           picture_alt,
+           upload_time
     FROM articles
     ORDER BY upload_time DESC,
              importance ASC

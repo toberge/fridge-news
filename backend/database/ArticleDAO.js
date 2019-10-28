@@ -13,7 +13,7 @@ module.exports = class ArticleDAO extends DAO {
   }
 
   getOne = async (id: number) => {
-    const [[rows]] = await super.execute('SELECT * FROM articles WHERE article_id = ?', id);
+    const [[rows]] = await super.execute('SELECT * FROM articles_view WHERE article_id = ?', id);
     return rows[0];
   }
 };

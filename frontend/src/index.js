@@ -4,8 +4,14 @@ import ReactDOM from 'react-dom';
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import { HashRouter, Route } from 'react-router-dom';
-import { ArticleEditor } from './ArticleEditor';
-import { ArticleViewer } from './ArticleViewer';
+import ArticleEditor from './components/ArticleEditor';
+import ArticleViewer from './components/ArticleViewer';
+import { ArticleBase } from './utils/Article';
+import { articleService } from './services';
+
+
+// REMOVE
+import { NavLink } from 'react-router-dom';
 
 class Menu extends Component {
   render() {
@@ -77,8 +83,22 @@ class Footer extends Component {
 }
 
 class FrontPage extends Component {
+  articles: ArticleBase[] = articleService.articles;
+
   render() {
-    return <div>rougwrg</div>;
+    return <div>
+      <ul>
+        {this.articles.map(a => (
+          <li><NavLink to={'/articles/' + a.id}>{a.title}</NavLink></li>
+        ))}
+      </ul>
+    </div>;
+  }
+
+  mounted(): void {
+    articleService.getFrontPage()
+      .then(res => this.articles = articleService.articles)
+      .catch(error => console.error(error));
   }
 }
 

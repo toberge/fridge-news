@@ -9,7 +9,7 @@ const fs = require('file-system');
 const bcrypt = require('bcryptjs');
 // TODO replace with bcrypt? Seems -js had last release 3 years ago...
 
-const publicPath = path.join(__dirname, '/../../client/public');
+const publicPath = path.join(__dirname, '../frontend/build');
 const app = express();
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
@@ -28,6 +28,13 @@ if (app.get('env') === 'production') {
 }
 
 app.use(session(sess));
+
+app.set('access-control-allow-origin', 'http://localhost:8080');
+
+app.get('/bollocks', (req, res) => {
+  console.log(req.headers);
+  res.send('hello');
+});
 
 const conf = JSON.parse(fs.readFileSync('database/properties.json', 'utf8'));
 const pool = mysql.createPool({
@@ -245,7 +252,7 @@ for (const { endpoint, query } of multiRowResources) {
 app.get('/articles/categories/:name', async (req, res) => { // removed ([\w]+)
   console.log('Got GET request at /categories/:name');
   try {
-    const rows = await multiRowQuery('SELECT * FROM articles_view WHERE category = ?', req.params.name);
+    const rows = await multiRowQuery('SELECT * FROM articles_condensed WHERE category = ?', req.params.name);
     console.log(`${rows.length} rows found`);
     if (rows.length > 0) {
       res.status(200).json(rows);
@@ -364,6 +371,7 @@ app.post('/articles', authLogin, async (req, res) => {
   const { title, media, content, importance, category } = req.body;
   console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
   try {
+    // TODO needs to be updated...
     if (await updateQuery('INSERT INTO articles(user_id, title, media, content, importance, category) VALUES(?, ?, ?, ?, ?, ?)',
       req.session.userId, title, media, content, importance, category)) {
       res.status(201).json({ message: 'POST successful' });

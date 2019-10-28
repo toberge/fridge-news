@@ -4,11 +4,11 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { Article } from './Article';
-import { articleService } from './services';
-import { Button, Card, Form } from './widgets';
+import { Article } from '../../utils/Article';
+import { articleService } from '../../services';
+import { Button, Card, Form } from './../widgets';
 
-export class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
+export default class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
   article: Article = articleService.currentArticle;
 
   render() {
