@@ -1,7 +1,7 @@
 image: node:latest
 
 services:
-    - mysql:latest
+    - mysql:5
 variables:
     MYSQL_DATABASE: "fridge"
     MYSQL_ROOT_PASSWORD: "fish"
