@@ -29,8 +29,8 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
   // split into its own method because we need to check for undefined to pacify Flow
   renderList(array: ArticleBase[]): React.Node {
     if (array)
-      return array.map(article => (
-        <ArticleCard article={article}/>
+      return array.map(a => (
+        <ArticleCard article={a} key={a.id} />
       ));
     else return 'No articles found';
   }

@@ -41,7 +41,7 @@ Most governments in the solar system have already stated that they perceive this
 
   getArticle(id: number) {
     return axios
-      .get<Article>('http://localhost:8080/articles/' + id)
+      .get<Article>('/articles/' + id)
       .then(response => response.data)
       .then(result => {
         const {
@@ -67,8 +67,8 @@ Most governments in the solar system have already stated that they perceive this
           picture_caption,
           content,
           category,
-          new Date(upload_time),
-          update_time ? new Date(update_time) : null,
+          new Date(Date.parse(upload_time)),
+          update_time ? new Date(Date.parse(update_time)) : null,
           importance,
           rating
         );

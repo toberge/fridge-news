@@ -11,7 +11,7 @@ export default class FrontPage extends Component {
       <main>
         <CardHolder>
           {articleStore.articles.map(a => (
-            <ArticleCard article={a} showCategory />
+            <ArticleCard article={a} key={a.id} showCategory />
           ))}
         </CardHolder>
       </main>
