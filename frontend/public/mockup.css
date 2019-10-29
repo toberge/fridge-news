@@ -29,7 +29,7 @@
         width: 950px;
         background-color: #fff;
         box-shadow: var(--section-background) 0 0 9px 0;
-        padding: 0 1%;
+        padding: 1%;
     }
 
     .navbar ul {

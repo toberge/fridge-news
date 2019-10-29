@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 // TODO replace with bcrypt? Seems -js had last release 3 years ago...
 
 const publicPath = path.join(__dirname, '../frontend/build');
+// const publicPath = path.join(__dirname, '../frontend/public');
 const app = express();
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
@@ -252,7 +253,14 @@ app.get('/articles/categories/:name', async (req, res) => { // removed ([\w]+)
     if (rows.length > 0) {
       res.status(200).json(rows);
     } else {
-      res.status(404).json({ error: 'No such category or no articles in category' });
+      switch (req.params.name) {
+        case 'culture':
+        case 'science':
+          res.status(200).json([]);
+          break;
+        default:
+          res.status(404).json({ error: 'No such category or no articles in category' });
+      }
     }
   } catch (e) {
     console.trace(e, 'Error occurred during category search');
@@ -369,6 +377,8 @@ app.post('/articles', authLogin, async (req, res) => {
     // TODO needs to be updated...
     if (await updateQuery('INSERT INTO articles(user_id, title, media, content, importance, category) VALUES(?, ?, ?, ?, ?, ?)',
       req.session.userId, title, media, content, importance, category)) {
+      // TODO add article ID after creation!
+      //  somehow return an int from DAO method - do a simple search and assume you're correct...
       res.status(201).json({ message: 'POST successful' });
     } else {
       res.status(400).json({ message: 'Could not POST article' });

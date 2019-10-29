@@ -11,7 +11,7 @@ CREATE TABLE articles(
     upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
     importance TINYINT NOT NULL DEFAULT 2,
-    category ENUM('news', 'culture', 'science', 'politics', 'bad stuff') NOT NULL,
+    category ENUM('news', 'culture', 'science', 'politics') NOT NULL,
     INDEX article_title_time(title, upload_time),
     INDEX article_importance_time(importance, upload_time),
     INDEX article_category_time(upload_time, importance, category)

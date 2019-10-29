@@ -5,6 +5,49 @@ import { Component } from 'react-simplified';
 import { NavLink } from 'react-router-dom';
 import { ArticleBase } from '../utils/Article';
 
+// TODO is this copied too heavily?
+class NavBarLink extends Component<{ exact?: boolean, to: string, children: React.Node }> {
+  render() {
+    return (
+      <li>
+        <NavLink activeClassName="active" exact={this.props.exact} to={this.props.to}>
+          {this.props.children}
+        </NavLink>
+      </li>
+    );
+  }
+}
+
+class NavBarBrand extends Component<{ children: React.Node }> {
+  render() {
+    return (
+      <li>
+        <NavLink id="logo" activeClassName="active" exact to="/">
+          {this.props.children}
+        </NavLink>
+      </li>
+    );
+  }
+}
+
+export class NavBar extends Component<{ brand?: React.Node, children: React.Node }> {
+  static Link = NavBarLink;
+  static Brand = NavBarBrand;
+
+  render() {
+    return (
+      <nav className="navbar">
+        {' '}
+        {/* navbar-expand-sm bg-light navbar-light*/}
+        {/*<NavLink id="logo" className="navbar-brand" activeClassName="active" exact to="/">*/}
+        {/*  Fridge News*/}
+        {/*</NavLink>*/}
+        <ul className="navbar-nav">{this.props.children}</ul>
+      </nav>
+    );
+  }
+}
+
 export class Card extends Component<{
   title: string,
   children: React.ChildrenArray<React.Node>
@@ -13,20 +56,23 @@ export class Card extends Component<{
     return (
       <div className="card">
         <h1 className="card-title">{this.props.title}</h1>
-        <div className="card-body">
-          {this.props.children}
-        </div>
+        <div className="card-body">{this.props.children}</div>
       </div>
     );
   }
 }
 
 export class ArticleCard extends Component<{
-  article: ArticleBase,
+  article: ArticleBase
 }> {
   render() {
     return (
-      <div className="card">
+      <div className="card" style={{width: '30rem;'}}>
+        <img
+          className="card-img-top"
+          src={this.props.article.picturePath ? this.props.article.picturePath : '#'}
+          alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Missing Image'}
+        />
         <h1 className="card-title">{this.props.article.title}</h1>
       </div>
     );
@@ -95,21 +141,21 @@ export class Button {
   static Primary = ButtonPrimary;
 }
 
-class FormInput extends Component<{ type?: string, value: string, onChange: () => void}> {
+class FormInput extends Component<{ type?: string, value: string, onChange: () => void }> {
   render() {
     return (
-      <input type={this.props.type? this.props.type : 'text'} value={this.props.value} onChange={this.props.onChange}/>
+      <input
+        type={this.props.type ? this.props.type : 'text'}
+        value={this.props.value}
+        onChange={this.props.onChange}
+      />
     );
   }
 }
 
 export class FormGroup extends Component<{ children: React.Node }> {
   render() {
-    return (
-      <div className="form-group">
-        {this.props.children}
-      </div>
-    );
+    return <div className="form-group">{this.props.children}</div>;
   }
 }
 
@@ -118,10 +164,6 @@ export class Form extends Component<{ children: React.Node }> {
   static Group = FormGroup;
 
   render() {
-    return (
-      <form>
-        {this.props.children}
-      </form>
-    );
+    return <form>{this.props.children}</form>;
   }
 }

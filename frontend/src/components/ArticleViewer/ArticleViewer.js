@@ -6,7 +6,7 @@ import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { Article } from '../../utils/Article';
-import { articleService } from '../../services';
+import { articleStore } from '../../services';
 
 export default class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
   comment: string;
@@ -21,7 +21,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       text,
       uploadTime,
       rating
-    } = articleService.currentArticle;
+    } = articleStore.currentArticle;
     return (
       <main className="mx-auto" style={{width: '50em'}}>
       <article>
@@ -93,7 +93,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
   }
 
   mounted(): void {
-    articleService.getArticle(this.props.match.params.id)
+    articleStore.getArticle(this.props.match.params.id)
       .catch(e => console.error(e));
   }
 

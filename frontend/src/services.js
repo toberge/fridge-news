@@ -9,7 +9,8 @@ const axiosInstance = axios.create({
   headers: { 'Access-Control-Allow-Origin': 'http://localhost:8080/' }
 });
 
-class ArticleService {
+class ArticleStore {
+  loadingArticle: boolean = false;
   currentArticle: Article = new Article(
     1,
     1,
@@ -35,6 +36,12 @@ Most governments in the solar system have already stated that they perceive this
     2.3
   );
   articles: ArticleBase[] = [];
+  categoryMap: Map<string, ArticleBase[]> = new Map<string, ArticleBase[]>([
+    ['news', []],
+    ['culture', []],
+    ['science', []],
+    ['politics', []]
+  ]);
 
   getArticle(id: number) {
     return axiosInstance
@@ -82,15 +89,35 @@ Most governments in the solar system have already stated that they perceive this
   getCategory(category: string): Promise<ArticleBase[]> {
     return axiosInstance
       .get<ArticleBase[]>('/articles/categories/' + category)
-      .then(response => this.setArticles(response.data));
+      .then(response => {
+        const array = this.categoryMap.get(category);
+        if (array) {
+          array.splice(0, array.length);
+          array.push(...this.toArticleArray(response.data));
+        }
+      })
+      /*.catch(e => {
+        // this is temporary crap
+        this.articles.splice(0, this.articles.length);
+        throw e;
+      })*/
   }
 
   setArticles(result: []) {
-    this.articles = result.map(e => {
+    this.articles.splice(0, this.articles.length);
+    const newOnes: ArticleBase[] = result.map(e => {
+      const {article_id, title, picture_path, picture_alt, category} = e;
+      return new ArticleBase(article_id, title, picture_path, picture_alt, category);
+    });
+    this.articles.push(...newOnes);
+  }
+
+  toArticleArray(result: []): ArticleBase[] {
+    return result.map(e => {
       const {article_id, title, picture_path, picture_alt, category} = e;
       return new ArticleBase(article_id, title, picture_path, picture_alt, category);
     });
   }
 }
 
-export const articleService = sharedComponentData(new ArticleService());
+export const articleStore = sharedComponentData(new ArticleStore());

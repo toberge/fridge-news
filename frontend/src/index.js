@@ -7,13 +7,14 @@ import { HashRouter, Route } from 'react-router-dom';
 import ArticleEditor from './components/ArticleEditor';
 import ArticleViewer from './components/ArticleViewer';
 import { ArticleBase } from './utils/Article';
-import { articleService } from './services';
-
+import { articleStore } from './services';
 
 // REMOVE
 import { NavLink } from 'react-router-dom';
 
-class Menu extends Component {
+import { ArticleCard, NavBar } from './components/widgets';
+
+class OldMenu extends Component {
   render() {
     return (
       <header id="masthead">
@@ -61,14 +62,36 @@ class Menu extends Component {
   }
 }
 
+class Menu extends Component {
+  render() {
+    return (
+      <NavBar>
+        <NavBar.Brand>Fridge News</NavBar.Brand>
+        <NavBar.Link exact to="/articles/categories/news">
+          News
+        </NavBar.Link>
+        <NavBar.Link exact to="/articles/categories/culture">
+          Culture
+        </NavBar.Link>
+        <NavBar.Link exact to="/articles/categories/science">
+          Science
+        </NavBar.Link>
+        <NavBar.Link to="/articles/write">
+          <i className="fas fa-edit"></i> Write
+        </NavBar.Link>
+      </NavBar>
+    );
+  }
+}
+
 class Footer extends Component {
   render() {
     return (
       <footer>
         <p>Copyright &copy; 2019 Fridge News</p>
         <p>
-          Logo credit: Icon made by <a href="https://www.freepik.com/home">Freepik</a>{' '}
-          from <a href="http://www.flaticon.com/">www.flaticon.com</a>
+          Logo credit: Icon made by <a href="https://www.freepik.com/home">Freepik</a> from{' '}
+          <a href="http://www.flaticon.com/">www.flaticon.com</a>
         </p>
         <ul>
           <li>
@@ -83,21 +106,46 @@ class Footer extends Component {
 }
 
 class FrontPage extends Component {
-  articles: ArticleBase[] = articleService.articles;
-
   render() {
-    return <div>
-      <ul>
-        {this.articles.map(a => (
-          <li><NavLink to={'/articles/' + a.id}>{a.title}</NavLink></li>
+    return (
+      <div className="card-columns">
+        {articleStore.articles.map(a => (
+          <ArticleCard article={a} />
         ))}
-      </ul>
-    </div>;
+      </div>
+    );
   }
 
   mounted(): void {
-    articleService.getFrontPage()
-      .then(res => this.articles = articleService.articles)
+    articleStore.getFrontPage().catch(error => console.error(error));
+  }
+}
+
+class CategoryPage extends Component<{ match: { params: { id: string } } }> {
+  render() {
+    return (
+      <div>
+        <ul>{this.renderList()}</ul>
+      </div>
+    );
+  }
+
+  // split into its own method because we need to check for undefined to pacify Flow
+  renderList() {
+    const array = articleStore.categoryMap.get(this.props.match.params.id);
+    if (array)
+      return array.map(a => (
+        <li>
+          <NavLink to={'/articles/' + a.id}>{a.title}</NavLink>
+        </li>
+      ));
+    else return 'No articles found';
+  }
+
+  mounted(): void {
+    articleStore
+      .getCategory(this.props.match.params.id)
+      // .then(e => super.forceUpdate(() => undefined))
       .catch(error => console.error(error));
   }
 }
@@ -121,6 +169,7 @@ if (root)
       {/*<Route path="/articles" component={ArticlesSomething}/>*/}
       <Route exact path="/articles/write" component={ArticleEditor} />
       <Route exact path="/articles/:id(\d+)" component={ArticleViewer} />
+      <Route exact path="/articles/categories/:id([a-z]+)" component={CategoryPage} />
       {/*<Route component={Error404}/>*/}
       <Footer />
     </HashRouter>,
