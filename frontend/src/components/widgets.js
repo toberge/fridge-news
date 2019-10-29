@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import { NavLink } from 'react-router-dom';
-import { ArticleBase } from '../utils/Article';
+import { ArticleBase, capitalizeFirstLetter } from '../utils/Article';
 import placeholderImage from '../assets/images/floppy.jpg';
 // Current placeholder is public domain and does not require contribution.
 // Regardless, here's where I found it: https://www.pexels.com/photo/office-disk-storage-data-41290/
@@ -69,20 +69,17 @@ export class Card extends Component<{
 
 export class CardHolder extends Component<{ children: React.Node }> {
   render() {
-    return (
-      <div className="card-columns">
-        {this.props.children}
-      </div>
-    );
+    return <div className="card-columns">{this.props.children}</div>;
   }
 }
 
 export class ArticleCard extends Component<{
-  article: ArticleBase
+  article: ArticleBase,
+  showCategory?: boolean
 }> {
   render() {
     return (
-      <NavLink className="card" style={{ width: '30rem;' }} to={`/articles/${this.props.article.id}`}>
+      <NavLink className="card" style={{ width: '40rem;' }} to={`/articles/${this.props.article.id}`}>
         <img
           className="card-img-top"
           src={this.props.article.picturePath ? this.props.article.picturePath : placeholderImage}
@@ -91,6 +88,9 @@ export class ArticleCard extends Component<{
         <div className="card-body">
           <h2 className="card-title">{this.props.article.title}</h2>
         </div>
+        {this.props.showCategory ? (
+          <div className="card-footer text-muted">{capitalizeFirstLetter(this.props.article.category)}</div>
+        ) : null}
       </NavLink>
     );
   }

@@ -77,7 +77,8 @@ CREATE VIEW front_page AS(
     SELECT article_id,
            title,
            picture_path,
-           picture_alt
+           picture_alt,
+           category
     FROM articles_view
     WHERE importance = 1
     ORDER BY upload_time DESC,

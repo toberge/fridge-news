@@ -7,6 +7,10 @@ export const CATEGORIES: string[] = [
   'politics'
 ];
 
+export const capitalizeFirstLetter = (s: string) => (
+  s.charAt(0).toLocaleUpperCase() + s.substring(1, s.length)
+);
+
 export class ArticleBase {
   id: number;
   title: string;

@@ -8,15 +8,18 @@ import { articleStore } from '../../stores/articleStore';
 export default class FrontPage extends Component {
   render() {
     return (
-      <CardHolder>
-        {articleStore.articles.map(a => (
-          <ArticleCard article={a} />
-        ))}
-      </CardHolder>
+      <main>
+        <CardHolder>
+          {articleStore.articles.map(a => (
+            <ArticleCard article={a} showCategory />
+          ))}
+        </CardHolder>
+      </main>
     );
   }
 
   mounted(): void {
     articleStore.getFrontPage().catch(error => console.error(error));
+    document.title = 'Fridge News | Home';
   }
 }

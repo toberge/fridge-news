@@ -254,8 +254,10 @@ app.get('/articles/categories/:name', async (req, res) => { // removed ([\w]+)
       res.status(200).json(rows);
     } else {
       switch (req.params.name) {
+        case 'news':
         case 'culture':
         case 'science':
+        case 'politics':
           res.status(200).json([]);
           break;
         default:
@@ -369,7 +371,8 @@ app.post('/users', async (req, res) => {
   }
 });
 
-app.post('/articles', authLogin, async (req, res) => {
+// TODO put the auths back in when refactored & all done
+app.post('/articles', /*authLogin, */async (req, res) => {
   if (!req.body.title) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { title, media, content, importance, category } = req.body;
   console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
@@ -389,7 +392,7 @@ app.post('/articles', authLogin, async (req, res) => {
   }
 });
 
-app.post('/articles/:id(\\d+)/comments', authLogin, async (req, res) => {
+app.post('/articles/:id(\\d+)/comments', /*authLogin, */async (req, res) => {
   if (!req.body.title || !req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { title, content } = req.body;
   console.log(`Got POST request from ${req.session.user} to add ${title} as comment to article ${req.params.id}`);
@@ -407,7 +410,7 @@ app.post('/articles/:id(\\d+)/comments', authLogin, async (req, res) => {
 });
 
 // will fail if used as update
-app.post('/articles/:id(\\d+)/ratings', authLogin, async (req, res) => {
+app.post('/articles/:id(\\d+)/ratings', /*authLogin, */async (req, res) => {
   if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
   console.log(`Got POST request from ${req.session.user} to rate article ${req.params.id} a ${req.body.value} out of 5`);
   try {
@@ -423,7 +426,7 @@ app.post('/articles/:id(\\d+)/ratings', authLogin, async (req, res) => {
   }
 });
 
-app.put('/articles/:articleId(\\d+)/ratings/:userId(\\d+)', authLogin, async (req, res) => {
+app.put('/articles/:articleId(\\d+)/ratings/:userId(\\d+)', /*authLogin, */async (req, res) => {
   // the session has number, param has string
   if (req.session.userId !== parseInt(req.params.userId)) return res.status(400).json({ error: 'Cannot change another user\'s rating' });
   if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });

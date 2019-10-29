@@ -22,6 +22,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       uploadTime,
       rating
     } = articleStore.currentArticle;
+    document.title = `Fridge News | ${title}`;
     return (
       <main className="mx-auto" style={{width: '50em'}}>
       <article>

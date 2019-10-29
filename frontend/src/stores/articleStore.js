@@ -10,6 +10,7 @@ const axiosInstance = axios.create({
 });
 
 class ArticleStore {
+  // TODO make this have an effect
   loadingArticle: boolean = false;
   currentArticle: Article = new Article(
     1,
@@ -83,7 +84,10 @@ Most governments in the solar system have already stated that they perceive this
   getFrontPage(): Promise<ArticleBase[]> {
     return axiosInstance
       .get<ArticleBase[]>('/articles/front_page')
-      .then(response => this.setArticles(response.data));
+      .then(response => {
+        this.articles.splice(0, this.articles.length);
+        this.articles.push(...this.toArticleArray(response.data));
+      });
   }
 
   getCategory(category: string): Promise<ArticleBase[]> {
