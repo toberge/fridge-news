@@ -1,5 +1,12 @@
 // @flow
 
+export const CATEGORIES: string[] = [
+  'news',
+  'culture',
+  'science',
+  'politics'
+];
+
 export class ArticleBase {
   id: number;
   title: string;

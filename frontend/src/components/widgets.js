@@ -4,6 +4,10 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import { NavLink } from 'react-router-dom';
 import { ArticleBase } from '../utils/Article';
+import placeholderImage from '../assets/images/floppy.jpg';
+// Current placeholder is public domain and does not require contribution.
+// Regardless, here's where I found it: https://www.pexels.com/photo/office-disk-storage-data-41290/
+// and where it seems to be from: https://www.publicdomainpictures.net/en/view-image.php?image=14548
 
 // TODO is this copied too heavily?
 class NavBarLink extends Component<{ exact?: boolean, to: string, children: React.Node }> {
@@ -48,6 +52,7 @@ export class NavBar extends Component<{ brand?: React.Node, children: React.Node
   }
 }
 
+// TODO remove or refactor
 export class Card extends Component<{
   title: string,
   children: React.ChildrenArray<React.Node>
@@ -62,19 +67,31 @@ export class Card extends Component<{
   }
 }
 
+export class CardHolder extends Component<{ children: React.Node }> {
+  render() {
+    return (
+      <div className="card-columns">
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
 export class ArticleCard extends Component<{
   article: ArticleBase
 }> {
   render() {
     return (
-      <div className="card" style={{width: '30rem;'}}>
+      <NavLink className="card" style={{ width: '30rem;' }} to={`/articles/${this.props.article.id}`}>
         <img
           className="card-img-top"
-          src={this.props.article.picturePath ? this.props.article.picturePath : '#'}
-          alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Missing Image'}
+          src={this.props.article.picturePath ? this.props.article.picturePath : placeholderImage}
+          alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Floppy disks'}
         />
-        <h1 className="card-title">{this.props.article.title}</h1>
-      </div>
+        <div className="card-body">
+          <h2 className="card-title">{this.props.article.title}</h2>
+        </div>
+      </NavLink>
     );
   }
 }

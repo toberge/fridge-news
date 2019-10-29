@@ -5,7 +5,7 @@ import { Component } from 'react-simplified';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { Article } from '../../utils/Article';
-import { articleStore } from '../../services';
+import { articleStore } from '../../stores/articleStore';
 import { Button, Card, Form } from './../widgets';
 
 export default class ArticleEditor extends Component<{ match: { params: { id: number } } }> {

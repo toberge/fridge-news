@@ -6,7 +6,7 @@ import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { Article } from '../../utils/Article';
-import { articleStore } from '../../services';
+import { articleStore } from '../../stores/articleStore';
 
 export default class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
   comment: string;
