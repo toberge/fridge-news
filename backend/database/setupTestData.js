@@ -14,12 +14,10 @@ const pool = mysql.createPool({
 const runSQL = async (file: string, pool: mysql.PromisePool) => {
   let connection: mysql.PromiseConnection = null;
   try {
-    const sql = fs.readFileSync(file);
+    const sql = fs.readFileSync(file, 'utf8'); // source of bug; provide encoding...
     connection = await pool.getConnection();
-    connection.query(sql);
+    await connection.query(sql);
     console.log(`Ran ${file} successfully`);
-  } catch (e) {
-    console.trace(e);
   } finally {
     if (connection) connection.release();
   }

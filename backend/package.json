@@ -12,7 +12,7 @@
     "testRegex": "[^/]+/.+test\\.js$"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "start": "nodemon --exec babel-node server.js"
   },
   "description": "Simple backend for serving fresh news from the fridge",

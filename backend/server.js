@@ -30,8 +30,6 @@ if (app.get('env') === 'production') {
 
 app.use(session(sess));
 
-app.set('access-control-allow-origin', 'http://localhost:8080');
-
 const conf = JSON.parse(fs.readFileSync('database/properties.json', 'utf8'));
 const pool = mysql.createPool({
   ...conf,

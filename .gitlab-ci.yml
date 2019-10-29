@@ -20,7 +20,7 @@ test_backend:
         - cd backend
         - npm install
         - npm test
-        - flow check server.js database/*.js
+        - flow check
 
 test_frontend:
     stage: test

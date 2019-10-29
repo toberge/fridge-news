@@ -11,6 +11,8 @@ import { Button, Card, Form } from './../widgets';
 export default class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
   article: Article = articleStore.currentArticle;
 
+  // TODO the most urgent TODO
+
   render() {
     return (
       <Card title="Write Article">

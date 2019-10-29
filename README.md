@@ -6,3 +6,5 @@ about flow-typed:
 run  
 `flow-typed install -f <flow-version(here 0.109)> package@major.minor.whatever`  
 to install more
+
+[also, to run tests locally](https://pastebin.com/DHcntABR)

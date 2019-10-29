@@ -4,11 +4,6 @@ import axios from 'axios';
 import { Article, ArticleBase } from '../utils/Article';
 import { sharedComponentData } from 'react-simplified';
 
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/',
-  headers: { 'Access-Control-Allow-Origin': 'http://localhost:8080/' }
-});
-
 class ArticleStore {
   // TODO make this have an effect
   loadingArticle: boolean = false;
@@ -45,7 +40,7 @@ Most governments in the solar system have already stated that they perceive this
   ]);
 
   getArticle(id: number) {
-    return axiosInstance
+    return axios
       .get<Article>('http://localhost:8080/articles/' + id)
       .then(response => response.data)
       .then(result => {
@@ -82,7 +77,7 @@ Most governments in the solar system have already stated that they perceive this
   }
 
   getFrontPage(): Promise<ArticleBase[]> {
-    return axiosInstance
+    return axios
       .get<ArticleBase[]>('/articles/front_page')
       .then(response => {
         this.articles.splice(0, this.articles.length);
@@ -91,7 +86,7 @@ Most governments in the solar system have already stated that they perceive this
   }
 
   getCategory(category: string): Promise<ArticleBase[]> {
-    return axiosInstance
+    return axios
       .get<ArticleBase[]>('/articles/categories/' + category)
       .then(response => {
         const array = this.categoryMap.get(category);

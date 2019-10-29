@@ -1,9 +1,7 @@
 [ignore]
-
+.*node_modules/bcryptjs/src/bower.json
 [include]
-server.js
-test/*.js
-database/*.js
+
 [libs]
 
 [lints]
