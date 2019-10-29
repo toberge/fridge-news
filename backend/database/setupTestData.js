@@ -26,8 +26,8 @@ const runSQL = async (file: string, pool: mysql.PromisePool) => {
 };
 
 const setup = async () => {
-  await runSQL('./init.sql', pool);
-  await runSQL('./data.sql', pool);
+  await runSQL('database/init.sql', pool);
+  await runSQL('database/data.sql', pool);
 };
 
 module.exports = [ pool, runSQL, setup ];
