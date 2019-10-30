@@ -4,10 +4,7 @@ import axios from 'axios';
 import { Article, ArticleBase } from '../utils/Article';
 import { sharedComponentData } from 'react-simplified';
 
-class ArticleStore {
-  // TODO make this have an effect
-  loadingArticle: boolean = false;
-  currentArticle: Article = new Article(
+const placeholder = new Article(
     1,
     1,
     'Fridge Found Floating in Space',
@@ -31,6 +28,30 @@ Most governments in the solar system have already stated that they perceive this
     1,
     2.3
   );
+
+const empty = new Article(
+    1,
+    1,
+    '',
+    'https://i.imgur.com/puQs66y.png',
+    '',
+    '',
+    `*Begin your article with an ingress*
+    
+## Use headers of level 2 and below
+
+write some **good** text`,
+    '',
+    new Date(),
+    null,
+    2,
+    2.3
+  );
+
+class ArticleStore {
+  // TODO make this have an effect
+  loadingArticle: boolean = false;
+  currentArticle: Article = placeholder;
   articles: ArticleBase[] = [];
   categoryMap: Map<string, ArticleBase[]> = new Map<string, ArticleBase[]>([
     ['news', []],
@@ -38,6 +59,10 @@ Most governments in the solar system have already stated that they perceive this
     ['science', []],
     ['politics', []]
   ]);
+
+  clearArticle() {
+    this.currentArticle = empty;
+  }
 
   getArticle(id: number) {
     return axios
@@ -74,6 +99,19 @@ Most governments in the solar system have already stated that they perceive this
         );
         return result;
       });
+  }
+
+  addArticle(article: Article) {
+    return axios.post('/articles/', {
+      user_id: article.authorID,
+      title: article.title,
+      picture_path: article.picturePath,
+      picture_alt: article.pictureAlt,
+      picture_caption: article.pictureCapt,
+      content: article.text,
+      importance: article.importance,
+      category: article.category
+    }).then(response => response.data.id);
   }
 
   getFrontPage(): Promise<ArticleBase[]> {

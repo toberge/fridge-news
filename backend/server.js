@@ -372,15 +372,13 @@ app.post('/users', async (req, res) => {
 // TODO put the auths back in when refactored & all done
 app.post('/articles', /*authLogin, */async (req, res) => {
   if (!req.body.title) return res.status(400).json({ error: 'Insufficient data in request body' });
-  const { title, media, content, importance, category } = req.body;
-  console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
+  const { user_id, title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
+  // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
+  console.log(`Got POST request from ${user_id} to add ${title} as article`);
   try {
-    // TODO needs to be updated...
-    if (await updateQuery('INSERT INTO articles(user_id, title, media, content, importance, category) VALUES(?, ?, ?, ?, ?, ?)',
-      req.session.userId, title, media, content, importance, category)) {
-      // TODO add article ID after creation!
-      //  somehow return an int from DAO method - do a simple search and assume you're correct...
-      res.status(201).json({ message: 'POST successful' });
+    let createdId = await articleDAO.addOne([user_id, title, picture_path, picture_alt, picture_caption, content, importance, category]);
+    if (createdId > 0) {
+      res.status(201).json({ message: 'POST successful', id: createdId });
     } else {
       res.status(400).json({ message: 'Could not POST article' });
     }
