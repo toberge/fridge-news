@@ -98,11 +98,12 @@ export class ArticleCard extends Component<{
 
 class ButtonPrimary extends Component<{
   onClick: () => mixed,
-  children?: React.Node
+  children?: React.Node,
+  disabled?: boolean
 }> {
   render() {
     return (
-      <button type="button" className="btn btn-primary" onClick={this.props.onClick}>
+      <button type="button" className="btn btn-primary" onClick={this.props.onClick} disabled={this.props.disabled}>
         {this.props.children}
       </button>
     );

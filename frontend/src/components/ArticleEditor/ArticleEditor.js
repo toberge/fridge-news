@@ -7,15 +7,16 @@ import 'easymde/dist/easymde.min.css';
 import { Article, capitalizeFirstLetter, CATEGORIES } from '../../utils/Article';
 import { articleStore } from '../../stores/articleStore';
 import { Button, Card, Form } from './../widgets';
-import {createHashHistory} from 'history';
+import { createHashHistory } from 'history';
+import placeholder from '../../assets/images/floppy.jpg';
 
 const history = createHashHistory();
 
+// TODO make it handle editing too - subclass?
 export default class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
   article: Article = articleStore.currentArticle;
   form = null;
-
-  // TODO the most urgent TODO
+  button = null;
 
   render() {
     return (
@@ -67,7 +68,11 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
             </div>
             {/*====== image preview ======*/}
             <div className="card align-items-center p-3 text-center">
-              <img src={this.article.picturePath} className="card-img w-25" alt="[ Preview ]" />
+              <img
+                src={this.article.picturePath ? this.article.picturePath : placeholder}
+                className="card-img w-25"
+                alt="[ Preview ]"
+              />
             </div>
             <p></p>
             {/* shitty hack */}
@@ -116,7 +121,7 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
           </div>
           {/*====== markdown text ======*/}
           <Form.Group>
-            <SimpleMDE onChange={this.handleMarkdownChange} label="Main text" options={{ spellChecker: false }} />
+            <SimpleMDE value={this.article.text} onChange={this.handleMarkdownChange} label="Main text" options={{ spellChecker: false }} />
           </Form.Group>
           {/*====== category and tags ======*/}
           <Form.Group>
@@ -133,12 +138,14 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
               >
                 <option value="">Select category...</option>
                 {CATEGORIES.map(c => (
-                  <option value={c} key={c}>{capitalizeFirstLetter(c)}</option>
+                  <option value={c} key={c}>
+                    {capitalizeFirstLetter(c)}
+                  </option>
                 ))}
               </select>
             </div>
           </Form.Group>
-          <Button.Primary onClick={this.handleUpload}>Upload</Button.Primary>
+          <Button.Primary ref={b => this.button = b} onClick={this.handleUpload}>Upload</Button.Primary>
         </form>
       </main>
     );
@@ -152,25 +159,37 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
     this.article.text = value;
   }
 
-  handleUpload() {
+  async handleUpload() {
     console.log(this.article);
-    if (!this.form || ! this.form.checkValidity()) {
+    if (!this.form || !this.form.checkValidity()) {
       // TODO make better feedback
       console.log('INVALID');
       return;
     }
+
+    // TODO disable button...
+    // console.log('it is a burton?', typeof this.button, this.button);
+    // if (this.button) this.button.props.disabled = true;
+
 
     // set no picture at all if picture is null
     if (!this.article.picturePath) {
       this.article.picturePath = null;
       this.article.pictureAlt = null;
       this.article.pictureCapt = null;
+    } else {
+      // TODO test if image exists, run a GET request?
     }
 
-    articleStore.addArticle(this.article).then(newId => {
+    // actually POST the article, moving user to article page afterwards
+    try {
+      let newId = await articleStore.addArticle(this.article);
       if (newId && newId > 0) {
         history.push('/articles/' + newId);
       }
-    });
+    } catch (e) {
+      // TODO handle...
+      console.error(e);
+    }
   }
 }

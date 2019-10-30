@@ -33,7 +33,7 @@ const empty = new Article(
     1,
     1,
     '',
-    'https://i.imgur.com/puQs66y.png',
+    null,
     '',
     '',
     `*Begin your article with an ingress*
@@ -61,7 +61,16 @@ class ArticleStore {
   ]);
 
   clearArticle() {
-    this.currentArticle = empty;
+    this.currentArticle.title = empty.title;
+    this.currentArticle.picturePath = empty.picturePath;
+    this.currentArticle.pictureAlt = empty.pictureAlt;
+    this.currentArticle.pictureCapt = empty.pictureCapt;
+    this.currentArticle.text = empty.text;
+    this.currentArticle.uploadTime = empty.uploadTime;
+    this.currentArticle.updateTime = empty.updateTime;
+    this.currentArticle.importance = empty.importance;
+    this.currentArticle.category = empty.category;
+
   }
 
   getArticle(id: number) {
@@ -101,7 +110,7 @@ class ArticleStore {
       });
   }
 
-  addArticle(article: Article) {
+  addArticle(article: Article): Promise<number | void> {
     return axios.post('/articles/', {
       user_id: article.authorID,
       title: article.title,
@@ -138,15 +147,6 @@ class ArticleStore {
         this.articles.splice(0, this.articles.length);
         throw e;
       })*/
-  }
-
-  setArticles(result: []) {
-    this.articles.splice(0, this.articles.length);
-    const newOnes: ArticleBase[] = result.map(e => {
-      const {article_id, title, picture_path, picture_alt, category} = e;
-      return new ArticleBase(article_id, title, picture_path, picture_alt, category);
-    });
-    this.articles.push(...newOnes);
   }
 
   toArticleArray(result: []): ArticleBase[] {
