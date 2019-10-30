@@ -40,7 +40,7 @@ export class NavBar extends Component<{ brand?: React.Node, children: React.Node
 
   render() {
     return (
-      <nav className="navbar">
+      <nav className="my-navbar">
         {' '}
         {/* navbar-expand-sm bg-light navbar-light*/}
         {/*<NavLink id="logo" className="navbar-brand" activeClassName="active" exact to="/">*/}

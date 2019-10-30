@@ -29,7 +29,7 @@ class OldMenu extends Component {
     return (
       <header id="masthead">
         {' '}
-        <nav className="navbar">
+        <nav className="my-navbar">
           <ul>
             <li>
               <a id="logo" href="index.html">

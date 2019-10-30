@@ -32,7 +32,7 @@
         padding: 1%;
     }
 
-    .navbar ul {
+    .my-navbar ul {
         flex-direction: row;
     }
 
@@ -64,7 +64,7 @@
     /* TODO avoid !important */
     /* TODO add hamborger */
 
-    .navbar ul {
+    .my-navbar ul {
         flex-direction: column;
     }
 
@@ -185,7 +185,7 @@ a {
 }
 
 /* credz: https://jsfiddle.net/joshnh/srNVQ/ */
-.navbar ul {
+.my-navbar ul {
     background: var(--section-background);
     /*font-size: 0;*/
     list-style: none;
@@ -197,7 +197,7 @@ a {
     display: flex;
 }
 
-.navbar li {
+.my-navbar li {
     margin: 0;
     padding: 0;
 }
@@ -206,11 +206,11 @@ a {
     background: var(--logo-background);
 }
 
-.navbar .separator {
+.my-navbar .separator {
     flex: auto;
 }
 
-.navbar a {
+.my-navbar a {
     background: var(--section-background);
     color: var(--section-text);
     display: block;
@@ -226,14 +226,14 @@ a {
     border: transparent solid 3px;
 }
 
-.navbar li:hover a,
-.navbar li a:focus {
+.my-navbar li:hover a,
+.my-navbar li a:focus {
     background: var(--focused-background);
     outline: none;
     border: solid 3px;
 }
 
-.navbar li a.active {
+.my-navbar li a.active {
     background: var(--active-background);
     color: var(--active-text);
 }
