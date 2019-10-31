@@ -1,0 +1,20 @@
+.loading-wrapper {
+  /*background-color: var(--section-background);*/
+  height: 80vh;
+  /*border-radius: 5%;*/
+}
+.loading-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.loading-box i {
+  font-size: 10rem;
+}

@@ -22,6 +22,14 @@ class NavBarLink extends Component<{ exact?: boolean, to: string, children: Reac
   }
 }
 
+class NavBarSeparator extends Component {
+  render() {
+    return (
+      <li className="separator"></li>
+    );
+  }
+}
+
 class NavBarBrand extends Component<{ children: React.Node }> {
   render() {
     return (
@@ -37,6 +45,7 @@ class NavBarBrand extends Component<{ children: React.Node }> {
 export class NavBar extends Component<{ brand?: React.Node, children: React.Node }> {
   static Link = NavBarLink;
   static Brand = NavBarBrand;
+  static Separator = NavBarSeparator;
 
   render() {
     return (

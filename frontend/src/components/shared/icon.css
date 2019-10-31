@@ -1,0 +1,5 @@
+.fa-spin-slow {
+  -webkit-animation: fa-spin 4s infinite ease;
+  -o-animation: fa-spin 4s infinite ease;
+  animation: fa-spin 4s infinite ease;
+}

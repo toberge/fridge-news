@@ -12,6 +12,7 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
     if (array && array.length > 0) {
       return (
         <main>
+          <h1>{capitalizeFirstLetter(this.props.match.params.id)}</h1>
           <CardHolder>
             {this.renderList(array)}
           </CardHolder>

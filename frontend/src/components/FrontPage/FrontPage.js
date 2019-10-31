@@ -9,6 +9,7 @@ export default class FrontPage extends Component {
   render() {
     return (
       <main>
+        <h1>Fridge News</h1>
         <CardHolder>
           {articleStore.articles.map(a => (
             <ArticleCard article={a} key={a.id} showCategory />

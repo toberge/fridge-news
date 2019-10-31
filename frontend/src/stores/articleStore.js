@@ -49,7 +49,8 @@ write some **good** text`,
   );
 
 class ArticleStore {
-  // TODO make this have an effect
+  // won't make loading multiple articles necessitate showing a loading page,
+  // it's better to show a not-yet-updated list than to show *the wrong article*
   loadingArticle: boolean = false;
   currentArticle: Article = placeholder;
   articles: ArticleBase[] = [];
@@ -74,6 +75,7 @@ class ArticleStore {
   }
 
   getArticle(id: number) {
+    this.loadingArticle = true;
     return axios
       .get<Article>('/articles/' + id)
       .then(response => response.data)
@@ -106,11 +108,13 @@ class ArticleStore {
           importance,
           rating
         );
+        this.loadingArticle = false;
         return result;
       });
   }
 
-  addArticle(article: Article): Promise<number | void> {
+  addArticle(): Promise<number | void> {
+    const article = this.currentArticle;
     return axios.post('/articles/', {
       user_id: article.authorID,
       title: article.title,
