@@ -1,6 +1,10 @@
+# sensitive files
 backend/database/properties.json
-**/package-lock.json
-**/node_modules
-.idea/**
-*.iml
+# library folders
+node_modules
+package-lock.json
+# build folders
 frontend/build
+# IDE files
+.idea
+*.iml

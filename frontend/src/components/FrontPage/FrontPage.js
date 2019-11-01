@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
-import { ArticleCard, CardHolder } from '../widgets';
+import { ArticleCard, CardHolder } from '../shared/Cards';
 import { articleStore } from '../../stores/articleStore';
 
 export default class FrontPage extends Component {

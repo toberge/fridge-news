@@ -17,8 +17,10 @@
       "./src/setup-tests.js"
     ],
     "testURL": "http://localhost",
-    "\\.(jpg|ico|jpeg|png|gif|svg)$": "src/__mocks__/fileMock.js",
-    "\\.(css|less)$": "src/__mocks__/fileMock.js"
+    "moduleNameMapper": {
+      "\\.(jpg|ico|jpeg|png|gif|svg)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/src/__mocks__/fileMock.js"
+    }
   },
   "dependencies": {
     "axios": "^0.19.0",
