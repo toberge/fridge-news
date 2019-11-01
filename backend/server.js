@@ -371,8 +371,8 @@ app.post('/users', async (req, res) => {
 
 // TODO put the auths back in when refactored & all done
 app.post('/articles', /*authLogin, */async (req, res) => {
-  if (!req.body.title) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { user_id, title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
+  if (!(user_id && title && content && importance && category)) return res.status(400).json({ error: 'Insufficient data in request body' });
   // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
   console.log(`Got POST request from ${user_id} to add ${title} as article`);
   try {
@@ -385,6 +385,24 @@ app.post('/articles', /*authLogin, */async (req, res) => {
   } catch (e) {
     console.trace('Failed to POST article');
     res.status(400).json({ error: 'Failed to POST article' });
+  }
+});
+
+app.put('/articles/:id(\\d+)', async (req, res) => {
+  const { title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
+  if (!(title && content && importance && category)) return res.status(400).json({ error: 'Insufficient data in request body' });
+  const id = parseInt(req.params.id);
+  console.log(`Got PUT request to update article ${title}`);
+  try {
+    let fields = await articleDAO.updateOne({ article_id: id, title, picture_path, picture_alt, picture_caption, content, importance, category});
+    if (fields.affectedRows === 1) {
+      res.status(200).json({ message: 'PUT successful' });
+    } else {
+      res.status(400).json({ message: 'Could not PUT article' });
+    }
+  } catch (e) {
+    console.trace(e, 'Failed to PUT article');
+    res.status(400).json({ error: 'Failed to PUT article' });
   }
 });
 

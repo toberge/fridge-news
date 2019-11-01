@@ -136,6 +136,6 @@ module.exports = class ArticleDAO extends DAO {
       );
       fields = fluff;
     }
-    return fields.insertId;
+    return fields;
   };
 };

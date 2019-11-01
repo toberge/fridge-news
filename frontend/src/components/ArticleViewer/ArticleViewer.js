@@ -7,6 +7,10 @@ import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { articleStore } from '../../stores/articleStore';
 import './ArticleViewer.css';
+import { Button } from '../widgets';
+import { createHashHistory } from 'history';
+
+const history = createHashHistory();
 
 export default class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
   comment: string = '';
@@ -57,6 +61,8 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
               </dd>
             </dl>
           </section>
+          <Button.Secondary onClick={() => history.push(`/articles/${this.props.match.params.id}/edit`)}>Edit</Button.Secondary>
+          <Button.Danger onClick={() => null}>Delete</Button.Danger>
           <section className="comments">
             <h2>Comments</h2>
             <div className="comment">
@@ -85,7 +91,8 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
                 <SimpleMDE onChange={this.handleMarkdownChange} label="Comment:" options={{ spellChecker: false }} />
               </div>
               <br />
-              <button id="comment-submit">Submit</button>
+              {/*<button id="comment-submit">Submit</button>*/}
+              <Button.Primary onClick={() => null}>Submit</Button.Primary>
             </form>
           </section>
         </article>
@@ -95,8 +102,9 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
 
   mounted(): void {
     this.hidden = true;
-    articleStore.getArticle(this.props.match.params.id)
-      .then(this.hidden = false)
+    articleStore
+      .getArticle(this.props.match.params.id)
+      .then((this.hidden = false))
       .catch(e => console.error(e));
   }
 

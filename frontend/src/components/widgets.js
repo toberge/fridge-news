@@ -2,12 +2,6 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
-import { NavLink } from 'react-router-dom';
-import { ArticleBase, capitalizeFirstLetter } from '../utils/Article';
-import placeholderImage from '../assets/images/floppy.jpg';
-// Current placeholder is public domain and does not require contribution.
-// Regardless, here's where I found it: https://www.pexels.com/photo/office-disk-storage-data-41290/
-// and where it seems to be from: https://www.publicdomainpictures.net/en/view-image.php?image=14548
 
 class ButtonPrimary extends Component<{
   onClick: () => mixed,
@@ -67,7 +61,7 @@ class ButtonDanger extends Component<{
  */
 export class Button {
   static Success = ButtonSuccess;
-  static Light = ButtonLight;
+  static Secondary = ButtonLight;
   static Danger = ButtonDanger;
   static Primary = ButtonPrimary;
 }

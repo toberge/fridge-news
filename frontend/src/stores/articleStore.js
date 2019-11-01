@@ -63,7 +63,7 @@ class ArticleStore {
 
   clearArticle() {
     this.currentArticle.title = empty.title;
-    this.currentArticle.picturePath = empty.picturePath;
+    this.currentArticle.picturePath = null;
     this.currentArticle.pictureAlt = empty.pictureAlt;
     this.currentArticle.pictureCapt = empty.pictureCapt;
     this.currentArticle.text = empty.text;
@@ -125,6 +125,19 @@ class ArticleStore {
       importance: article.importance,
       category: article.category
     }).then(response => response.data.id);
+  }
+
+  updateArticle(): Promise<boolean | void> {
+    const article = this.currentArticle;
+    return axios.put('/articles/' + article.id, {
+      title: article.title,
+      picture_path: article.picturePath,
+      picture_alt: article.pictureAlt,
+      picture_caption: article.pictureCapt,
+      content: article.text,
+      importance: article.importance,
+      category: article.category
+    }).then(response => response.status === 200);
   }
 
   getFrontPage(): Promise<ArticleBase[]> {

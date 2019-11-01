@@ -5,6 +5,7 @@ node_modules
 package-lock.json
 # build folders
 frontend/build
+coverage
 # IDE files
 .idea
 *.iml

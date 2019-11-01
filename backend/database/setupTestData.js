@@ -15,7 +15,8 @@ const runSQL = async (file: string, pool: mysql.PromisePool) => {
   let connection: mysql.PromiseConnection = null;
   let things = null;
   try {
-    const sql = fs.readFileSync(file, 'utf8'); // source of bug; provide encoding...
+    let sql = fs.readFileSync(file, 'utf8'); // source of bug; provide encoding...
+    sql.replace('\n', ' ');
     connection = await pool.getConnection();
     things = await connection.query(sql);
     console.log(`Ran ${file} successfully`);

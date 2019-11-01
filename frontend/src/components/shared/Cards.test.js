@@ -28,7 +28,7 @@ describe('Card', () => {
     expect(typeof instance).toEqual('object');
     // total bogus test
     if (instance) {
-      expect(typeof instance.props.article).toEqual('object');
+      expect(instance.props.article instanceof ArticleBase).toBe(true);
       expect(instance.props.article.title).toEqual(TITLE);
     }
     done();
