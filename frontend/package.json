@@ -16,7 +16,9 @@
     "setupFiles": [
       "./src/setup-tests.js"
     ],
-    "testURL": "http://localhost"
+    "testURL": "http://localhost",
+    "\\.(jpg|ico|jpeg|png|gif|svg)$": "src/__mocks__/fileMock.js",
+    "\\.(css|less)$": "src/__mocks__/fileMock.js"
   },
   "dependencies": {
     "axios": "^0.19.0",

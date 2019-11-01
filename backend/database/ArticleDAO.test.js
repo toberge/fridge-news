@@ -3,8 +3,13 @@
 const mysql = require('mysql2/promise');
 const [ pool, runSQL, setup ]: [ mysql.PromisePool, any, any ] = require('./setupTestData');
 
-beforeAll(() => {
-  return setup();
+beforeAll(async () => {
+  // fails timeout if run w/o DB, but it's fine
+  try {
+    await setup();
+  } catch (e) {
+    console.error(e);
+  }
 });
 
 afterAll(done => {

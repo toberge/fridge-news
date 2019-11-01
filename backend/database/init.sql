@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS articles, users, ratings, comments;
 
 CREATE TABLE articles(
-    article_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    article_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL REFERENCES users(user_id),
     title VARCHAR(64) NOT NULL,
     picture_path VARCHAR(2083),
@@ -18,7 +18,7 @@ CREATE TABLE articles(
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 CREATE TABLE users(
-    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT PRIMARY KEY AUTO_INCREMENT ,
     name VARCHAR(30) UNIQUE NOT NULL,
     password VARCHAR(255) /*NOT NULL*/,
     admin BOOLEAN NOT NULL DEFAULT 0,
@@ -33,7 +33,7 @@ CREATE TABLE ratings(
 );
 
 CREATE TABLE comments(
-    comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    comment_id INT PRIMARY KEY AUTO_INCREMENT,
     article_id INT NOT NULL REFERENCES articles(article_id),
     user_id INT NOT NULL REFERENCES users(user_id),
     title VARCHAR(30) NOT NULL,
