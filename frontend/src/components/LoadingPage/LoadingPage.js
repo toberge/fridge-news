@@ -5,7 +5,7 @@ import { Component } from 'react-simplified';
 import './LoadingPage.css';
 import Icon from '../shared/Icon';
 
-
+// TODO remove this maybe?
 export default class LoadingPage extends Component {
   render() {
     return (

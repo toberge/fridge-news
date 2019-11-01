@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
+import './Footer.css';
 
 export default class Footer extends Component {
   render() {

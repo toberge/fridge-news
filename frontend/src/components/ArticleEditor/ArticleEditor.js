@@ -6,7 +6,7 @@ import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { Article, capitalizeFirstLetter, CATEGORIES } from '../../utils/Article';
 import { articleStore } from '../../stores/articleStore';
-import { Button, Card, Form } from './../widgets';
+import { Button, Form } from './../widgets';
 import { createHashHistory } from 'history';
 import placeholder from '../../assets/images/floppy.jpg';
 import LoadingPage from "../LoadingPage";

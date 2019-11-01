@@ -1,0 +1,81 @@
+
+/*======================*\
+   grid + media queries
+   TODO split into individual component css?
+\*======================*/
+
+@media screen and (min-width: 961px) {
+  /* margin around articles on wider screens */
+  main {
+    margin: 0 auto;
+    width: 950px;
+    background-color: #fff;
+    box-shadow: var(--section-background) 0 0 9px 0;
+    padding: 1%;
+  }
+
+  .my-navbar ul {
+    flex-direction: row;
+  }
+
+  /* sticky navbar since screen is wide enough to fit it */
+
+  /* simple grid layout */
+  /*  kinda superfluous */
+  @supports (display: grid) {
+    #grid {
+      display: grid;
+      grid-template-areas:
+        'header header header'
+        ' main   main   main '
+        'footer footer footer';
+    }
+    header {
+      grid-area: header;
+    }
+    main {
+      grid-area: main;
+    }
+    footer {
+      grid-area: footer;
+    }
+  }
+}
+
+@media screen and (max-width: 960px) {
+  /* tiny margin around content on narrow screens */
+  /* TODO rem instead */
+  main {
+    margin: 0 2%;
+  }
+  /* TODO avoid !important */
+  /* TODO add hamborger */
+
+  .my-navbar ul {
+    flex-direction: column;
+  }
+
+  #masthead {
+    position: revert !important;
+  }
+
+  .separator {
+    height: 0.2rem;
+    background: var(--section-text);
+  }
+}
+
+/*@media screen and (max-width: 480px) {
+
+    !* show logo above navbar on extra smol screens *!
+    !* TODO this is WIP *!
+    #masthead:before {
+        content: 'Fridge News';
+        text-align: center;
+        background-color: var(--focused-background);
+    }
+
+    .navbar #icon {
+        display: none;
+    }
+}*/

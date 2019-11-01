@@ -1,0 +1,39 @@
+/*===================*\
+   custom properties
+\*===================*/
+
+:root {
+  --section-text: #212121; /* 444 fails WCAG AAA with focused bg */
+  --section-background: #ddd;
+  --focused-background: #ccc;
+  --active-background: #bbb; /* #FF5D66; */
+  --logo-background: lightblue;
+  --active-text: var(--section-text); /* #FFFFFF; */
+  --button-background: darkgreen;
+  --button-focus: green;
+  --button-text: white;
+  /*--link-text: TODO;*/
+  --sans-serif-font: Roboto, Ubuntu, 'Helvetica Neue', Helvetica, 'Noto Sans', 'Liberation Sans', 'DejaVu Sans', Arial,
+    sans-serif;
+  --serif-font: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; /* TODO */
+}
+
+/*===================*\
+    general layout
+    TODO keep it here?
+\*===================*/
+
+body {
+  margin: 0;
+  font-family: var(--sans-serif-font);
+}
+
+h1,
+h2,
+h3  {
+  text-align: center;
+}
+
+a {
+  /*color: var(--link-text);*/
+}

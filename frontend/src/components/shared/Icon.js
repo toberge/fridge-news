@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
-import './icon.css';
+import './Icon.css';
 
 class LoadingIcon extends Component {
   render() {
