@@ -12,26 +12,51 @@ type MinimalArticle = {
   category: string
 };
 
+type Article = {
+  article_id: number,
+  user_id: number,
+  upload_time: string,
+  update_time: string,
+  rating: number
+} & MinimalArticle;
+
 module.exports = class ArticleDAO extends DAO {
   constructor(pool: mysql.PromisePool) {
     super(pool);
   }
 
-  async getAll() {
+  // TODO search method
+
+  getAll = async () => {
     const [[rows]] = await super.query('SELECT * FROM articles_view');
     return rows;
-  }
+  };
+
+  getFrontPage = async () => {
+    const [[rows]] = await super.query('SELECT * FROM front_page');
+    return rows;
+  };
+
+  getByCategory = async (category: string) => {
+    const [[rows]] = await super.execute('SELECT * FROM articles_condensed WHERE category = ?', category);
+    return rows;
+  };
 
   /**
    * Fetches an article from DB
    * based on ID.
    *
    * @param id - id of article
-   * @returns {Promise<*>}
+   * @returns {Promise<Article>}
    */
-  getOne = async (id: number) => {
+  getOne = async (id: number): Promise<Article> => {
     const [[rows]] = await super.execute('SELECT * FROM articles_view WHERE article_id = ?', id);
     return rows[0];
+  };
+
+  deleteOne = async (id: number) => {
+    const [[fields]] = await super.execute('DELETE FROM articles WHERE article_id = ?', id);
+    return fields;
   };
 
   /**
