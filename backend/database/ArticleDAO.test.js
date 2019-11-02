@@ -22,7 +22,9 @@ describe('ArticleDAO', () => {
   describe('.getAll()', () => {
     it('gives correctly sorted articles', async () => {
       const articles = await articleDAO.getFrontPage();
-      expect(articles[0].title).toBe(TESLA_TITLE);
+      // TODO decide sorting order for this query if you ever use it
+      console.log(articles);
+      expect(articles[0].title).toBe(TITLE);
     });
   });
 
@@ -47,7 +49,7 @@ describe('ArticleDAO', () => {
       const article = await articleDAO.getOne(2);
       expect(article.title).not.toBeUndefined();
       expect(article.title).toBe(TITLE);
-      expect(article.article_id).toBe(1);
+      expect(article.article_id).toBe(2);
     });
   });
 
@@ -57,7 +59,10 @@ describe('ArticleDAO', () => {
       expect(affectedRows).toBe(1);
     });
     it('fails if nonexistent ID', async () => {
-      await expect(articleDAO.deleteOne(42)).rejects.toThrow();
+      // throw syntax for later
+      // await expect(articleDAO.deleteOne(42)).rejects.toThrow();
+      const {affectedRows} = await articleDAO.deleteOne(42);
+      expect(affectedRows).toBe(0);
     });
   });
 
@@ -97,6 +102,8 @@ describe('ArticleDAO', () => {
       expect(article.content).toBe('elon is not ok');
       // since we can have articles w/o picture, the caption should be ignored
       expect(article.picture_caption).toBe(null);
+      // since it was updated, it should have an update time
+      expect(article.update_time).not.toBe(null);
     });
   });
 });
