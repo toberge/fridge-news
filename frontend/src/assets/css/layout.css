@@ -1,4 +1,3 @@
-
 /*======================*\
    grid + media queries
    TODO split into individual component css?
@@ -19,26 +18,10 @@
   }
 
   /* sticky navbar since screen is wide enough to fit it */
-
-  /* simple grid layout */
-  /*  kinda superfluous */
-  @supports (display: grid) {
-    #grid {
-      display: grid;
-      grid-template-areas:
-        'header header header'
-        ' main   main   main '
-        'footer footer footer';
-    }
-    header {
-      grid-area: header;
-    }
-    main {
-      grid-area: main;
-    }
-    footer {
-      grid-area: footer;
-    }
+  #masthead {
+    position: sticky;
+    /* because of bootstrap elements */
+    z-index: 999;
   }
 }
 
@@ -47,21 +30,47 @@
   /* TODO rem instead */
   main {
     margin: 0 2%;
+    /* TODO I know about that */
   }
-  /* TODO avoid !important */
   /* TODO add hamborger */
 
   .my-navbar ul {
     flex-direction: column;
   }
 
-  #masthead {
-    position: revert !important;
-  }
-
   .separator {
     height: 0.2rem;
     background: var(--section-text);
+  }
+}
+
+/* simple grid layout */
+/* handy for footer positioning */
+/* TODO make non-grid alternative */
+@supports (display: grid) {
+  body,
+  html {
+    width: 100%;
+    height: 100%;
+  }
+  .grid {
+    display: grid;
+    grid-template-areas:
+      'header header header'
+      ' main   main   main '
+      'footer footer footer';
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+    min-height: 100%;
+  }
+  header {
+    grid-area: header;
+  }
+  main {
+    grid-area: main;
+  }
+  footer {
+    grid-area: footer;
   }
 }
 
@@ -78,4 +87,10 @@
     .navbar #icon {
         display: none;
     }
+}*/
+
+/*
+body {
+  min-height: 100%;
+  position: relative;
 }*/

@@ -9,11 +9,11 @@ import { articleStore } from '../../stores/articleStore';
 import './ArticleViewer.css';
 import { Button } from '../widgets';
 import { createHashHistory } from 'history';
+import CommentSection from './CommentSection';
 
 const history = createHashHistory();
 
 export default class ArticleViewer extends Component<{ match: { params: { id: number } } }> {
-  comment: string = '';
   hidden: boolean = true;
 
   render() {
@@ -63,38 +63,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
           </section>
           <Button.Secondary onClick={() => history.push(`/articles/${this.props.match.params.id}/edit`)}>Edit</Button.Secondary>
           <Button.Danger onClick={() => null}>Delete</Button.Danger>
-          <section className="comments">
-            <h2>Comments</h2>
-            <div className="comment">
-              <p>
-                <em>
-                  <span className="author">Grumbling Grevory</span> said:
-                </em>
-              </p>
-              <p>I really hate this article...</p>
-            </div>
-            <div className="comment">
-              <p>
-                <em>
-                  <span className="author">Somebody</span> said:
-                </em>
-              </p>
-              <p>
-                Everything is fine.
-                <br />
-                It really is.
-              </p>
-            </div>
-            <h2>Leave your own comment</h2>
-            <form>
-              <div className="form-group">
-                <SimpleMDE onChange={this.handleMarkdownChange} label="Comment:" options={{ spellChecker: false }} />
-              </div>
-              <br />
-              {/*<button id="comment-submit">Submit</button>*/}
-              <Button.Primary onClick={() => null}>Submit</Button.Primary>
-            </form>
-          </section>
+          <CommentSection articleID={this.props.match.params.id}/>
         </article>
       </main>
     );
@@ -108,7 +77,5 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       .catch(e => console.error(e));
   }
 
-  handleMarkdownChange(value: string) {
-    this.comment = value;
-  }
+
 }

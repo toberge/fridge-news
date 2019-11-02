@@ -383,7 +383,7 @@ app.post('/articles', /*authLogin, */async (req, res) => {
       res.status(400).json({ message: 'Could not POST article' });
     }
   } catch (e) {
-    console.trace('Failed to POST article');
+    console.trace(e, 'Failed to POST article');
     res.status(400).json({ error: 'Failed to POST article' });
   }
 });
