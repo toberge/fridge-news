@@ -13,8 +13,10 @@
   --button-focus: green;
   --button-text: white;
   /*--link-text: TODO;*/
-  --sans-serif-font: Roboto, Ubuntu, 'Helvetica Neue', Helvetica, 'Noto Sans', 'Liberation Sans', 'DejaVu Sans', Arial,
-    sans-serif;
+  --sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Helvetica,
+    'Noto Sans', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif;
+  /* override bootstrap like ez */
+  --font-family-sans-serif: var(--sans-serif-font);
   --serif-font: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; /* TODO */
 }
 
