@@ -9,7 +9,7 @@ import { articleStore } from '../../stores/articleStore';
 import { Button, Form } from './../widgets';
 import { createHashHistory } from 'history';
 import placeholder from '../../assets/images/floppy.jpg';
-import LoadingPage from "../LoadingPage";
+import Icon from '../shared/Icon';
 
 const history = createHashHistory();
 
@@ -20,141 +20,149 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
   pending: boolean = false;
 
   render() {
-    if (this.pending) {
-      return <LoadingPage/>;
-    } else {
-      return (
-        <main>
-          <h1>Write Article</h1>
-          <form ref={f => (this.form = f)}>
-            {/*====== title ======*/}
-            <Form.Group>
-              <div className="row">
-                <label htmlFor="title" className="col-sm-1 col-form-label col-form-label-lg">
-                  Title
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    id="title"
-                    className="form-control form-control-lg"
-                    type="text"
-                    placeholder="Your wonderful title"
-                    aria-describedby="titleHelp"
-                    onChange={(event: SyntheticInputEvent<HTMLInputElement>) => (this.article.title = event.target.value)}
-                    required
-                  />
-                  <small id="titleHelp" className="form-text text-muted">
-                    Please pick a catchy title that fits the content of your article
-                  </small>
-                </div>
+    return (
+      <main>
+        <h1>Write Article</h1>
+        <form ref={f => (this.form = f)}>
+          {/*====== title ======*/}
+          <Form.Group>
+            <div className="row">
+              <label htmlFor="title" className="col-sm-1 col-form-label col-form-label-lg">
+                Title
+              </label>
+              <div className="col-sm-8">
+                <input
+                  id="title"
+                  className="form-control form-control-lg"
+                  type="text"
+                  placeholder="Your wonderful title"
+                  aria-describedby="titleHelp"
+                  onChange={(event: SyntheticInputEvent<HTMLInputElement>) => (this.article.title = event.target.value)}
+                  required
+                />
+                <small id="titleHelp" className="form-text text-muted">
+                  Please pick a catchy title that fits the content of your article
+                </small>
               </div>
-            </Form.Group>
-            {/*====== image (needs image preview) ======*/}
-            <div className="form-group">
-              <div className="input-group">
-                <div className="input-group-prepend">
+            </div>
+          </Form.Group>
+          {/*====== image (needs image preview) ======*/}
+          <div className="form-group">
+            <div className="input-group">
+              <div className="input-group-prepend">
                 <span className="input-group-text" id="imgSpan">
                   Upload
                 </span>
-                </div>
-                <div className="custom-file">
-                  <input
-                    type="file"
-                    className="custom-file-input"
-                    id="imgFile"
-                    onChange={event => (this.article.picturePath = URL.createObjectURL(event.target.files[0]))}
-                    aria-describedby="imgSpan"
-                  />
-                  <label className="custom-file-label" htmlFor="imgFile">
-                    Choose a suitable image
-                  </label>
-                </div>
               </div>
-              {/*====== image preview ======*/}
-              <div className="card align-items-center p-3 text-center">
-                <img
-                  src={this.article.picturePath ? this.article.picturePath : placeholder}
-                  className="card-img w-25"
-                  alt="[ Preview ]"
+              <div className="custom-file">
+                <input
+                  type="file"
+                  className="custom-file-input"
+                  id="imgFile"
+                  onChange={event => (this.article.picturePath = URL.createObjectURL(event.target.files[0]))}
+                  aria-describedby="imgSpan"
                 />
-              </div>
-              <p></p>
-              {/* shitty hack */}
-              <div className="row">
-                <label htmlFor="imgAlt" className="col col-form-label">
-                  Alt-Text
+                <label className="custom-file-label" htmlFor="imgFile">
+                  Choose a suitable image
                 </label>
-                <div className="col-10">
-                  <input
-                    id="imgAlt"
-                    className="form-control"
-                    type="text"
-                    placeholder="Image content description"
-                    onChange={(event: SyntheticInputEvent<HTMLInputElement>) =>
-                      (this.article.pictureAlt = event.target.value)
-                    }
-                    aria-describedby="imgAltHelp"
-                  />
-                  <small id="imgAltHelp" className="form-text text-muted">
-                    An alt-text will let people with bad vision get an idea of what it depicts (or if it does not load)
-                  </small>
-                </div>
-              </div>
-              <p></p>
-              {/* shitty hack */}
-              <div className="row">
-                <label htmlFor="imgCapt" className="col col-form-label">
-                  Image Caption
-                </label>
-                <div className="col-10">
-                  <input
-                    id="imgCapt"
-                    className="form-control"
-                    type="text"
-                    placeholder="Image caption"
-                    onChange={(event: SyntheticInputEvent<HTMLInputElement>) =>
-                      (this.article.pictureCapt = event.target.value)
-                    }
-                    aria-describedby="imgCaptHelp"
-                  />
-                  <small id="imgCaptHelp" className="form-text text-muted">
-                    Please provide a caption for your image, containing further details
-                  </small>
-                </div>
               </div>
             </div>
-            {/*====== markdown text ======*/}
-            <Form.Group>
-              <SimpleMDE value={this.article.text} onChange={this.handleMarkdownChange} label="Main text"
-                         options={{spellChecker: false}}/>
-            </Form.Group>
-            {/*====== category and tags ======*/}
-            <Form.Group>
-              <div className="col-3">
-                <label htmlFor="category">Category</label>
-                <select
-                  className="custom-select"
-                  onInvalid={event => console.log('TODO')}
-                  id="category"
-                  onChange={(event: SyntheticInputEvent<HTMLInputElement>) => {
-                    if (event.target.value) this.article.category = event.target.value;
-                  }}
-                  required
-                >
-                  <option value="">Select category...</option>
-                  {CATEGORIES.map(c => (
-                    <option value={c} key={c}>
-                      {capitalizeFirstLetter(c)}
-                    </option>
-                  ))}
-                </select>
+            {/*====== image preview ======*/}
+            <div className="card align-items-center p-3 text-center">
+              <img
+                src={this.article.picturePath ? this.article.picturePath : placeholder}
+                className="card-img w-25"
+                alt="[ Preview ]"
+              />
+            </div>
+            <p></p>
+            {/* shitty hack */}
+            <div className="row">
+              <label htmlFor="imgAlt" className="col col-form-label">
+                Alt-Text
+              </label>
+              <div className="col-10">
+                <input
+                  id="imgAlt"
+                  className="form-control"
+                  type="text"
+                  placeholder="Image content description"
+                  onChange={(event: SyntheticInputEvent<HTMLInputElement>) =>
+                    (this.article.pictureAlt = event.target.value)
+                  }
+                  aria-describedby="imgAltHelp"
+                />
+                <small id="imgAltHelp" className="form-text text-muted">
+                  An alt-text will let people with bad vision get an idea of what it depicts (or if it does not load)
+                </small>
               </div>
-            </Form.Group>
-            <Button.Primary onClick={this.handleUpload} disabled={this.pending}>Upload</Button.Primary>
-          </form>
-        </main>
-      );
-    }
+            </div>
+            <p></p>
+            {/* shitty hack */}
+            <div className="row">
+              <label htmlFor="imgCapt" className="col col-form-label">
+                Image Caption
+              </label>
+              <div className="col-10">
+                <input
+                  id="imgCapt"
+                  className="form-control"
+                  type="text"
+                  placeholder="Image caption"
+                  onChange={(event: SyntheticInputEvent<HTMLInputElement>) =>
+                    (this.article.pictureCapt = event.target.value)
+                  }
+                  aria-describedby="imgCaptHelp"
+                />
+                <small id="imgCaptHelp" className="form-text text-muted">
+                  Please provide a caption for your image, containing further details
+                </small>
+              </div>
+            </div>
+          </div>
+          {/*====== markdown text ======*/}
+          <Form.Group>
+            <SimpleMDE
+              value={this.article.text}
+              onChange={this.handleMarkdownChange}
+              label="Main text"
+              options={{ spellChecker: false }}
+            />
+          </Form.Group>
+          {/*====== category and tags ======*/}
+          <Form.Group>
+            <div className="col-3">
+              <label htmlFor="category">Category</label>
+              <select
+                className="custom-select"
+                onInvalid={event => console.log('TODO')}
+                id="category"
+                onChange={(event: SyntheticInputEvent<HTMLInputElement>) => {
+                  if (event.target.value) this.article.category = event.target.value;
+                }}
+                required
+              >
+                <option value="">Select category...</option>
+                {CATEGORIES.map(c => (
+                  <option value={c} key={c}>
+                    {capitalizeFirstLetter(c)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </Form.Group>
+          <Button.Primary onClick={this.handleUpload} disabled={this.pending}>
+            Upload
+          </Button.Primary>
+          {this.pending ? (
+            <span>
+              {' '}
+              <Icon.Loading /> Uploading...
+            </span>
+          ) : null}
+        </form>
+      </main>
+    );
   }
 
   mounted() {
@@ -175,7 +183,6 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
 
     // disable button (+ possible additional effects)
     this.pending = true;
-
 
     // set no picture at all if picture is null
     if (!this.article.picturePath) {

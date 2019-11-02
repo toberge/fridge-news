@@ -5,6 +5,7 @@ import { Component } from 'react-simplified';
 import { ArticleCard, CardHolder } from '../shared/Cards';
 import { articleStore } from '../../stores/articleStore';
 import { ArticleBase, capitalizeFirstLetter } from '../../utils/Article';
+import ErrorPage from "../ErrorPage";
 
 export default class CategoryPage extends Component<{ match: { params: { id: string } } }> {
   render() {
@@ -20,9 +21,7 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
       );
     } else {
       return (
-        <main>
-          <h1>Nothing here ¯\_(ツ)_/¯</h1>
-        </main>
+        <ErrorPage/>
       )
     }
   }

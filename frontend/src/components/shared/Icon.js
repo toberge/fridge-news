@@ -7,7 +7,7 @@ import './Icon.css';
 class LoadingIcon extends Component {
   render() {
     return (
-      <i className="fas fa-spinner fa-fw fa-spin-slow"></i>
+      <i className="fas fa-spinner fa-fw fa-spin"></i>
     );
   }
 }
