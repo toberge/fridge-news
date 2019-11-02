@@ -44,15 +44,21 @@
   }
 }
 
+/* globally force full viewport usage */
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.grid {
+  min-height: 100%;
+}
+
 /* simple grid layout */
 /* handy for footer positioning */
-/* TODO make non-grid alternative */
 @supports (display: grid) {
-  body,
-  html {
-    width: 100%;
-    height: 100%;
-  }
   .grid {
     display: grid;
     grid-template-areas:
@@ -61,7 +67,6 @@
       'footer footer footer';
     grid-template-rows: auto 1fr auto;
     grid-template-columns: 100%;
-    min-height: 100%;
   }
   header {
     grid-area: header;
@@ -74,23 +79,23 @@
   }
 }
 
-/*@media screen and (max-width: 480px) {
+/* basically this solution for footer:
+   https://dev.to/domysee/keeping-the-footer-at-the-bottom-with-css-flexbox-5h5f
+ */
+@supports not (display: grid) {
+  .grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    !* show logo above navbar on extra smol screens *!
-    !* TODO this is WIP *!
-    #masthead:before {
-        content: 'Fridge News';
-        text-align: center;
-        background-color: var(--focused-background);
-    }
+  main {
+    flex-grow: 1;
+  }
 
-    .navbar #icon {
-        display: none;
-    }
-}*/
-
-/*
-body {
-  min-height: 100%;
-  position: relative;
-}*/
+  header,
+  main,
+  footer {
+    flex-shrink: 0;
+  }
+}
