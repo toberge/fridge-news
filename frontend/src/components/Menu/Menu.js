@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import NavBar from './NavBar';
-import {capitalizeFirstLetter, CATEGORIES} from '../../utils/Article';
+import {capitalizeFirstLetter, CATEGORIES} from '../../data/Article';
 import Icon from '../shared/Icon';
 
 export default class Menu extends Component {

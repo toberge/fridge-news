@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ArticleCard } from './Cards';
-import { ArticleBase } from '../../utils/Article';
+import { ArticleBase } from '../../data/Article';
 import { shallow, mount, ShallowWrapper, render } from 'enzyme';
 
 describe('Card', () => {

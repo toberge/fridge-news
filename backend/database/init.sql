@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS articles, users, ratings, comments;
 CREATE TABLE articles(
     article_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL REFERENCES users(user_id),
-    title VARCHAR(64) NOT NULL,
+    title VARCHAR(32) NOT NULL,
     picture_path VARCHAR(2083),
     picture_alt VARCHAR(64),
     picture_caption VARCHAR(64),
@@ -19,7 +19,7 @@ CREATE TABLE articles(
 
 CREATE TABLE users(
     user_id INT PRIMARY KEY AUTO_INCREMENT ,
-    name VARCHAR(30) UNIQUE NOT NULL,
+    name VARCHAR(32) UNIQUE NOT NULL,
     password VARCHAR(255) /*NOT NULL*/,
     admin BOOLEAN NOT NULL DEFAULT 0,
     INDEX user_name(name)

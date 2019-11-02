@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { Article, capitalizeFirstLetter, CATEGORIES } from '../../utils/Article';
+import { Article, capitalizeFirstLetter, CATEGORIES } from '../../data/Article';
 import { articleStore } from '../../stores/articleStore';
 import { Button, Form } from './../widgets';
 import { createHashHistory } from 'history';

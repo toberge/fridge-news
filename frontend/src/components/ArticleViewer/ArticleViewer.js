@@ -10,6 +10,8 @@ import './ArticleViewer.css';
 import { Button } from '../widgets';
 import { createHashHistory } from 'history';
 import CommentSection from './CommentSection';
+import Notifier from "../shared/Notifier";
+import {userStore} from "../../stores/userStore";
 
 const history = createHashHistory();
 
@@ -50,7 +52,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
           <section className="details">
             <dl className="dateline">
               <dt>Author:</dt>
-              <dd>{authorID}</dd>
+              <dd>{userStore.currentAuthor.name}</dd>
               <dt>Published:</dt>
               <dd>{uploadTime.toLocaleString()}</dd>
               <dt>Rated:</dt>
@@ -69,13 +71,15 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
     );
   }
 
-  mounted(): void {
+  async mounted() {
     this.hidden = true;
-    articleStore
-      .getArticle(this.props.match.params.id)
-      .then((this.hidden = false))
-      .catch(e => console.error(e));
+    try {
+      await articleStore.getArticle(this.props.match.params.id);
+      await userStore.getAuthor(articleStore.currentArticle.authorID);
+      this.hidden = false
+    } catch (e) {
+      Notifier.error(`Could not fetch article, reason:\n${e.message}`);
+      history.push('/404')
+    }
   }
-
-
 }

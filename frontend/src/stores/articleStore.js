@@ -1,7 +1,7 @@
 // @flow
 
 import axios from 'axios';
-import { Article, ArticleBase } from '../utils/Article';
+import { Article, ArticleBase } from '../data/Article';
 import { sharedComponentData } from 'react-simplified';
 
 const placeholder = new Article(

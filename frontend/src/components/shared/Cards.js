@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import { NavLink } from 'react-router-dom';
-import { ArticleBase, capitalizeFirstLetter } from '../../utils/Article';
+import { ArticleBase, capitalizeFirstLetter } from '../../data/Article';
 import placeholderImage from '../../assets/images/floppy.jpg';
 // Current placeholder is public domain and does not require contribution.
 // Regardless, here's where I found it: https://www.pexels.com/photo/office-disk-storage-data-41290/

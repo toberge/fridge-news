@@ -14,8 +14,8 @@ TODO
     + GET ✔
 + articles/:id
     + GET ✔
-    + PUT?
-    + DELETE?
+    + PUT ✔
+    + DELETE ✔
 + articles/:id/comments
     + GET ✔
     + POST ✔
@@ -50,6 +50,6 @@ TODO
 ## Other tasks
 
 + session cookie --> token for authentication
-+ split DB queries into DAOs
-+ actually write tests
-+ frontend at a later point
++ split DB queries into DAOs - WIP
++ actually write tests - WIP
++ frontend ~~at a later point~~ in progress
