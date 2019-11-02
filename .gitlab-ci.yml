@@ -1,14 +1,5 @@
 image: node:latest
 
-services:
-    - mysql:5
-variables:
-    MYSQL_DATABASE: "fridge"
-    MYSQL_ROOT_PASSWORD: "fish"
-
-before_script:
-    - npm install -g flow-bin
-
 stages:
     - test
     - build
@@ -16,8 +7,14 @@ stages:
 
 test_backend:
     stage: test
+    services:
+        - mysql:5
+    variables:
+        MYSQL_DATABASE: "fridge"
+        MYSQL_ROOT_PASSWORD: "fish"
     script:
         - cd backend
+        - npm install -g flow-bin
         - npm install
         - npm test
         - flow check
@@ -26,6 +23,7 @@ test_frontend:
     stage: test
     script:
         - cd frontend
+        - npm install -g flow-bin
         - npm install
         - npm test
         - flow check src
