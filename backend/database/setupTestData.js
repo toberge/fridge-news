@@ -13,22 +13,28 @@ const pool = mysql.createPool({
 
 const runSQL = async (file: string, pool: mysql.PromisePool) => {
   let connection: mysql.PromiseConnection = null;
-  let things = null;
   try {
-    let sql = fs.readFileSync(file, 'utf8'); // source of bug; provide encoding...
-    sql.replace('\n', ' ');
+    // kudos to this https://stackoverflow.com/a/22659240
+    let sql = fs
+      .readFileSync(file, 'utf8')
+      .replace(/(\r\n|\n|\r)/gm, ' ') // remove newlines
+      .replace(/\s+/g, ' ') // remove whitespace
+      .split(';') // split into statements
+      .map(e => e.trim()) // remove more whitespace
+      .filter(e => e.length !== 0); // finally, skip empty lines
     connection = await pool.getConnection();
-    things = await connection.query(sql);
+    for (let s of sql) {
+      await connection.query(s);
+    }
     console.log(`Ran ${file} successfully`);
   } finally {
     if (connection) connection.release();
   }
-  return things;
 };
 
 const setup = async () => {
   await runSQL('database/init.sql', pool);
-  await runSQL('database/data.sql', pool);
+  await runSQL('database/test.sql', pool);
 };
 
-module.exports = [ pool, runSQL, setup ];
+module.exports = [pool, setup];

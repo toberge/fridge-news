@@ -9,7 +9,10 @@
     "mysql2": "^1.7.0"
   },
   "jest": {
-    "testRegex": "[^/]+/.+test\\.js$"
+    "collectCoverage": true,
+    "coverageReporters": [
+      "text"
+    ]
   },
   "scripts": {
     "test": "jest --detectOpenHandles",

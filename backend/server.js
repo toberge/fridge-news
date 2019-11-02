@@ -376,9 +376,9 @@ app.post('/articles', /*authLogin, */async (req, res) => {
   // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
   console.log(`Got POST request from ${user_id} to add ${title} as article`);
   try {
-    let createdId = await articleDAO.addOne({user_id, title, picture_path, picture_alt, picture_caption, content, importance, category});
-    if (createdId > 0) {
-      res.status(201).json({ message: 'POST successful', id: createdId });
+    const { insertId } = await articleDAO.addOne({user_id, title, picture_path, picture_alt, picture_caption, content, importance, category});
+    if (insertId > 0) {
+      res.status(201).json({ message: 'POST successful', id: insertId });
     } else {
       res.status(400).json({ message: 'Could not POST article' });
     }

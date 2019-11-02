@@ -1,33 +1,41 @@
 // @flow
 
 const mysql = require('mysql2/promise');
-const [ pool, runSQL, setup ]: [ mysql.PromisePool, any, any ] = require('./setupTestData');
+const [pool, setup]: [mysql.PromisePool, any] = require('./setupTestData');
+const ArticleDAO = require('./ArticleDAO');
 
-beforeAll(async () => {
-  // fails timeout if run w/o DB, but it's fine
-  try {
-    await setup();
-  } catch (e) {
-    console.error(e);
-  }
+const articleDAO = new ArticleDAO(pool);
+
+beforeAll(() => {
+  return setup();
 });
 
-afterAll(done => {
-  pool.end(() => done());
+afterAll(() => {
+  pool.end();
+  // to inform you: don't pass a callback to end() again.
 });
 
-// describe('getOne()', () => {
-//
-//   it('goes well', async done => {
-//     // TODO
-//     done();
-//   });
-//
-// });
+describe('getOne()', () => {
+  it('just works', async () => {
+    const article = await articleDAO.getOne(1);
+    expect(article.title).not.toBeUndefined();
+    expect(article.title).toBe('Fridge Found Floating in Space');
+  });
+});
 
-// TODO this is executed BEFORE beforeAll
-//  i am officially dead soon
-
-test('something', done => {
-  done();
+describe('addOne()', () => {
+  it('works', async () => {
+    const { insertId, affectedRows } = await articleDAO.addOne({
+      user_id: 1,
+      title: 'Two Birds with One Stone',
+      picture_path: null,
+      picture_alt: null,
+      picture_caption: 'hello there',
+      content: 'Desperation',
+      importance: 2,
+      category: 'culture'
+    });
+    expect(affectedRows).toBe(1);
+    expect(insertId).toBeGreaterThan(2);
+  });
 });

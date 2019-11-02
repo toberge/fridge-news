@@ -18,7 +18,7 @@ module.exports = class ArticleDAO extends DAO {
   }
 
   async getAll() {
-    const [[rows]] = await super.query('SELECT * FROM articles');
+    const [[rows]] = await super.query('SELECT * FROM articles_view');
     return rows;
   }
 
@@ -83,7 +83,7 @@ module.exports = class ArticleDAO extends DAO {
       );
       fields = fluff;
     }
-    return fields.insertId;
+    return fields;
   };
 
   /**
