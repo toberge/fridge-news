@@ -166,6 +166,7 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
   }
 
   mounted() {
+    document.title = 'Fridge News | Write Article';
     articleStore.clearArticle();
   }
 

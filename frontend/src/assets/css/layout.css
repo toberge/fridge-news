@@ -68,7 +68,7 @@ html {
 
 /* simple grid layout */
 /* handy for footer positioning */
-@supports not (display: grid) {
+@supports (display: grid) {
   .grid {
     display: grid;
     grid-template-areas:
@@ -92,7 +92,7 @@ html {
 /* basically this solution for footer:
    https://dev.to/domysee/keeping-the-footer-at-the-bottom-with-css-flexbox-5h5f
  */
-@supports (display: grid) {
+@supports not (display: grid) {
   .grid {
     display: flex;
     flex-direction: column;

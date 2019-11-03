@@ -45,7 +45,7 @@ describe('ArticleDAO', () => {
   });
 
   describe('.getOne()', () => {
-    it('just works', async () => {
+    it('fetches correct article', async () => {
       const article = await articleDAO.getOne(2);
       expect(article.title).not.toBeUndefined();
       expect(article.title).toBe(TITLE);
@@ -67,7 +67,7 @@ describe('ArticleDAO', () => {
   });
 
   describe('.addOne()', () => {
-    it('actually deletes', async () => {
+    it('inserts data', async () => {
       const {insertId, affectedRows} = await articleDAO.addOne({
         user_id: 1,
         title: 'Two Birds with One Stone',
@@ -85,7 +85,7 @@ describe('ArticleDAO', () => {
   });
 
   describe('.updateOne()', () => {
-    it('actually updates the data', async () => {
+    it('actually updates stored data', async () => {
       const {affectedRows} = await articleDAO.updateOne({
         article_id: 1,
         title: TESLA_TITLE, // shan't break other test

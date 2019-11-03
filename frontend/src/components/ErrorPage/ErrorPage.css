@@ -4,14 +4,17 @@
   /*border-radius: 5%;*/
 }
 .center-box {
-  position: absolute;
-  top: 50%;
+  /*position: absolute;
   left: 50%;
+  top: 50%;
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);*/
+  /* TODO fix this sometime, below is a quick "fix" */
+  /* since centering placed the box in center of *screen*, not wrapper element */
+  margin-top: 30%;
   text-align: center;
 }
 

@@ -11,11 +11,16 @@ export default class ErrorPage extends Component {
         <div className="center-wrapper">
           <div className="center-box">
             <h1>404 Not Found</h1>
-            <p>- which means there's nothing here ¯\_(ツ)_/¯</p>
+            <p>which means there's nothing here</p>
+            <p>¯\_(ツ)_/¯</p>
           </div>
         </div>
       </main>
     );
+  }
+
+  mounted() {
+    document.title = 'Fridge News | 404 Not Found'
   }
 
 }
