@@ -36,9 +36,18 @@ class UserIcon extends Component {
   }
 }
 
+class DeleteIcon extends Component {
+  render() {
+    return (
+      <i className="fas fa-trash"></i>
+    );
+  }
+}
+
 export default class Icon {
   static Loading = LoadingIcon;
   static Write = WriteIcon;
   static Search = SearchIcon;
   static User = UserIcon;
+  static Delete = DeleteIcon;
 }

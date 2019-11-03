@@ -6,6 +6,7 @@ import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { Button } from '../../widgets';
+import './CommentSection.css';
 
 export default class CommentSection extends Component<{ articleID: number }> {
   comment: string = '';

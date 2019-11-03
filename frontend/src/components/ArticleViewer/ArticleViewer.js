@@ -9,8 +9,9 @@ import './ArticleViewer.css';
 import { Button } from '../widgets';
 import { createHashHistory } from 'history';
 import CommentSection from './CommentSection';
-import Notifier from "../shared/Notifier";
-import {userStore} from "../../stores/userStore";
+import Notifier from '../shared/Notifier';
+import { userStore } from '../../stores/userStore';
+import Icon from '../shared/Icon';
 
 const history = createHashHistory();
 
@@ -60,9 +61,18 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
               </dd>
             </dl>
           </section>
-          <Button.Secondary onClick={() => history.push(`/articles/${this.props.match.params.id}/edit`)}>Edit</Button.Secondary>
-          <Button.Danger onClick={() => null}>Delete</Button.Danger>
-          <CommentSection articleID={this.props.match.params.id}/>
+          <section className="article-buttons">
+            <strong>You may wish to </strong>
+            <Button.Secondary onClick={() => history.push(`/articles/${this.props.match.params.id}/edit`)}>
+              <Icon.Write /> Edit
+            </Button.Secondary>
+            <strong> or </strong>
+            <Button.Danger onClick={() => null}>
+              <Icon.Delete /> Delete
+            </Button.Danger>
+            <strong> this article.</strong>
+          </section>
+          <CommentSection articleID={this.props.match.params.id} />
         </article>
       </main>
     );
@@ -73,10 +83,10 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
     try {
       await articleStore.getArticle(this.props.match.params.id);
       await userStore.getAuthor(articleStore.currentArticle.authorID);
-      this.hidden = false
+      this.hidden = false;
     } catch (e) {
       Notifier.error(`Could not fetch article, reason:\n${e.message}`);
-      history.push('/404')
+      history.push('/404');
     }
   }
 }
