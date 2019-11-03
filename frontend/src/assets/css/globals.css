@@ -20,22 +20,3 @@
   --serif-font: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; /* TODO */
 }
 
-/*===================*\
-    general layout
-    TODO keep it here?
-\*===================*/
-
-body {
-  margin: 0;
-  font-family: var(--sans-serif-font);
-}
-
-h1,
-h2,
-h3  {
-  text-align: center;
-}
-
-a {
-  /*color: var(--link-text);*/
-}

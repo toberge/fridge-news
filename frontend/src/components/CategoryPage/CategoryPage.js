@@ -12,7 +12,13 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
     return (
       <main>
         <h1>{capitalizeFirstLetter(this.props.match.params.id)}</h1>
-        {array && array.length > 0 ? <CardHolder>{this.renderList(array)}</CardHolder> : <h2><em>We've come up empty</em></h2>}
+        {array && array.length > 0 ? (
+          <CardHolder>{this.renderList(array)}</CardHolder>
+        ) : (
+          <h2>
+            <em>We've come up empty</em>
+          </h2>
+        )}
       </main>
     );
   }
@@ -25,11 +31,7 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
 
   mounted(): void {
     const category = this.props.match.params.id;
-    if (category) {
-      articleStore.getCategory(category).catch(error => console.error(error));
-      document.title = `Fridge News | ${capitalizeFirstLetter(category)}`;
-    } else {
-      // TODO
-    }
+    articleStore.getCategory(category).catch(error => console.error(error));
+    document.title = `Fridge News | ${capitalizeFirstLetter(category)}`;
   }
 }

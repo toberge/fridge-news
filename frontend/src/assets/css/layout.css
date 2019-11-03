@@ -43,6 +43,17 @@
   }
 }
 
+/* general */
+
+body {
+  margin: 0;
+  font-family: var(--sans-serif-font);
+}
+
+h1, h2, h3 {
+  text-align: center;
+}
+
 /* globally force full viewport usage */
 
 body,

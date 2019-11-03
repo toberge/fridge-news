@@ -23,6 +23,32 @@ figure img {
   width: 100%;
 }
 
+.dateline {
+  background-color: var(--section-background);
+  padding: 1rem;
+  -webkit-border-radius: 0.3rem;
+  -moz-border-radius: 0.3rem;
+  border-radius: 0.3rem;
+}
+
+@media screen and (min-width: 961px) {
+  .dateline {
+    text-align: center;
+  }
+
+  .dateline dt, .dateline dd {
+    display: inline-block;
+  }
+
+  .dateline dt {
+    margin-right: 0.5rem;
+  }
+
+  .dateline dd {
+    margin-right: 1rem;
+  }
+}
+
 .comments {
   margin: 1%;
   padding: 2%;

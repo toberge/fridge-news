@@ -49,7 +49,7 @@ const performSingleRowQuery = async (res, func, context: string, ...params) => {
       if (rows) {
         res.status(200).json(rows);
       } else {
-        res.send(404).json({ error: `GET request failed, invalid ID for ${context}`});
+        res.status(404).json({ error: `GET request failed, invalid ID for ${context}`});
       }
     })
     .catch(e => {

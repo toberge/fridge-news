@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS articles, users, ratings, comments;
 CREATE TABLE articles(
     article_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL REFERENCES users(user_id),
-    title VARCHAR(32) NOT NULL,
+    title VARCHAR(64) NOT NULL,
     picture_path VARCHAR(2083),
     picture_alt VARCHAR(64),
     picture_caption VARCHAR(64),

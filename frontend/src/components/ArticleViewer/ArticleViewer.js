@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import MarkdownRenderer from 'react-markdown-renderer';
-import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { articleStore } from '../../stores/articleStore';
 import './ArticleViewer.css';
@@ -48,7 +47,6 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
             </figure>
           ) : null}
           <MarkdownRenderer markdown={text} />
-          {/*comments TODO*/}
           <section className="details">
             <dl className="dateline">
               <dt>Author:</dt>
@@ -58,7 +56,6 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
               <dt>Rated:</dt>
               <dd>
                 <meter value={rating} max={5} min={1} />
-                <br />
                 {` (${rating} out of 5)`}
               </dd>
             </dl>
