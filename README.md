@@ -8,6 +8,65 @@ This is my work on a relatively small project for a university course in web dev
 
 Static HTML+CSS mockup on [github](https://github.com/toberge/fridge-news-mockup) and [our university's gitlab instance](https://gitlab.stud.iie.ntnu.no/toberge/fridge-news-mockup)
 
+## Installation
+
+Developers can install flow and prettier globally:  
+```bash
+npm install -g flow-bin prettier
+```
+
+Run either
+```bash
+cd frontend
+```
+or
+```bash
+cd backend
+```
+then run
+```bash
+npm install
+```
+to install dependencies.
+
+## Testing
+
+Backend testing requires a MySQL database with credentials as specified in `backend/database/test-properties.json`, or your own if you edit the file.
+
+In `frontend` or `backend`, run
+```bash
+npm test
+```
+to perform tests, and
+```bash
+flow check files_to_check
+```
+to perform typechecking.
+
+## Running
+
+Database credentials are specified in `backend/database/properties.json` following the pattern in `backend/database/template.json`.
+
+In `backend`, run
+```bash
+npm start
+```
+to start the server.
+
+In `frontend`, run
+```bash
+npm start
+```
+to start a development run that will reload the page when the code is changed.
+
+## Building
+
+In `frontend`: running
+```bash
+npm run build
+```
+will prepare an optimized production build that will be served through the backend when that is running.
+
 ## note to self
 
 about flow-typed:  

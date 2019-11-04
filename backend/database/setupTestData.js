@@ -3,7 +3,7 @@
 const fs = require('fs');
 const mysql = require('mysql2/promise');
 
-const conf = JSON.parse(fs.readFileSync('database/test.json', 'utf8'));
+const conf = JSON.parse(fs.readFileSync('database/test-properties.json', 'utf8'));
 const pool = mysql.createPool({
   ...conf,
   connectionLimit: 4,
