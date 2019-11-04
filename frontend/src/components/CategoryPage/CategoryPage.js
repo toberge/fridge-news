@@ -32,6 +32,6 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
   mounted(): void {
     const category = this.props.match.params.id;
     articleStore.getCategory(category).catch(error => console.error(error));
-    document.title = `Fridge News | ${capitalizeFirstLetter(category)}`;
+    document.title = `${capitalizeFirstLetter(category)} - Fridge News`;
   }
 }

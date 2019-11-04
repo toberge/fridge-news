@@ -20,6 +20,22 @@ class WriteIcon extends Component {
   }
 }
 
+class SaveIcon extends Component {
+  render() {
+    return (
+      <i className="fas fa-save"></i>
+    );
+  }
+}
+
+class UploadIcon extends Component {
+  render() {
+    return (
+      <i className="fas fa-upload"></i>
+    );
+  }
+}
+
 class SearchIcon extends Component {
   render() {
     return (
@@ -36,6 +52,14 @@ class UserIcon extends Component {
   }
 }
 
+class EmailIcon extends Component {
+  render() {
+    return (
+      <i className="far fa-envelope"></i>
+    );
+  }
+}
+
 class DeleteIcon extends Component {
   render() {
     return (
@@ -47,7 +71,10 @@ class DeleteIcon extends Component {
 export default class Icon {
   static Loading = LoadingIcon;
   static Write = WriteIcon;
+  static Upload = UploadIcon;
+  static Save = SaveIcon;
+  static Delete = DeleteIcon;
   static Search = SearchIcon;
   static User = UserIcon;
-  static Delete = DeleteIcon;
+  static Email = EmailIcon;
 }

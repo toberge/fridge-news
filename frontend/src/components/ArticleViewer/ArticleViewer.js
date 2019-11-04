@@ -12,6 +12,7 @@ import CommentSection from './CommentSection';
 import Notifier from '../shared/Notifier';
 import { userStore } from '../../stores/userStore';
 import Icon from '../shared/Icon';
+import {capitalizeFirstLetter} from "../../data/Article";
 
 const history = createHashHistory();
 
@@ -100,10 +101,12 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
 
   async mounted() {
     this.hidden = true;
+    document.title = 'Loading... - Fridge News';
     try {
       await articleStore.getArticle(this.props.match.params.id);
       await userStore.getAuthor(articleStore.currentArticle.authorID);
       this.hidden = false;
+      document.title = `${articleStore.currentArticle.title} - ${capitalizeFirstLetter(articleStore.currentArticle.category)} - Fridge News`
     } catch (e) {
       Notifier.error(`Could not fetch article, reason:\n${e.message}`);
       history.push('/404');

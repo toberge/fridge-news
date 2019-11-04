@@ -1,1 +1,1 @@
-export { default } from './ArticleEditor';
+export * from './Editor';

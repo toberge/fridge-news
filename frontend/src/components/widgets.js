@@ -67,12 +67,15 @@ export class Button {
 }
 
 class FormSubmit extends Component<{
-  value: string,
-  disabled: boolean
+  disabled: boolean,
+  children?: React.Node
 }> {
   render() {
     return (
-      <input type="submit" className="btn btn-primary" disabled={this.props.disabled} value={this.props.value} />
+      <button type="submit" className="btn btn-primary" disabled={this.props.disabled}>
+        {/*<input type="submit" className="btn btn-primary" disabled={this.props.disabled} value={this.props.value} />*/}
+        {this.props.children}
+      </button>
     );
   }
 }

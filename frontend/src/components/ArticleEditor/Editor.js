@@ -4,42 +4,37 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { Article, capitalizeFirstLetter, CATEGORIES } from '../../data/Article';
+import { capitalizeFirstLetter, CATEGORIES } from '../../data/Article';
 import { articleStore } from '../../stores/articleStore';
 import { Form } from './../widgets';
 import { createHashHistory } from 'history';
 import Icon from '../shared/Icon';
+import Notifier from '../shared/Notifier';
 
 const history = createHashHistory();
 
-// TODO make another version that handles editing
-export default class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
-  article: Article = articleStore.currentArticle;
+export class ArticleWriter extends Component<{ match: { params: { id: number } } }> {
   pending: boolean = false;
 
   render() {
     return (
       <main>
         <h1>Write Article</h1>
-        <EditorForm pending={this.pending} handleUpload={this.handleUpload} />
+        <EditorForm pending={this.pending} handleUpload={this.handleUpload} save={false} />
       </main>
     );
   }
 
   mounted() {
-    document.title = 'Fridge News | Write Article';
+    document.title = 'Write Article - Fridge News';
     articleStore.clearArticle();
   }
 
   async handleUpload(event: SyntheticInputEvent<HTMLFormElement>) {
     event.preventDefault();
+    // no need to validate (except image?) - already done by form
 
     console.log('received', articleStore.currentArticle, event.target);
-    // TODO validate - wait, there's no need for that...
-    if (!event.target || event.target.checkValidity()) {
-      console.log('wow')
-      return;
-    }
 
     // disable button (+ possible additional effects)
     this.pending = true;
@@ -58,15 +53,67 @@ export default class ArticleEditor extends Component<{ match: { params: { id: nu
       let newId = await articleStore.addArticle();
       if (newId && newId > 0) {
         history.push('/articles/' + newId);
+        return;
+      } else {
+        Notifier.error('Posting article failed with unknown error.')
       }
     } catch (e) {
-      // TODO handle...
-      console.error(e);
+      Notifier.error(`Posting article failed\n${e.message}`);
     }
+    this.pending = false;
   }
 }
 
-class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any) => mixed }> {
+export class ArticleEditor extends Component<{ match: { params: { id: number } } }> {
+  pending: boolean = false;
+
+  render() {
+    return (
+      <main>
+        <h1>Edit Article</h1>
+        <EditorForm pending={this.pending} handleUpload={this.handleSave} save={true} />
+      </main>
+    );
+  }
+
+  mounted() {
+    document.title = 'Edit Article - Fridge News';
+  }
+
+  async handleSave(event: SyntheticInputEvent<HTMLFormElement>) {
+    event.preventDefault();
+    // no need to validate (except image?) - already done by form
+
+    console.log('received', articleStore.currentArticle, event.target);
+
+    // disable button (+ possible additional effects)
+    this.pending = true;
+
+    // set no picture at all if picture is null
+    if (!articleStore.currentArticle.picturePath || articleStore.currentArticle.picturePath === '') {
+      articleStore.currentArticle.picturePath = null;
+      articleStore.currentArticle.pictureAlt = null;
+      articleStore.currentArticle.pictureCapt = null;
+    } else {
+      // TODO test if image exists, run a GET request?
+    }
+
+    try {
+      if (await articleStore.updateArticle()) {
+        history.push('/articles/' + articleStore.currentArticle.id);
+        return;
+      } else {
+        Notifier.error('Updating article failed with unknown error.')
+      }
+    } catch (e) {
+      Notifier.error(`Updating article failed\n${e.message}`);
+    }
+    // not pending no more
+    this.pending = false;
+  }
+}
+
+class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any) => mixed, save?: boolean }> {
   hasPicture: boolean = false;
 
   handleMarkdownChange(value: string) {
@@ -94,6 +141,13 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
     const value = event.target.value;
     if (this.hasPicture && value != null && value.length < 64) {
       articleStore.currentArticle.pictureAlt = value;
+    }
+  }
+
+  handlePictureCaptChange(event: SyntheticInputEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    if (this.hasPicture && value != null && value.length < 64) {
+      articleStore.currentArticle.pictureCapt = value;
     }
   }
 
@@ -263,7 +317,11 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             </select>
           </div>
         </Form.Group>
-        <Form.Submit disabled={this.props.pending} value="Upload" />
+        {/*<Form.Submit disabled={this.props.pending} value={this.props.buttonText} />*/}
+        <Form.Submit disabled={this.props.pending}>
+          {this.props.save ? <Icon.Save /> : <Icon.Upload />}
+          {this.props.save ? ' Save' : ' Upload'}
+        </Form.Submit>
         {this.props.pending ? (
           <span>
             {' '}

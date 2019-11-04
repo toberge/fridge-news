@@ -21,6 +21,6 @@ export default class FrontPage extends Component {
 
   mounted(): void {
     articleStore.getFrontPage().catch(error => console.error(error));
-    document.title = 'Fridge News | Home';
+    document.title = 'Fridge News';
   }
 }
