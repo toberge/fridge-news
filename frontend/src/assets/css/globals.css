@@ -3,20 +3,23 @@
 \*===================*/
 
 :root {
+  --blank-background: #fff;
   --section-text: #212121; /* 444 fails WCAG AAA with focused bg */
   --section-background: #ddd;
   --focused-background: #ccc;
   --active-background: #bbb; /* #FF5D66; */
-  --logo-background: lightblue;
+  --logo-background: #b1eaf9;
+  --logo-active-background: lightblue;
   --active-text: var(--section-text); /* #FFFFFF; */
+
   --button-background: darkgreen;
   --button-focus: green;
   --button-text: white;
-  /*--link-text: TODO;*/
+  --footer-link-text: darkblue;
+
   --sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Helvetica,
     'Noto Sans', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif;
   /* override bootstrap like ez */
   --font-family-sans-serif: var(--sans-serif-font);
   --serif-font: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; /* TODO */
 }
-

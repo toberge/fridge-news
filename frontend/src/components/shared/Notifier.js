@@ -8,7 +8,7 @@ import "./Notifier.css";
 notifier.configure({
   position: 'top-center',
   closeOnClick: true,
-  width: '30rem',
+  // width: '30rem', TODO needs further styling... X shows up too far left
   animation: {
     in: "fadeIn",
     out: "fadeOut",

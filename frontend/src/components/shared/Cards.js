@@ -21,19 +21,19 @@ export class ArticleCard extends Component<{
 }> {
   render() {
     return (
-      <NavLink className="card" style={{ width: '40rem;' }} to={`/articles/${this.props.article.id}`}>
+      <div className="card" style={{ width: '40rem;' }} >
         <img
           className="card-img-top"
           src={this.props.article.picturePath ? this.props.article.picturePath : placeholderImage}
           alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Floppy disks'}
         />
         <div className="card-body">
-          <h2 className="card-title">{this.props.article.title}</h2>
+          <NavLink to={`/articles/${this.props.article.id}`}><h2 className="card-title">{this.props.article.title}</h2></NavLink>
         </div>
         {this.props.showCategory ? (
           <div className="card-footer text-muted">{capitalizeFirstLetter(this.props.article.category)}</div>
         ) : null}
-      </NavLink>
+      </div>
     );
   }
 }

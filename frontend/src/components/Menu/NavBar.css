@@ -5,6 +5,7 @@
 #masthead {
   /*position: sticky;*/
   top: 0;
+  background: var(--blank-background);
 }
 
 /* credz: https://jsfiddle.net/joshnh/srNVQ/ */
@@ -27,6 +28,16 @@
 
 #logo {
   background: var(--logo-background);
+}
+
+#logo.active {
+  background: var(--logo-active-background);
+}
+
+#logo img {
+  display: inline;
+  margin: 0;
+  height: 2rem;
 }
 
 .my-navbar .separator {
@@ -53,7 +64,7 @@
 .my-navbar li a:focus {
   background: var(--focused-background);
   outline: none;
-  border: solid 3px;
+  border-bottom: solid 3px;
 }
 
 .my-navbar li a.active {

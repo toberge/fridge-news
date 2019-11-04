@@ -14,7 +14,7 @@
   transform: translate(-50%, -50%);*/
   /* TODO fix this sometime, below is a quick "fix" */
   /* since centering placed the box in center of *screen*, not wrapper element */
-  margin-top: 30%;
+  margin-top: 20vh;
   text-align: center;
 }
 
