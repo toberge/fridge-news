@@ -63,11 +63,11 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
           </section>
           <section className="article-buttons">
             <strong>You may wish to </strong>
-            <Button.Secondary onClick={() => history.push(`/articles/${this.props.match.params.id}/edit`)}>
+            <Button.Secondary onClick={this.handleEdit}>
               <Icon.Write /> Edit
             </Button.Secondary>
             <strong> or </strong>
-            <Button.Danger onClick={() => null}>
+            <Button.Danger onClick={this.handleDelete}>
               <Icon.Delete /> Delete
             </Button.Danger>
             <strong> this article.</strong>
@@ -76,6 +76,26 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
         </article>
       </main>
     );
+  }
+
+  handleEdit() {
+    // TODO prevent this from being necessary?
+    if (articleStore.currentArticle.picturePath === null) {
+      articleStore.currentArticle.picturePath = '';
+      articleStore.currentArticle.pictureAlt = '';
+      articleStore.currentArticle.pictureCapt = '';
+    }
+    history.push(`/articles/${this.props.match.params.id}/edit`);
+  }
+
+  handleDelete() {
+    articleStore.deleteArticle()
+      .then(() => {
+        Notifier.success('Successfully deleted article');
+        history.push('/');
+      })
+      .catch((e: Error) => Notifier.error(`Could not delete article\n${e.message}`));
+    // TODO maybe don't push immediately
   }
 
   async mounted() {

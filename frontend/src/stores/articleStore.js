@@ -33,7 +33,7 @@ const empty = new Article(
     1,
     1,
     '',
-    null,
+    '',
     '',
     '',
     `*Begin your article with an ingress*
@@ -62,16 +62,7 @@ class ArticleStore {
   ]);
 
   clearArticle() {
-    this.currentArticle.title = empty.title;
-    this.currentArticle.picturePath = null;
-    this.currentArticle.pictureAlt = empty.pictureAlt;
-    this.currentArticle.pictureCapt = empty.pictureCapt;
-    this.currentArticle.text = empty.text;
-    this.currentArticle.uploadTime = empty.uploadTime;
-    this.currentArticle.updateTime = empty.updateTime;
-    this.currentArticle.importance = empty.importance;
-    this.currentArticle.category = empty.category;
-
+    Object.assign(this.currentArticle, { ...empty });
   }
 
   getArticle(id: number) {
@@ -138,6 +129,11 @@ class ArticleStore {
       importance: article.importance,
       category: article.category
     }).then(response => response.status === 200);
+  }
+
+  deleteArticle(): Promise<boolean> {
+    return axios.delete(`/articles/${this.currentArticle.id}`)
+      .then(response => response.status === 200);
   }
 
   getFrontPage(): Promise<ArticleBase[]> {

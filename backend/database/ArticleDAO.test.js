@@ -53,6 +53,9 @@ describe('ArticleDAO', () => {
     });
   });
 
+  // TODO test if comments are deleted...
+  //  and perhaps do the comment deletion manually
+  //  if ON DELETE CASCADE seems too dangerous.
   describe('.deleteOne()', () => {
     it('deletes an article', async () => {
       const {affectedRows} = await articleDAO.deleteOne(3);

@@ -406,6 +406,22 @@ app.put('/articles/:id(\\d+)', async (req, res) => {
   }
 });
 
+app.delete('/articles/:id(\\d+)', async (req, res) => {
+  const id = parseInt(req.params.id);
+  console.log(`Got request to DELETE article ${id}`);
+  try {
+    let fields = await articleDAO.deleteOne(id);
+    if (fields.affectedRows === 1) {
+      res.status(200).json({ message: 'DELETE successful' });
+    } else {
+      res.status(400).json({ message: 'Could not DELETE article' });
+    }
+  } catch (e) {
+    console.trace(e, 'Failed to DELETE article');
+    res.status(400).json({ error: 'Failed to DELETE article' });
+  }
+});
+
 app.post('/articles/:id(\\d+)/comments', /*authLogin, */async (req, res) => {
   if (!req.body.title || !req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { title, content } = req.body;

@@ -38,7 +38,7 @@ export class Article {
   category: string;
   uploadTime: Date;
   updateTime: Date | null;
-  importance: 1 | 2;
+  importance: number;
   rating: number;
 
   constructor(

@@ -34,7 +34,7 @@ CREATE TABLE ratings(
 
 CREATE TABLE comments(
     comment_id INT PRIMARY KEY AUTO_INCREMENT,
-    article_id INT NOT NULL REFERENCES articles(article_id),
+    article_id INT NOT NULL REFERENCES articles(article_id) ON DELETE CASCADE, /* should be safe, but who knowns */
     user_id INT NOT NULL REFERENCES users(user_id),
     title VARCHAR(30) NOT NULL,
     content TEXT NOT NULL,

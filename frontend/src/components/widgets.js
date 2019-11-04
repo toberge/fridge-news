@@ -66,6 +66,17 @@ export class Button {
   static Primary = ButtonPrimary;
 }
 
+class FormSubmit extends Component<{
+  value: string,
+  disabled: boolean
+}> {
+  render() {
+    return (
+      <input type="submit" className="btn btn-primary" disabled={this.props.disabled} value={this.props.value} />
+    );
+  }
+}
+
 class FormInput extends Component<{ type?: string, value: string, onChange: () => void }> {
   render() {
     return (
@@ -87,6 +98,7 @@ export class FormGroup extends Component<{ children: React.Node }> {
 export class Form extends Component<{ children: React.Node }> {
   static Input = FormInput;
   static Group = FormGroup;
+  static Submit = FormSubmit;
 
   render() {
     return <form>{this.props.children}</form>;
