@@ -3,7 +3,8 @@
 \*===================*/
 
 :root {
-  --blank-background: #fff;
+  --real-background: #a5b2b6;
+  --content-background: #fff;
   --section-text: #212121; /* 444 fails WCAG AAA with focused bg */
   --section-background: #ddd;
   --focused-background: #ccc;

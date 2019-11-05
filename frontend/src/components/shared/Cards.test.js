@@ -23,7 +23,7 @@ describe('Card', () => {
 
   it('has a title', done => {
     // TODO why did teacher suggest setTimeout here?
-    // setTimeout(() => {
+    //  --> because Alert uses setTimeout itself...
     const instance = ArticleCard.instance();
     expect(typeof instance).toEqual('object');
     // total bogus test
@@ -32,7 +32,6 @@ describe('Card', () => {
       expect(instance.props.article.title).toEqual(TITLE);
     }
     done();
-    // });
   });
 
   // NOTE: throws error when rendering since it uses NavLink and isn't in Router context here

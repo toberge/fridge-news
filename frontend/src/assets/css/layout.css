@@ -2,13 +2,14 @@
    grid + media queries
 \*======================*/
 
-@media screen and (min-width: 961px) {
+/* TODO navbar can be squeezed at 62rem or something instead */
+@media screen and (min-width: 65rem) {
   /* margin around articles on wider screens */
   main {
     margin: 0 auto;
     width: 950px;
-    background-color: var(--blank-background);
-    box-shadow: var(--section-background) 0 0 9px 0;
+    background-color: var(--content-background);
+    box-shadow: var(--content-background) 0 0 1rem 0.5rem;
     padding: 1%;
   }
 
@@ -24,11 +25,12 @@
   }
 }
 
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 65rem) {
   /* tiny margin around content on narrow screens */
   /* TODO rem instead */
   main {
-    margin: 0 2%;
+    padding: 0 2%;
+    background-color: var(--content-background);
     /* TODO I know about that */
   }
   /* TODO add hamborger */
@@ -48,6 +50,13 @@
 body {
   margin: 0;
   font-family: var(--sans-serif-font);
+  background-color: var(--real-background);
+}
+
+main {
+  /* feedback from maria */
+  padding-top: 3rem;
+  padding-bottom: 2rem;
 }
 
 h1, h2, h3 {

@@ -31,7 +31,7 @@ figure img {
   border-radius: 0.3rem;
 }
 
-@media screen and (min-width: 961px) {
+@media screen and (min-width: 65rem) {
   .dateline {
     text-align: center;
   }
