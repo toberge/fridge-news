@@ -21,10 +21,10 @@ const TESLA_TITLE = 'One Thousand Teslas Found Outside the Solar System';
 describe('ArticleDAO', () => {
   describe('.getAll()', () => {
     it('gives correctly sorted articles', async () => {
-      const articles = await articleDAO.getFrontPage();
+      const articles = await articleDAO.getAll();
       // TODO decide sorting order for this query if you ever use it
-      console.log(articles);
-      expect(articles[0].title).toBe(TITLE);
+      expect(articles[0].title).toBe(TESLA_TITLE);
+      expect(articles[1].title).toBe(TITLE);
     });
   });
 
@@ -33,6 +33,14 @@ describe('ArticleDAO', () => {
       const articles = await articleDAO.getFrontPage();
       // is 2nd in creation here, 1st if filtered by importance and sorted by recency
       expect(articles[0].title).toBe(TITLE);
+    });
+  });
+
+  describe('.getNewsFeed()', () => {
+    it('gives correctly sorted articles', async () => {
+      const articles = await articleDAO.getNewsFeed();
+      // is 2nd in creation here, 1st if filtered by importance and sorted by recency
+      expect(articles[0].title).toBe(TESLA_TITLE);
     });
   });
 

@@ -13,20 +13,19 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
       <main>
         <h1>{capitalizeFirstLetter(this.props.match.params.id)}</h1>
         {array && array.length > 0 ? (
-          <CardHolder>{this.renderList(array)}</CardHolder>
+          <CardHolder>
+            {array.map(a => (
+              <ArticleCard article={a} key={a.id} />
+            ))}
+          </CardHolder>
         ) : (
           <h2>
+            {/* TODO this is gonna appear evry single time before init, plz fix? */}
             <em>We've come up empty</em>
           </h2>
         )}
       </main>
     );
-  }
-
-  // split into its own method because we need to check for undefined to pacify Flow
-  renderList(array: ArticleBase[]): React.Node {
-    if (array) return array.map(a => <ArticleCard article={a} key={a.id} />);
-    else return 'No articles found';
   }
 
   mounted(): void {

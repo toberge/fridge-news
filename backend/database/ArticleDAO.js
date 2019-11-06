@@ -37,6 +37,11 @@ module.exports = class ArticleDAO extends DAO {
     return rows;
   };
 
+  getNewsFeed = async () => {
+    const [[rows]] = await super.query('SELECT * FROM news_feed');
+    return rows;
+  };
+
   getByCategory = async (category: string) => {
     const [[rows]] = await super.execute('SELECT * FROM articles_condensed WHERE category = ?', category);
     return rows;

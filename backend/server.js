@@ -1,5 +1,5 @@
 // @flow
-'use strict';
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session'); // TODO don't actually use this next time, use JWT stuffs
@@ -76,7 +76,7 @@ app.get('/articles', (req, res) => {
 
 const things = [
   articleDAO.getOne
-]
+];
 app.get('/articles/:id(\\d+)', async (req, res) => {
   /*try {
     const rows = await things[0](req.params.id);
