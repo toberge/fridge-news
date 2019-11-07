@@ -1,17 +1,17 @@
 // @flow
 
 import axios from 'axios';
-import { Article, ArticleBase } from '../data/Article';
+import { Article, ArticleBase, NewsFeedArticle } from '../data/Article';
 import { sharedComponentData } from 'react-simplified';
 
 const placeholder = new Article(
-    1,
-    1,
-    'Fridge Found Floating in Space',
-    'https://i.imgur.com/puQs66y.png',
-    'Fridge floating in space',
-    'The infamous space-floating fridge',
-    `*After its long flight through the rings of Saturn, a fridge of mysterious
+  1,
+  1,
+  'Fridge Found Floating in Space',
+  'https://i.imgur.com/puQs66y.png',
+  'Fridge floating in space',
+  'The infamous space-floating fridge',
+  `*After its long flight through the rings of Saturn, a fridge of mysterious
 origin was caught by a spacewalking astronaut on the ISS and brought to
 Earth for inspection. Inside were the remains of an unknown biological life
 form - and a pile of ancient floppy disks. The floppies contained impressive
@@ -22,31 +22,31 @@ Yesterday, a fleet of extrasolar ships approached Earth, bearing an ultimatum.
 If we do not stop eating meat and return all our livestock to nature, our entire civilization will be eradicated.
 The species behind this harsh request look almost exactly like the cows of humanity's home world, but their intelligence is on a whole other level, perhaps exceeding ours.
 Most governments in the solar system have already stated that they perceive this threat as very real, some adding that they will take immediate action to enforce a meat ban.`,
-    'news',
-    new Date(),
-    null,
-    1,
-    2.3
-  );
+  'news',
+  new Date(),
+  null,
+  1,
+  2.3
+);
 
 const empty = new Article(
-    1,
-    1,
-    '',
-    '',
-    '',
-    '',
-    `*Begin your article with an ingress*
+  1,
+  1,
+  '',
+  '',
+  '',
+  '',
+  `*Begin your article with an ingress*
     
 ## Use headers of level 2 and below
 
 write some **good** text`,
-    '',
-    new Date(),
-    null,
-    2,
-    2.3
-  );
+  '',
+  new Date(),
+  null,
+  2,
+  2.3
+);
 
 class ArticleStore {
   // won't make loading multiple articles necessitate showing a loading page,
@@ -54,13 +54,16 @@ class ArticleStore {
   loadingArticle: boolean = false;
   currentArticle: Article = placeholder;
   articles: ArticleBase[] = [];
+  newsFeed: NewsFeedArticle[] = [];
+  feedCount: number = 0;
   categoryMap: Map<string, ArticleBase[]> = new Map<string, ArticleBase[]>();
 
   categories: string[] = ['loading categories...'];
 
   // wow shit why must I be forced to do this...
   getCategories() {
-    return axios.get('/articles/categories/')
+    return axios
+      .get('/articles/categories/')
       .then(response => response.data)
       .then(strings => {
         // replace old array (if anything lives there)
@@ -73,7 +76,7 @@ class ArticleStore {
             this.categoryMap.set(s, []);
           }
         });
-      })
+      });
   }
 
   clearArticle() {
@@ -121,56 +124,73 @@ class ArticleStore {
 
   addArticle(): Promise<number | void> {
     const article = this.currentArticle;
-    return axios.post('/articles/', {
-      user_id: article.authorID,
-      title: article.title,
-      picture_path: article.picturePath,
-      picture_alt: article.pictureAlt,
-      picture_caption: article.pictureCapt,
-      content: article.text,
-      importance: article.importance,
-      category: article.category
-    }).then(response => response.data.id);
+    return axios
+      .post('/articles/', {
+        user_id: article.authorID,
+        title: article.title,
+        picture_path: article.picturePath,
+        picture_alt: article.pictureAlt,
+        picture_caption: article.pictureCapt,
+        content: article.text,
+        importance: article.importance,
+        category: article.category
+      })
+      .then(response => response.data.id);
   }
 
   updateArticle(): Promise<boolean | void> {
     const article = this.currentArticle;
-    return axios.put('/articles/' + article.id, {
-      title: article.title,
-      picture_path: article.picturePath,
-      picture_alt: article.pictureAlt,
-      picture_caption: article.pictureCapt,
-      content: article.text,
-      importance: article.importance,
-      category: article.category
-    }).then(response => response.status === 200);
-  }
-
-  deleteArticle(): Promise<boolean> {
-    return axios.delete(`/articles/${this.currentArticle.id}`)
+    return axios
+      .put('/articles/' + article.id, {
+        title: article.title,
+        picture_path: article.picturePath,
+        picture_alt: article.pictureAlt,
+        picture_caption: article.pictureCapt,
+        content: article.text,
+        importance: article.importance,
+        category: article.category
+      })
       .then(response => response.status === 200);
   }
 
-  getFrontPage(): Promise<ArticleBase[]> {
+  deleteArticle(): Promise<boolean> {
+    return axios.delete(`/articles/${this.currentArticle.id}`).then(response => response.status === 200);
+  }
+
+  // TODO this is excessively complex while avoiding the matter of updating the content of the newsfeed...
+  getNewsFeed(): Promise<NewsFeedArticle[]> {
     return axios
-      .get<ArticleBase[]>('/articles/front_page')
-      .then(response => {
-        this.articles.splice(0, this.articles.length);
-        this.articles.push(...this.toArticleArray(response.data));
+      .get('/articles/news_feed')
+      .then(response => response.data)
+      .then((rows: []) =>
+        rows
+          .map(row => new NewsFeedArticle(row.article_id, row.title, new Date(Date.parse(row.upload_time))))
+          .filter(a => !this.newsFeed.find(present => present.id === a.id))
+      )
+      .then((feed: NewsFeedArticle[]) => {
+        // add feed elements that aren't present to beginning of array
+        this.newsFeed.unshift(...feed);
+        this.feedCount += feed.length; // indicate pushback
+        return this.newsFeed;
       });
   }
 
+  getFrontPage(): Promise<ArticleBase[]> {
+    return axios.get<ArticleBase[]>('/articles/front_page').then(response => {
+      this.articles.splice(0, this.articles.length);
+      this.articles.push(...this.toArticleArray(response.data));
+    });
+  }
+
   getCategory(category: string): Promise<ArticleBase[]> {
-    return axios
-      .get<ArticleBase[]>('/articles/categories/' + category)
-      .then(response => {
-        const array = this.categoryMap.get(category);
-        if (array) {
-          array.splice(0, array.length);
-          array.push(...this.toArticleArray(response.data));
-        }
-      })
-      /*.catch(e => {
+    return axios.get<ArticleBase[]>('/articles/categories/' + category).then(response => {
+      const array = this.categoryMap.get(category);
+      if (array) {
+        array.splice(0, array.length);
+        array.push(...this.toArticleArray(response.data));
+      }
+    });
+    /*.catch(e => {
         // this is temporary crap
         this.articles.splice(0, this.articles.length);
         throw e;
@@ -179,7 +199,7 @@ class ArticleStore {
 
   toArticleArray(result: []): ArticleBase[] {
     return result.map(e => {
-      const {article_id, title, picture_path, picture_alt, category} = e;
+      const { article_id, title, picture_path, picture_alt, category } = e;
       return new ArticleBase(article_id, title, picture_path, picture_alt, category);
     });
   }

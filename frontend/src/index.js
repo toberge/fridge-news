@@ -12,17 +12,22 @@ import Footer from './components/Footer';
 import './assets/css/globals.css';
 import './assets/css/layout.css';
 import ErrorPage from './components/ErrorPage';
-import { CATEGORIES } from './data/Article';
-import {articleStore} from "./stores/articleStore";
+import { articleStore } from './stores/articleStore';
+import NewsFeed from './components/NewsFeed';
+import Notifier from "./components/shared/Notifier";
 
 // screw you, oppgavetekst
-articleStore.getCategories();
+articleStore.getCategories()
+  .catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));
 
 const root = document.getElementById('root');
 if (root)
   ReactDOM.render(
     <HashRouter>
-      <Menu />
+      <header id="masthead">
+        <Menu />
+        <Route exact path="/" component={NewsFeed} />
+      </header>
       <Switch>
         <Route exact path="/" component={FrontPage} />
         <Route exact path="/articles/write" component={ArticleWriter} />

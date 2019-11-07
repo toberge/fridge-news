@@ -1,0 +1,37 @@
+#news-feed {
+  width: 100vw; /* no shit sherlock */
+}
+#news-feed ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.3rem 0.8rem;
+  border-bottom: solid 0.3rem var(--section-background);
+
+  /* TODO limited scrolling */
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+@media screen and (min-width: 65rem) {
+  #news-feed li {
+    min-width: 10rem;
+    margin-right: 0.5rem;
+    max-height: 3rem;
+    background: var(--real-background);
+    border-radius: 0.3rem;
+    border: solid 0.1rem var(--cyan);
+    padding: 0 0.2rem;
+
+    /* cutoff with ellipsis */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media screen and (max-width: 65rem) {
+  #news-feed ul {
+    flex-direction: column;
+  }
+}

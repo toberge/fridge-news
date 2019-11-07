@@ -1,15 +1,20 @@
 // @flow
 
-export const CATEGORIES: string[] = [
-  'news',
-  'culture',
-  'science',
-  'politics'
-];
+export const CATEGORIES: string[] = ['news', 'culture', 'science', 'politics'];
 
-export const capitalizeFirstLetter = (s: string) => (
-  s.charAt(0).toLocaleUpperCase() + s.substring(1, s.length)
-);
+export const capitalizeFirstLetter = (s: string) => s.charAt(0).toLocaleUpperCase() + s.substring(1, s.length);
+
+export class NewsFeedArticle {
+  id: number;
+  title: string;
+  uploadTime: Date;
+
+  constructor(id: number, title: string, uploadTime: Date) {
+    this.id = id;
+    this.title = title;
+    this.uploadTime = uploadTime;
+  }
+}
 
 export class ArticleBase {
   id: number;
