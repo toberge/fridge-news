@@ -33,7 +33,7 @@ test_frontend:
         - flow check src
     artifacts:
         paths:
-            - backend/coverage/
+            - frontend/coverage/
 
 publish_coverage:
     stage: coverage
