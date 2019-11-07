@@ -14,7 +14,9 @@ CREATE TABLE articles(
     category ENUM('news', 'culture', 'science', 'politics') NOT NULL,
     INDEX article_title_time(title, upload_time),
     INDEX article_importance_time(importance, upload_time),
-    INDEX article_category_time(upload_time, importance, category)
+    INDEX article_category_time(upload_time, importance, category),
+    FULLTEXT txt_title(title),
+    FULLTEXT txt_content(content)
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 CREATE TABLE users(
@@ -36,14 +38,13 @@ CREATE TABLE comments(
     comment_id INT PRIMARY KEY AUTO_INCREMENT,
     article_id INT NOT NULL REFERENCES articles(article_id) ON DELETE CASCADE, /* should be safe, but who knowns */
     user_id INT NOT NULL REFERENCES users(user_id),
-    title VARCHAR(30) NOT NULL,
     content TEXT NOT NULL,
     upload_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME ON UPDATE CURRENT_TIMESTAMP,
     INDEX comment_article_index(article_id),
     INDEX comment_user_index(user_id),
     INDEX comment_article_time_index(article_id, upload_time),
-    INDEX comment_article_time_title_index(article_id, upload_time, title)
+    FULLTEXT txt_comment(content)
 ) DEFAULT CHAR SET utf8 DEFAULT COLLATE utf8_general_ci;
 
 

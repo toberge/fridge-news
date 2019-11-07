@@ -41,7 +41,11 @@ const pool = mysql.createPool({
 /* TODO the mess */
 
 const ArticleDAO = require('./database/ArticleDAO');
-let articleDAO = new ArticleDAO(pool);
+const articleDAO = new ArticleDAO(pool);
+const UserDAO = require('./database/UserDAO');
+const userDAO = new UserDAO(pool);
+const CommentDAO = require('./database/CommentDAO');
+const commentDAO = new CommentDAO(pool);
 
 const performSingleRowQuery = async (res, func, context: string, ...params) => {
   func(...params)
@@ -91,7 +95,7 @@ app.get('/articles/:id(\\d+)', async (req, res) => {
     res.status(501).json({ error: 'blablabla', details: e.toString() });
   }*/
   performSingleRowQuery(res, articleDAO.getOne, 'articles', parseInt(req.params.id))
-})
+});
 
 /* TODO end of mess... */
 
@@ -271,7 +275,7 @@ app.get('/articles/categories/:name', async (req, res) => { // removed ([\w]+)
 app.get('/articles/:id(\\d+)/comments', async (req, res) => {
   console.log(`Got GET request at ${req.path}`);
   try {
-    const rows = await multiRowQuery('SELECT * FROM comments WHERE article_id = ?', req.params.id);
+    const rows = await commentDAO.getByArticle(parseInt(req.params.id));
     console.log(`${rows.length} rows found`);
     // gotta send the data even if there is none, let the client handle it
     res.status(200).json(rows);
@@ -322,7 +326,7 @@ for (const { endpoint, query } of singleRowResources) {
 app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
   try {
     console.log(`Got GET request at ${req.path}`);
-    const row = await singleRowQuery('SELECT * FROM comments WHERE /*article_id = ? AND*/ comment_id = ?', /* req.params.articleId, */ req.params.commentId);
+    const row = await commentDAO.getOne(parseInt(req.params.commentId));
     if (row) {
       console.log('Found a comment');
       res.status(200).json(row);
@@ -423,12 +427,12 @@ app.delete('/articles/:id(\\d+)', async (req, res) => {
 });
 
 app.post('/articles/:id(\\d+)/comments', /*authLogin, */async (req, res) => {
-  if (!req.body.title || !req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
-  const { title, content } = req.body;
-  console.log(`Got POST request from ${req.session.user} to add ${title} as comment to article ${req.params.id}`);
+  if (!req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
+  const { content } = req.body;
+  console.log(`Got POST request from ${req.session.user} to add ${content} as comment to article ${req.params.id}`);
   try {
-    if (await updateQuery('INSERT INTO comments(article_id, user_id, title, content) VALUES(?, ?, ?, ?)',
-      req.params.id, req.session.userId, title, content)) {
+    const {insertId} = await commentDAO.addOne({article_id: req.params.id, user_id: req.session.userId, content});
+    if (insertId > 0) {
       res.status(201).json({ message: 'POST successful' });
     } else {
       res.status(400).json({ message: 'Could not POST comment' });

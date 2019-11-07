@@ -33,8 +33,8 @@ const runSQL = async (file: string, pool: mysql.PromisePool) => {
 };
 
 const setup = async () => {
-  await runSQL('database/init.sql', pool);
-  await runSQL('database/test.sql', pool);
+  await runSQL('database/sql/init.sql', pool);
+  await runSQL('database/sql/test.sql', pool);
 };
 
 module.exports = [pool, setup];

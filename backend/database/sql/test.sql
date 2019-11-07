@@ -20,5 +20,6 @@ INSERT INTO ratings(article_id, user_id, value) VALUES
 (1,         3,       5);
 
 INSERT INTO comments(article_id, user_id, title, content) VALUES
-(1, 1, 'Title', 'Some text'),
-(3, 3, 'Too Bad', 'It\'s all way too bad');
+(1, 1, 'Some text'),
+(1, 2, 'What is this mess'),
+(2, 3, 'It\'s all way too bad');

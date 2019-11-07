@@ -23,7 +23,13 @@ Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices
  '2019-08-08 08:08:08', 2, 'culture'),
 (1, 'Emptiness Intrudes', NULL, NULL, NULL,
  'The fridge is empty and no more news will be served',
- '2020-01-01 01:01:01', 1, 'news');
+ '2020-01-01 01:01:01', 1, 'news'),
+(2, 'This is a test', 'http://folk.ntnu.no/toberge/tests/test.svg', 'Terminal', 'Terminal running an if loop', 'This is a terminal offense!
+BAH!', '2019-11-04 17:45:23', 2, 'culture'),
+(4, 'This is fine.', 'https://media.giphy.com/media/NTur7XlVDUdqM/giphy.gif', 'fire in room', 'This is fine. Everything is fine.', 'Let''s have some *good* text here!
+Some *real good text*
+`it gets better`
+## would you believe it', '2019-11-04 21:29:08', 1, 'politics');
 
 INSERT INTO users(name) VALUES
 ('The Fridge'),
@@ -36,6 +42,6 @@ INSERT INTO ratings(article_id, user_id, value) VALUES
 (1,         2,       3),
 (1,         3,       5);
 
-INSERT INTO comments(article_id, user_id, title, content) VALUES
-(1, 1, 'Title', 'Some text'),
-(3, 3, 'Too Bad', 'It\'s all way too bad');
+INSERT INTO comments(article_id, user_id, content) VALUES
+(1, 1, 'Some text'),
+(3, 3, 'It\'s all way too bad');
