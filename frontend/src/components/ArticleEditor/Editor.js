@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { capitalizeFirstLetter, CATEGORIES } from '../../data/Article';
+import { capitalizeFirstLetter } from '../../data/Article';
 import { articleStore } from '../../stores/articleStore';
 import { Form } from './../widgets';
 import { createHashHistory } from 'history';
@@ -55,7 +55,7 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
         history.push('/articles/' + newId);
         return;
       } else {
-        Notifier.error('Posting article failed with unknown error.')
+        Notifier.error('Posting article failed with unknown error.');
       }
     } catch (e) {
       Notifier.error(`Posting article failed\n${e.message}`);
@@ -103,7 +103,7 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
         history.push('/articles/' + articleStore.currentArticle.id);
         return;
       } else {
-        Notifier.error('Updating article failed with unknown error.')
+        Notifier.error('Updating article failed with unknown error.');
       }
     } catch (e) {
       Notifier.error(`Updating article failed\n${e.message}`);

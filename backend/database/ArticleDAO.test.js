@@ -19,6 +19,16 @@ const TITLE = 'Fridge Found Floating in Space';
 const TESLA_TITLE = 'One Thousand Teslas Found Outside the Solar System';
 
 describe('ArticleDAO', () => {
+  describe('.getCategories()', () => {
+    it('gives all categories', async () => {
+      const categories = await articleDAO.getCategories();
+      expect(categories[0]).toBe('news');
+      expect(categories[1]).toBe('culture');
+      expect(categories[2]).toBe('science');
+      expect(categories[3]).toBe('politics');
+    });
+  });
+
   describe('.getAll()', () => {
     it('gives correctly sorted articles', async () => {
       const articles = await articleDAO.getAll();
@@ -66,20 +76,20 @@ describe('ArticleDAO', () => {
   //  if ON DELETE CASCADE seems too dangerous.
   describe('.deleteOne()', () => {
     it('deletes an article', async () => {
-      const {affectedRows} = await articleDAO.deleteOne(3);
+      const { affectedRows } = await articleDAO.deleteOne(3);
       expect(affectedRows).toBe(1);
     });
     it('fails if nonexistent ID', async () => {
       // throw syntax for later
       // await expect(articleDAO.deleteOne(42)).rejects.toThrow();
-      const {affectedRows} = await articleDAO.deleteOne(42);
+      const { affectedRows } = await articleDAO.deleteOne(42);
       expect(affectedRows).toBe(0);
     });
   });
 
   describe('.addOne()', () => {
-    it('inserts data', async () => {
-      const {insertId, affectedRows} = await articleDAO.addOne({
+    it('skips picture data if none is given', async () => {
+      const { insertId, affectedRows } = await articleDAO.addOne({
         user_id: 1,
         title: 'Two Birds with One Stone',
         picture_path: null,
@@ -90,14 +100,36 @@ describe('ArticleDAO', () => {
         category: 'culture'
       });
       expect(affectedRows).toBe(1);
-      // we know we didn't delete more than 1 --> total 2 is safe
-      expect(insertId).toBeGreaterThan(2);
+      // auto_increment shouldn't bring us lower again after a deletion
+      expect(insertId).toBeGreaterThan(3);
+
+      const after = await articleDAO.getOne(insertId);
+      expect(after.picture_caption).toBe(null);
     });
+
+    it('inserts picture data if any is provided', async () => {
+      const { insertId, affectedRows } = await articleDAO.addOne({
+        user_id: 2,
+        title: 'What a wonderful Snore',
+        picture_path: 'https://nothing.com/image.jpg',
+        picture_alt: 'ja ja ja',
+        picture_caption: 'btw I don\'t use arch',
+        content: 'Zzzzzzzzzzzzzzzz...',
+        importance: 2,
+        category: 'culture'
+      });
+      expect(affectedRows).toBe(1);
+      expect(insertId).toBeGreaterThan(3);
+
+      const after = await articleDAO.getOne(insertId);
+      expect(after.picture_path).toBe('https://nothing.com/image.jpg');
+      expect(after.picture_alt).toBe('ja ja ja');
+    })
   });
 
   describe('.updateOne()', () => {
     it('actually updates stored data', async () => {
-      const {affectedRows} = await articleDAO.updateOne({
+      const { affectedRows } = await articleDAO.updateOne({
         article_id: 1,
         title: TESLA_TITLE, // shan't break other test
         picture_path: null,
@@ -118,5 +150,3 @@ describe('ArticleDAO', () => {
     });
   });
 });
-
-

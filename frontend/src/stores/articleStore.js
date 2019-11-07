@@ -54,14 +54,9 @@ class ArticleStore {
   loadingArticle: boolean = false;
   currentArticle: Article = placeholder;
   articles: ArticleBase[] = [];
-  categoryMap: Map<string, ArticleBase[]> = new Map<string, ArticleBase[]>([
-    ['news', []],
-    ['culture', []],
-    ['science', []],
-    ['politics', []]
-  ]);
+  categoryMap: Map<string, ArticleBase[]> = new Map<string, ArticleBase[]>();
 
-  categories: string[] = ['news', 'culture', 'science', 'politics', 'blablabla'];
+  categories: string[] = ['loading categories...'];
 
   // wow shit why must I be forced to do this...
   getCategories() {
@@ -70,14 +65,14 @@ class ArticleStore {
       .then(strings => {
         // replace old array (if anything lives there)
         const countBefore = this.categories.length;
-        this.categories.push(strings);
+        this.categories.push(...strings);
         this.categories.splice(0, countBefore);
         // add to hashmap of cached categories
         strings.forEach(s => {
           if (!this.categoryMap.get(s)) {
             this.categoryMap.set(s, []);
           }
-        })
+        });
       })
   }
 

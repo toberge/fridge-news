@@ -37,7 +37,7 @@ class UserStore {
   }
 
   getAuthor(id: number) {
-    return this.getUser(id).then(user => this.currentAuthor = user);
+    return this.getUser(id).then(user => (this.currentAuthor = user));
   }
 }
 

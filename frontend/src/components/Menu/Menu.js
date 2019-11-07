@@ -3,17 +3,19 @@
 import * as React from 'react';
 import { Component } from 'react-simplified';
 import NavBar from './NavBar';
-import {capitalizeFirstLetter, CATEGORIES} from '../../data/Article';
+import { capitalizeFirstLetter } from '../../data/Article';
 import Icon from '../shared/Icon';
 import logo from '../../assets/images/logo.svg';
-import {articleStore} from "../../stores/articleStore";
+import { articleStore } from '../../stores/articleStore';
 
 export default class Menu extends Component {
   render() {
     return (
       <header id="masthead">
         <NavBar>
-          <NavBar.Brand><img src={logo} alt="logo" /> Fridge News</NavBar.Brand>
+          <NavBar.Brand>
+            <img src={logo} alt="logo" /> Fridge News
+          </NavBar.Brand>
           {articleStore.categories.map((category: string) => (
             <NavBar.Link exact to={`/articles/categories/${category}`}>
               {capitalizeFirstLetter(category)}
@@ -35,4 +37,3 @@ export default class Menu extends Component {
     );
   }
 }
-
