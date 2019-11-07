@@ -11,7 +11,8 @@
   "jest": {
     "collectCoverage": true,
     "coverageReporters": [
-      "text"
+      "text",
+      "html"
     ]
   },
   "scripts": {

@@ -2,6 +2,7 @@ image: node:latest
 
 stages:
     - test
+    - coverage
     - build
     - deploy
 
@@ -18,6 +19,9 @@ test_backend:
         - npm install
         - npm test
         - flow check
+    artifacts:
+        paths:
+            - backend/coverage/
 
 test_frontend:
     stage: test
@@ -27,6 +31,20 @@ test_frontend:
         - npm install
         - npm test
         - flow check src
+    artifacts:
+        paths:
+            - backend/coverage/
+
+publish_coverage:
+    stage: coverage
+    script:
+        - mkdir -p .public/{front,back}end
+        - cp -r backend/coverage/* .public/backend
+        - cp -r frontend/coverage/* .public/frontend
+        - mv .public public
+    artifacts:
+        paths:
+            - public/
 
 build:
     stage: build

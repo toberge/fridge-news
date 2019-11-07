@@ -20,7 +20,8 @@
     },
     "collectCoverage": true,
     "coverageReporters": [
-      "text"
+      "text",
+      "html"
     ]
   },
   "dependencies": {

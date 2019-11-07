@@ -29,7 +29,6 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       uploadTime,
       rating
     } = articleStore.currentArticle;
-    document.title = `Fridge News | ${title}`;
     return (
       <main>
         {/* TODO split into ArticleRenderer to be used for preview in editor */}
@@ -49,19 +48,21 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
             </figure>
           ) : null}
           <MarkdownRenderer markdown={text} />
+
           <section className="details">
             <dl className="dateline">
               <dt>Author:</dt>
               <dd>{userStore.currentAuthor.name}</dd>
               <dt>Published:</dt>
               <dd>{uploadTime.toLocaleString()}</dd>
-              <dt>Rated:</dt>
+              {/*<dt>Rated:</dt>
               <dd>
                 <meter value={rating} max={5} min={1} />
                 {` (${rating} out of 5)`}
-              </dd>
+              </dd>*/}
             </dl>
           </section>
+
           <section className="article-buttons">
             <strong>You may wish to </strong>
             <Button.Secondary onClick={this.handleEdit}>
