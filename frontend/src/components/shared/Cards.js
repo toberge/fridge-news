@@ -21,40 +21,20 @@ export class ArticleCard extends Component<{
 }> {
   render() {
     return (
-      <div className="card" >
+      <div className="card">
         <Link to={`/articles/${this.props.article.id}`}>
-        <img
-          className="card-img-top"
-          src={this.props.article.picturePath ? this.props.article.picturePath : placeholderImage}
-          alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Floppy disks'}
-        />
-        <div className="card-body">
-          <h2 className="card-title">{this.props.article.title}</h2>
-        </div>
+          <img
+            className="card-img-top"
+            src={this.props.article.picturePath ? this.props.article.picturePath : placeholderImage}
+            alt={this.props.article.pictureAlt ? this.props.article.pictureAlt : 'Floppy disks'}
+          />
+          <div className="card-body">
+            <h2 className="card-title">{this.props.article.title}</h2>
+          </div>
         </Link>
         {this.props.showCategory ? (
           <div className="card-footer text-muted">{capitalizeFirstLetter(this.props.article.category)}</div>
         ) : null}
-      </div>
-    );
-  }
-}
-
-export class NewsFeedCard extends Component<{
-  article: ArticleBase
-}> {
-  render() {
-    return (
-      <div className="card">
-        <div className="card-body">
-          <div className="card-text">
-            <strong>
-              <Link className="card" to={`/articles/${this.props.article.id}`}>
-                {this.props.article.title}
-              </Link>
-            </strong>
-          </div>
-        </div>
       </div>
     );
   }
