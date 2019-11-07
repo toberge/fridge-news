@@ -294,7 +294,7 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
               required
             >
               <option value="">Select category...</option>
-              {CATEGORIES.map(c => (
+              {articleStore.categories.map(c => (
                 <option value={c} key={c}>
                   {capitalizeFirstLetter(c)}
                 </option>

@@ -61,6 +61,26 @@ class ArticleStore {
     ['politics', []]
   ]);
 
+  categories: string[] = ['news', 'culture', 'science', 'politics', 'blablabla'];
+
+  // wow shit why must I be forced to do this...
+  getCategories() {
+    return axios.get('/articles/categories/')
+      .then(response => response.data)
+      .then(strings => {
+        // replace old array (if anything lives there)
+        const countBefore = this.categories.length;
+        this.categories.push(strings);
+        this.categories.splice(0, countBefore);
+        // add to hashmap of cached categories
+        strings.forEach(s => {
+          if (!this.categoryMap.get(s)) {
+            this.categoryMap.set(s, []);
+          }
+        })
+      })
+  }
+
   clearArticle() {
     Object.assign(this.currentArticle, { ...empty });
   }

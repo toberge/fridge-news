@@ -13,6 +13,10 @@ import './assets/css/globals.css';
 import './assets/css/layout.css';
 import ErrorPage from './components/ErrorPage';
 import { CATEGORIES } from './data/Article';
+import {articleStore} from "./stores/articleStore";
+
+// screw you, oppgavetekst
+articleStore.getCategories();
 
 const root = document.getElementById('root');
 if (root)
@@ -26,7 +30,8 @@ if (root)
         <Route exact path="/articles/:id(\d+)/edit" component={ArticleEditor} />
         <Route
           exact
-          path={`/articles/categories/:id(${CATEGORIES.reduce((s, c) => `${s}|${c}`, '')})`}
+          // path={`/articles/categories/:id(${CATEGORIES.reduce((s, c) => `${s}|${c}`, '')})`}
+          path="/articles/categories/:id([a-z]+)"
           component={CategoryPage}
         />
         {/* if none of these match, show our 404 page */}

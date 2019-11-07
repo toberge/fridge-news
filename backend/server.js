@@ -1,12 +1,17 @@
 // @flow
 
+// SERVER
 const express = require('express');
 const path = require('path');
 const session = require('express-session'); // TODO don't actually use this next time, use JWT stuffs
 const bodyParser = require('body-parser');
+// DB
 const mysql = require('mysql2/promise');
+// MISC
 const fs = require('file-system');
-const bcrypt = require('bcryptjs');
+// LOGIN
+const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 // TODO replace with bcrypt? Seems -js had last release 3 years ago...
 
 const publicPath = path.join(__dirname, '../frontend/build');
@@ -62,6 +67,21 @@ const performSingleRowQuery = async (res, func, context: string, ...params) => {
     });
 };
 
+const performMultiRowQuery = async (res, func, context: string) => {
+  func()
+    .then(rows => {
+      if (rows.length > 0) {
+        res.status(200).json(rows);
+      } else {
+        res.status(404).json({ error: `GET request failed for ${context}`});
+      }
+    })
+    .catch(e => {
+      console.error(e, `Error occurred while fetching ${context}`);
+      res.status(404).json({ error: 'GET failed', details: e.toString() });
+    });
+};
+
 app.get('/articles', (req, res) => {
 
   articleDAO.getAll()
@@ -82,19 +102,11 @@ const things = [
   articleDAO.getOne
 ];
 app.get('/articles/:id(\\d+)', async (req, res) => {
-  /*try {
-    const rows = await things[0](req.params.id);
-    console.log(rows);
-    if (rows) {
-      res.status(200).json(rows);
-    } else {
-      res.send(501);
-    }
-  } catch (e) {
-    console.trace(e);
-    res.status(501).json({ error: 'blablabla', details: e.toString() });
-  }*/
-  performSingleRowQuery(res, articleDAO.getOne, 'articles', parseInt(req.params.id))
+  await performSingleRowQuery(res, articleDAO.getOne, 'articles', parseInt(req.params.id))
+});
+
+app.get('/articles/categories', async (req, res) => {
+  await performMultiRowQuery(res, articleDAO.getCategories, 'categories')
 });
 
 /* TODO end of mess... */

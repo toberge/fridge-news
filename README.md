@@ -2,6 +2,12 @@
 
 \- Serving fresh news from the fridge -
 
+Coverage report for
+[server](http://toberge.pages.stud.idi.ntnu.no/fridge-news/backend/)
+and
+[client](http://toberge.pages.stud.idi.ntnu.no/fridge-news/frontend/)
+and your amusement
+
 ## Origin
 
 This is my work on a relatively small project for a university course in web development.

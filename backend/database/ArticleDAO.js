@@ -27,6 +27,13 @@ module.exports = class ArticleDAO extends DAO {
 
   // TODO search method
 
+  getCategories = async () => {
+    const [[rows]] = await super.query('SHOW COLUMNS FROM articles LIKE \'category\'');
+    let string: string = rows[0].Type;
+    // on the form enum('news','culture','science','politics') so we replace and split
+    return string.replace(/(enum\(|\)|')/g, '').split(',');
+  };
+
   getAll = async () => {
     const [[rows]] = await super.query('SELECT * FROM articles_view');
     return rows;
