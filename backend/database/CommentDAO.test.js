@@ -19,7 +19,7 @@ describe('CommentDAO', () => {
     it('finds the comment', async () => {
       // not needed in actual system tho...
       const comment = await commentDAO.getOne(1);
-      expect(comment.title).toBe('Some text');
+      expect(comment.content).toBe('Some text');
     });
   });
 
