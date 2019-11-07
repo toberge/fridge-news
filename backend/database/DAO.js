@@ -19,8 +19,6 @@ module.exports = class DAO {
     try {
       connection = await this.getConnection();
       result = await connection.query(sql);
-    } catch (e) {
-      throw e;
     } finally {
       if (connection) connection.release();
       // console.log(this.pool.pool._allConnections._list.length);
@@ -35,8 +33,6 @@ module.exports = class DAO {
     try {
       connection = await this.getConnection();
       result = await connection.execute(sql, params);
-    } catch (e) {
-      throw e;
     } finally {
       if (connection) connection.release();
       // console.log(this.pool.pool._allConnections._list.length);

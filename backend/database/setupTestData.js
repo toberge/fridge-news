@@ -26,7 +26,6 @@ const runSQL = async (file: string, pool: mysql.PromisePool) => {
     for (let s of sql) {
       await connection.query(s);
     }
-    console.log(`Ran ${file} successfully`);
   } finally {
     if (connection) connection.release();
   }
