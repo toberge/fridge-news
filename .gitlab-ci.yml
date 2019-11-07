@@ -35,7 +35,7 @@ test_frontend:
         paths:
             - frontend/coverage/
 
-publish_coverage:
+pages:
     stage: coverage
     script:
         - mkdir -p .public/{front,back}end
@@ -45,6 +45,8 @@ publish_coverage:
     artifacts:
         paths:
             - public/
+    only:
+        - master
 
 build:
     stage: build
