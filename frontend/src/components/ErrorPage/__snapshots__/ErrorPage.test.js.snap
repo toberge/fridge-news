@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorPage should render as intended 1`] = `
+"<main>
+  <div className=\\"center-wrapper\\">
+    <div className=\\"center-box\\">
+      <h1>
+        404 Not Found
+      </h1>
+      <p>
+        which means there&#39;s nothing here
+      </p>
+      <p>
+        ¯\\\\_(ツ)_/¯
+      </p>
+    </div>
+  </div>
+</main>"
+`;
