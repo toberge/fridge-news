@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CommentSection should render as intended 1`] = `
+"<section className=\\"comments\\">
+  <h2>
+    Comments
+  </h2>
+  <em>
+    Loading...
+  </em>
+  <h2>
+    Leave your own comment
+  </h2>
+  <form onSubmit={[Function: bound handleSubmit]}>
+    <div className=\\"form-group\\">
+      <SimpleMDEEditor value=\\"\\" onChange={[Function: bound handleMarkdownChange]} label=\\"Comment:\\" options={{...}} events={{...}} />
+    </div>
+    <FormSubmit disabled={true}>
+      <UploadIcon />
+       Submit
+    </FormSubmit>
+  </form>
+</section>"
+`;

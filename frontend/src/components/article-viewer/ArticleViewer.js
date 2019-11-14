@@ -8,7 +8,7 @@ import { articleStore } from '../../stores/articleStore';
 import './ArticleViewer.css';
 import { Button } from '../widgets';
 import { createHashHistory } from 'history';
-import CommentSection from './CommentSection';
+import CommentSection from './comment-section';
 import Notifier from '../shared/Notifier';
 import { userStore } from '../../stores/userStore';
 import Icon from '../shared/Icon';

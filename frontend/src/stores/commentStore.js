@@ -7,7 +7,7 @@ import {userStore} from "./userStore";
 
 const empty = new Comment(-1, 1, '', new Date(), null);
 
-class CommentStore {
+export class CommentStore {
   draft: Comment = empty;
   comments: Comment[] = [];
 

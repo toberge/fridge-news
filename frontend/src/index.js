@@ -3,17 +3,17 @@
 import ReactDOM from 'react-dom';
 import * as React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import Menu from './components/Menu';
-import { ArticleEditor, ArticleWriter } from './components/ArticleEditor';
-import ArticleViewer from './components/ArticleViewer';
-import FrontPage from './components/FrontPage';
-import CategoryPage from './components/CategoryPage';
-import Footer from './components/Footer';
+import Menu from './components/menu';
+import { ArticleEditor, ArticleWriter } from './components/article-editor';
+import ArticleViewer from './components/article-viewer';
+import FrontPage from './components/front-page';
+import CategoryPage from './components/category-page';
+import Footer from './components/footer';
 import './assets/css/globals.css';
 import './assets/css/layout.css';
-import ErrorPage from './components/ErrorPage';
+import ErrorPage from './components/error-page';
 import { articleStore } from './stores/articleStore';
-import NewsFeed from './components/NewsFeed';
+import NewsFeed from './components/news-feed';
 import Notifier from "./components/shared/Notifier";
 
 // screw you, oppgavetekst
