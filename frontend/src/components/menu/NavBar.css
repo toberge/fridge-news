@@ -1,5 +1,7 @@
 /*===================*\
         navbar
+basically a reworked version of
+https://jsfiddle.net/joshnh/srNVQ/
 \*===================*/
 
 #masthead {
@@ -8,7 +10,7 @@
   background: var(--content-background);
 }
 
-/* credz: https://jsfiddle.net/joshnh/srNVQ/ */
+/* credz:  */
 .my-navbar ul {
   background: var(--section-background);
   /*font-size: 0;*/

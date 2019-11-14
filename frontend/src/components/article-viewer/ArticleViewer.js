@@ -12,7 +12,7 @@ import CommentSection from './comment-section';
 import Notifier from '../shared/Notifier';
 import { userStore } from '../../stores/userStore';
 import Icon from '../shared/Icon';
-import {capitalizeFirstLetter} from "../../data/Article";
+import { capitalizeFirstLetter } from '../../data/Article';
 
 const history = createHashHistory();
 
@@ -27,43 +27,48 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       pictureCapt,
       text,
       uploadTime,
-      rating
+      updateTime
+      // rating
     } = articleStore.currentArticle;
     return (
       <main>
-        {/* TODO split into ArticleRenderer to be used for preview in editor */}
-        <article className={this.hidden || articleStore.loadingArticle ? 'hidden' : ''}>
-          <header>
-            <h1>{title}</h1>
-          </header>
-          {picturePath && pictureAlt && pictureCapt ? (
-            <figure>
-              <img src={picturePath} alt={pictureAlt} />
-              <figcaption>
-                <p>
-                  <em>Image:</em>
-                  {' ' + pictureCapt}
-                </p>
-              </figcaption>
-            </figure>
-          ) : null}
-          <MarkdownRenderer markdown={text} />
+        <div className={this.hidden || articleStore.loadingArticle ? 'hidden' : ''}>
+          {/* TODO split into ArticleRenderer to be used for preview in editor */}
+          <article>
+            <header>
+              <h1>{title}</h1>
+            </header>
+            {picturePath && pictureAlt && pictureCapt ? (
+              <figure>
+                <img src={picturePath} alt={pictureAlt} />
+                <figcaption>
+                  <p>
+                    <em>Image:</em>
+                    {' ' + pictureCapt}
+                  </p>
+                </figcaption>
+              </figure>
+            ) : null}
+            <MarkdownRenderer markdown={text} />
+          </article>
 
-          <section className="details">
+          <aside className="details">
             <dl className="dateline">
               <dt>Author:</dt>
               <dd>{userStore.currentAuthor.name}</dd>
               <dt>Published:</dt>
               <dd>{uploadTime.toLocaleString()}</dd>
+              {updateTime ? <dt>Updated:</dt> : null}
+              {updateTime ? <dd>{updateTime.toLocaleString()}</dd> : null}
               {/*<dt>Rated:</dt>
               <dd>
                 <meter value={rating} max={5} min={1} />
                 {` (${rating} out of 5)`}
               </dd>*/}
             </dl>
-          </section>
+          </aside>
 
-          <section className="article-buttons">
+          <aside className="article-buttons">
             <strong>You may wish to </strong>
             <Button.Secondary onClick={this.handleEdit}>
               <Icon.Write /> Edit
@@ -73,9 +78,9 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
               <Icon.Delete /> Delete
             </Button.Danger>
             <strong> this article.</strong>
-          </section>
+          </aside>
           <CommentSection articleID={this.props.match.params.id} />
-        </article>
+        </div>
       </main>
     );
   }
@@ -91,7 +96,8 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
   }
 
   handleDelete() {
-    articleStore.deleteArticle()
+    articleStore
+      .deleteArticle()
       .then(() => {
         Notifier.success('Successfully deleted article');
         history.goBack(); // TODO handle other page I guess
@@ -107,7 +113,9 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       await articleStore.getArticle(this.props.match.params.id);
       await userStore.getAuthor(articleStore.currentArticle.authorID);
       this.hidden = false;
-      document.title = `${articleStore.currentArticle.title} - ${capitalizeFirstLetter(articleStore.currentArticle.category)} - Fridge News`
+      document.title = `${articleStore.currentArticle.title} - ${capitalizeFirstLetter(
+        articleStore.currentArticle.category
+      )} - Fridge News`;
     } catch (e) {
       Notifier.error(`Could not fetch article, reason:\n${e.message}`);
       history.push('/404');

@@ -19,7 +19,7 @@ export default class CommentSection extends Component<{ articleID: number }> {
 
   render() {
     return (
-      <section className="comments">
+      <aside className="comments">
         <h2>Comments</h2>
         {this.loading ? (
           <em>Loading...</em>
@@ -42,7 +42,7 @@ export default class CommentSection extends Component<{ articleID: number }> {
           </div>
           <Form.Submit disabled={this.pending || commentStore.draft.text === ''}><Icon.Upload /> Submit</Form.Submit>
         </form>
-      </section>
+      </aside>
     );
   }
 

@@ -14,7 +14,8 @@ const pool = mysql.createPool({
 const runSQL = async (file: string, pool: mysql.PromisePool) => {
   let connection: mysql.PromiseConnection = null;
   try {
-    // kudos to this https://stackoverflow.com/a/22659240
+    // Using this person's solution https://stackoverflow.com/a/22659240
+    // could've written my own, but I didn't wanna bother after all that debugging
     let sql = fs
       .readFileSync(file, 'utf8')
       .replace(/(\r\n|\n|\r)/gm, ' ') // remove newlines

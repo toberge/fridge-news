@@ -1,4 +1,4 @@
-# Fridge News [![pipeline status](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/badges/master/pipeline.svg)](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/commits/master) [![coverage report](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/badges/master/coverage.svg)](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/commits/master) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+# Fridge News [![pipeline status](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/badges/master/pipeline.svg)](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/commits/master) [![coverage report](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/badges/master/coverage.svg)](https://gitlab.stud.idi.ntnu.no/toberge/fridge-news/commits/master) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) ![GitHub language count](https://img.shields.io/github/languages/count/toberge/fridge-news)
 
 \- Serving fresh news from the fridge -
 

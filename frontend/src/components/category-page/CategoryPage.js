@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import { ArticleCard, CardHolder } from '../shared/Cards';
 import { articleStore } from '../../stores/articleStore';
-import { ArticleBase, capitalizeFirstLetter } from '../../data/Article';
+import { capitalizeFirstLetter } from '../../data/Article';
 import Notifier from "../shared/Notifier";
 
 export default class CategoryPage extends Component<{ match: { params: { id: string } } }> {
