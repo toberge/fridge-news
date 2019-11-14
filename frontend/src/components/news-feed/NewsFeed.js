@@ -36,7 +36,6 @@ export default class NewsFeed extends Component {
   }
 
   async poll() {
-    console.log('polling...');
     try {
       await articleStore.getNewsFeed();
     } catch (e) {

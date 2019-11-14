@@ -34,8 +34,6 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
     event.preventDefault();
     // no need to validate (except image?) - already done by form
 
-    console.log('received', articleStore.currentArticle, event.target);
-
     // disable button (+ possible additional effects)
     this.pending = true;
 
@@ -83,8 +81,6 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
   async handleSave(event: SyntheticInputEvent<HTMLFormElement>) {
     event.preventDefault();
     // no need to validate (except image?) - already done by form
-
-    console.log('received', articleStore.currentArticle, event.target);
 
     // disable button (+ possible additional effects)
     this.pending = true;
@@ -285,7 +281,7 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             <label htmlFor="category">Category</label>
             <select
               className="custom-select"
-              onInvalid={event => console.log('TODO')}
+              // onInvalid={event => console.log('TODO')}
               id="category"
               value={articleStore.currentArticle.category}
               onChange={(event: SyntheticInputEvent<HTMLInputElement>) => {
