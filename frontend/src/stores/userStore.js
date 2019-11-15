@@ -19,7 +19,13 @@ class UserStore {
   }
 
   register(username: string, password: string) {
-    // TODO
+    return axios.post('/users/', {name: username, password})
+      .then(async response => {
+        // TODO token...
+        this.currentUser = await this.getUser(response.data.insertId);
+        this.loggedIn = true;
+        return this.currentUser.id;
+      });
   }
 
   getUser(id: number): Promise<User> {

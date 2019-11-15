@@ -14,11 +14,11 @@ import './assets/css/layout.css';
 import ErrorPage from './components/error-page';
 import { articleStore } from './stores/articleStore';
 import NewsFeed from './components/news-feed';
-import Notifier from "./components/shared/Notifier";
+import Notifier from './components/shared/Notifier';
+import Login from './components/login';
 
 // screw you, oppgavetekst
-articleStore.getCategories()
-  .catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));
+articleStore.getCategories().catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));
 
 const root = document.getElementById('root');
 if (root)
@@ -30,6 +30,7 @@ if (root)
       </header>
       <Switch>
         <Route exact path="/" component={FrontPage} />
+        <Route exact path="/login" component={Login} />
         <Route exact path="/articles/write" component={ArticleWriter} />
         <Route exact path="/articles/:id(\d+)" component={ArticleViewer} />
         <Route exact path="/articles/:id(\d+)/edit" component={ArticleEditor} />

@@ -21,6 +21,8 @@ const app = express();
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
 
+/* ----------------- TOKEN SETUP ----------------- */
+
 // from express-session's thing TODO replace with JWT
 const sess = {
   secret: 'Let the Dragon ride again on the winds of time',
@@ -36,6 +38,12 @@ if (app.get('env') === 'production') {
 
 app.use(session(sess));
 // end of TODO replace
+
+const TOKEN_EXPIRE_TIME = 60;
+const PUBLIC_KEY = 'totally legit certificate';
+const PRIVATE_KEY = PUBLIC_KEY;
+
+/* ----------------- DATABASE CONFIG ----------------- */
 
 const conf = JSON.parse(fs.readFileSync('database/properties.json', 'utf8'));
 const pool = mysql.createPool({
@@ -165,81 +173,71 @@ const updateQuery = async (query, ...params) => {
   }
 };
 
-/* ----------------- LOGIN - TODO JWT ----------------- */
+/* ----------------- LOGIN - NOW USING JWT! ----------------- */
 
-const authLogin = (req, res, next) => {
-  if (req.session && req.session.user) {
-    return next();
-  } else {
-    return res.status(401).json({ error: 'User not logged in; cannot access resource' });
-  }
-};
-
-/*
-const authOwnsArticle = async (req, res, next) => {
-  if (req.session) {
-    try {
-      if (req.session.userId === await singleRowQuery('SELECT user_id FROM articles WHERE article_id = ?', [req.params.id]).user_id) {
-        return next();
-      } else {
-        return res.status(401).json({ error: 'User is not author of article' });
-      }
-    } catch (e) {
-      console.trace('Error occured during author check');
-      return res.status(400).json({ error: 'Could not check if user is author' });
-    }
-  } else {
-    return res.status(401).json({ error: 'User not logged in or is not author of article' });
-  }
-};
-*/
-
-app.post('/logout', function(req, res) {
-  if (req.session.userId) {
-    req.session.destroy();
-    res.status(201).json({ message: 'Logged out' });
-  } else {
-    res.status(401).json({ error: 'Was not logged in in the first place' });
+app.post('/users', async (req, res) => {
+  console.log(`Got POST request to add ${req.body.name} to users`);
+  try {
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const { insertId } = await userDAO.addOne({ name: req.body.name, password: hash });
+    res.status(201).json({ message: 'POST successful', insertId: insertId });
+  } catch (e) {
+    console.trace(e, 'Error occurred during /users/');
+    res.json({ error: 'Error occurred during registration', details: e.toString() });
   }
 });
-
-const getUserByName = async ({ name }) => {
-  try {
-    const connection = await pool.getConnection();
-    const [rows] = await connection.execute('SELECT user_id, name, password FROM users WHERE name = ?', [name]);
-    connection.release();
-    return rows;
-  } catch (e) {
-    console.error(`Failed to execute query during login, with ${e.code}`, e);
-    throw e;
-  }
-};
-
-// check req.session.userId against user_id in, say, article entry to verify that the user can update this one?
 
 app.post('/login', async (req, res) => {
   if (!req.body.name || !req.body.password) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { password, name } = req.body;
   console.log(`Got login request for user ${name}`);
   try {
-    const rows = await getUserByName({ name: name });
-    if (rows.length === 1) {
-      const user = rows[0];
-      if (password && (await bcrypt.compare(password, user.password))) {
-        req.session.user = name;
-        req.session.userId = user.user_id;
-        res.status(201).send('Login successful');
-      } else {
-        res.status(401).json({ error: 'Login failed, wrong credentials' });
-      }
+    const user = await userDAO.getOneByName(req.body.name);
+    if (await bcrypt.compare(password, user.password)) {
+      console.log('Credentials OK, signing token...');
+      const token = jwt.sign({ username: req.body.name }, PRIVATE_KEY, {
+        expiresIn: TOKEN_EXPIRE_TIME
+      });
+      res.status(201).json({ message: 'Login successful', jwt: token });
     } else {
+      console.log('Credentials WRONG');
       res.status(401).json({ error: 'Login failed, wrong credentials' });
     }
   } catch (e) {
-    console.trace('Error occured during login', e);
-    res.status(401).json({ error: 'Error occured during login' });
+    console.error(e, 'Error occured during login');
+    res.status(401).json({ error: 'Error occured during login', details: e.toString() });
   }
 });
+
+// regen endpoint (or append to all? ...no.)
+app.get('/token', (req, res) => {
+  let token = req.headers['x-access-token'];
+  jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
+    if (err) {
+      console.log('Token NOT okay');
+      res.status(401).json({ error: 'Not authorized' }); // or 403...
+    } else {
+      console.log('Decoded token for ' + decoded.username + ', regenerating...');
+      token = jwt.sign({ username: decoded.username }, PRIVATE_KEY, {
+        expiresIn: TOKEN_EXPIRE_TIME
+      });
+      res.status(200).json({ message: 'Regenerated token', jwt: token });
+    }
+  });
+});
+
+const authenticate = (req, res, next) => {
+  const token = req.headers['x-access-token'];
+  jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
+    if (err) {
+      console.log('Token NOT okay');
+      res.status(401).json({ error: 'Not authorized' }); // or 403...
+    } else {
+      console.log(`${decoded.username} is authorized, proceeding...`);
+      next();
+    }
+  });
+};
 
 /* ----------------- GET ROWS ----------------- */
 
@@ -297,18 +295,6 @@ app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
 });
 
 /* ----------------- POST REQUESTS ----------------- */
-
-app.post('/users', async (req, res) => {
-  console.log(`Got POST request to add ${req.body.name} to users`);
-  try {
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const { insertId } = await userDAO.addOne({ name: req.body.name, password: hash });
-    res.status(201).json({ message: 'POST successful', insertId: insertId });
-  } catch (e) {
-    console.trace(e, 'Error occured during /users/');
-    res.json({ error: e.toString() }); // todo RLY?
-  }
-});
 
 // TODO put the auths back in when refactored & all done
 app.post(

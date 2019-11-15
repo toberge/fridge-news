@@ -5,7 +5,7 @@ import { Component } from 'react-simplified';
 import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { Form } from '../../widgets';
+import Form from '../../shared/Form';
 import Icon from '../../shared/Icon';
 import './CommentSection.css';
 import { commentStore } from '../../../stores/commentStore';

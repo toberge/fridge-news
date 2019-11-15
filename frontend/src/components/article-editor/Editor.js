@@ -6,7 +6,7 @@ import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
 import { capitalizeFirstLetter } from '../../data/Article';
 import { articleStore } from '../../stores/articleStore';
-import { Form } from './../widgets';
+import Form from './../shared/Form';
 import { createHashHistory } from 'history';
 import Icon from '../shared/Icon';
 import Notifier from '../shared/Notifier';
@@ -120,6 +120,14 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
     const value = event.target.value;
     if (value !== null && value.length < 64) {
       articleStore.currentArticle.title = value;
+      if (value.length === 0) {
+        event.target.setCustomValidity('Title must not be empty');
+      } else {
+        event.target.setCustomValidity('');
+      }
+    } else {
+      console.log(event.target.validationMessage);
+      event.target.setCustomValidity('Title must be no more than 64 letters');
     }
   }
 
