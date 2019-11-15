@@ -23,6 +23,14 @@ describe('UserDAO', () => {
     });
   });
 
+  describe('.getOneByName()', () => {
+    it('finds the corect user', async () => {
+      const user = await userDAO.getOneByName('The Fridge');
+      expect(user.user_id).toBe(1);
+      expect(user.name).toBe('The Fridge');
+    });
+  });
+
   describe('.addOne()', () => {
     it('adds a user', async () => {
       const user = { name: 'Lech Walesa', password: '222u4g82hg92ufc8u982u4g'};
@@ -31,8 +39,8 @@ describe('UserDAO', () => {
       expect(fields.insertId).toBeGreaterThan(3);
       // verify data
       const found = await userDAO.getOne(fields.insertId);
+      expect(found.user_id).toEqual(fields.insertId);
       expect(found.name).toEqual(user.name);
-      expect(found.password).toEqual(user.password);
     })
   })
 });

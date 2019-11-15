@@ -201,7 +201,7 @@ app.post('/login', async (req, res) => {
       const token = jwt.sign({ username: req.body.name }, PRIVATE_KEY, {
         expiresIn: TOKEN_EXPIRE_TIME
       });
-      res.status(201).json({ message: 'Login successful', jwt: token });
+      res.status(201).json({ message: 'Login successful', jwt: token, user_id: user.user_id });
     } else {
       console.log('Credentials WRONG');
       res.status(401).json({ error: 'Login failed, wrong credentials' });

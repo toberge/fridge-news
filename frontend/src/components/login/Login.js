@@ -83,8 +83,7 @@ export default class Login extends Component {
     this.pending = true;
 
     try {
-      let newId = await userStore.logIn(this.name, this.password);
-      if (newId && newId > 0) {
+      if (await userStore.logIn(this.name, this.password)) {
         history.push('/');
         return;
       } else {

@@ -18,6 +18,7 @@ module.exports = class UserDAO extends DAO {
     return rows[0];
   };
 
+  // returns password since it's used for authentication
   getOneByName = async (name: string): Promise<User> => {
     const [[rows]] = await super.execute('SELECT user_id, name, admin, password FROM users WHERE name = ?', name);
     return rows[0];

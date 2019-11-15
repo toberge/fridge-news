@@ -15,10 +15,12 @@ class UserStore {
     return axios.post('/login', { name, password })
       .then(async (response: AxiosResponse) => {
         // already okay
-        this.currentUser = await this.getUser(response.data.insertId);
+        console.log(response.data);
+        this.currentUser = await this.getUser(response.data.user_id);
         this.token = response.data.jwt;
         this.loggedIn = true;
         console.log('receievedd', this.token);
+        return true;
       })
   }
 

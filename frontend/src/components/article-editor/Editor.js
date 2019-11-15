@@ -10,6 +10,7 @@ import Form from './../shared/Form';
 import { createHashHistory } from 'history';
 import Icon from '../shared/Icon';
 import Notifier from '../shared/Notifier';
+import {userStore} from "../../stores/userStore";
 
 const history = createHashHistory();
 
@@ -26,6 +27,7 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
   }
 
   mounted() {
+    if (!userStore.loggedIn) history.push('/login');
     document.title = 'Write Article - Fridge News';
     articleStore.clearArticle();
   }

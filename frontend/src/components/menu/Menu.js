@@ -7,6 +7,7 @@ import { capitalizeFirstLetter } from '../../data/Article';
 import Icon from '../shared/Icon';
 import logo from '../../assets/images/logo.svg';
 import { articleStore } from '../../stores/articleStore';
+import { userStore } from '../../stores/userStore';
 
 export default class Menu extends Component {
   render() {
@@ -21,13 +22,20 @@ export default class Menu extends Component {
           </NavBar.Link>
         ))}
         <NavBar.Separator />
-        <NavBar.Link to="/login">
-          {/*TODO*/}
-          <Icon.User /> Log In
-        </NavBar.Link>
-        <NavBar.Link to="/articles/write">
-          <Icon.Write /> Write
-        </NavBar.Link>
+        {userStore.currentUser ? (
+          <NavBar.Link to="/nahduh">
+            <Icon.User /> {' ' + userStore.currentUser.name}
+          </NavBar.Link>
+        ) : (
+          <NavBar.Link to="/login">
+            <Icon.User /> Log In
+          </NavBar.Link>
+        )}
+        {userStore.loggedIn ? (
+          <NavBar.Link to="/articles/write">
+            <Icon.Write /> Write
+          </NavBar.Link>
+        ) : null}
         <NavBar.Link to="/search">
           <Icon.Search /> Search
         </NavBar.Link>
