@@ -180,7 +180,10 @@ app.post('/users', async (req, res) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 10);
     const { insertId } = await userDAO.addOne({ name: req.body.name, password: hash });
-    res.status(201).json({ message: 'POST successful', insertId: insertId });
+    const token = jwt.sign({ username: req.body.name }, PRIVATE_KEY, {
+      expiresIn: TOKEN_EXPIRE_TIME
+    });
+    res.status(201).json({ message: 'POST successful', insertId: insertId, jwt: token });
   } catch (e) {
     console.trace(e, 'Error occurred during /users/');
     res.json({ error: 'Error occurred during registration', details: e.toString() });
@@ -210,7 +213,7 @@ app.post('/login', async (req, res) => {
 });
 
 // regen endpoint (or append to all? ...no.)
-app.get('/token', (req, res) => {
+app.get('/token', (req: express$Request, res) => {
   let token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
@@ -226,7 +229,11 @@ app.get('/token', (req, res) => {
   });
 });
 
-const authenticate = (req, res, next) => {
+const authenticate: express$Middleware<express$Request> = (
+  req: express$Request,
+  res: express$Response,
+  next: express$NextFunction
+) => {
   const token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
@@ -238,6 +245,14 @@ const authenticate = (req, res, next) => {
     }
   });
 };
+
+// this turned out to not be necessary (after intense wrestling with Flow)
+// auth routes
+// const authenticator = express.Router();
+// authenticator.post('/articles', authenticate);
+
+// use that middleware
+// app.use(authenticator);
 
 /* ----------------- GET ROWS ----------------- */
 
@@ -297,36 +312,33 @@ app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
 /* ----------------- POST REQUESTS ----------------- */
 
 // TODO put the auths back in when refactored & all done
-app.post(
-  '/articles',
-  /*authLogin, */ async (req, res) => {
-    const { user_id, title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
-    if (!(user_id && title && content && importance && category))
-      return res.status(400).json({ error: 'Insufficient data in request body' });
-    // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
-    console.log(`Got POST request from ${user_id} to add ${title} as article`);
-    try {
-      const { insertId } = await articleDAO.addOne({
-        user_id,
-        title,
-        picture_path,
-        picture_alt,
-        picture_caption,
-        content,
-        importance,
-        category
-      });
-      if (insertId > 0) {
-        res.status(201).json({ message: 'POST successful', id: insertId });
-      } else {
-        res.status(400).json({ message: 'Could not POST article' });
-      }
-    } catch (e) {
-      console.trace(e, 'Failed to POST article');
-      res.status(400).json({ error: 'Failed to POST article' });
+app.post('/articles', authenticate, async (req, res) => {
+  const { user_id, title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
+  if (!(user_id && title && content && importance && category))
+    return res.status(400).json({ error: 'Insufficient data in request body' });
+  // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
+  console.log(`Got POST request from ${user_id} to add ${title} as article`);
+  try {
+    const { insertId } = await articleDAO.addOne({
+      user_id,
+      title,
+      picture_path,
+      picture_alt,
+      picture_caption,
+      content,
+      importance,
+      category
+    });
+    if (insertId > 0) {
+      res.status(201).json({ message: 'POST successful', id: insertId });
+    } else {
+      res.status(400).json({ message: 'Could not POST article' });
     }
+  } catch (e) {
+    console.trace(e, 'Failed to POST article');
+    res.status(400).json({ error: 'Failed to POST article' });
   }
-);
+});
 
 app.put('/articles/:id(\\d+)', async (req, res) => {
   const { title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;

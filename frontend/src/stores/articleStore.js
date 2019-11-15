@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { Article, ArticleBase, NewsFeedArticle } from '../data/Article';
 import { sharedComponentData } from 'react-simplified';
+import {userStore} from "./userStore";
 
 const placeholder = new Article(
   1,
@@ -123,6 +124,7 @@ class ArticleStore {
   }
 
   addArticle(): Promise<number | void> {
+    if (!userStore.loggedIn) return Promise.reject(new Error('Must be logged in to add article'));
     const article = this.currentArticle;
     return axios
       .post('/articles/', {
@@ -134,6 +136,10 @@ class ArticleStore {
         content: article.text,
         importance: article.importance,
         category: article.category
+      }, { // TODO wrap in a function somewhere...
+        headers: {
+          'x-access-token': userStore.token
+        }
       })
       .then(response => response.data.id);
   }
