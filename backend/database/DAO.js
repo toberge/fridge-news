@@ -8,7 +8,7 @@ module.exports = class DAO {
     this.pool = pool;
   }
 
-  getConnection() {
+  getConnection(): mysql.PromisePoolConnection {
     return this.pool.getConnection();
   }
 
