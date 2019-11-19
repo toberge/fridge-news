@@ -124,11 +124,11 @@ class ArticleStore {
   }
 
   addArticle(): Promise<number | void> {
-    if (!userStore.loggedIn) return Promise.reject(new Error('Must be logged in to add article'));
+    if (!userStore.loggedIn || !userStore.currentUser) return Promise.reject(new Error('Must be logged in to add article'));
     const article = this.currentArticle;
     return axios
       .post('/articles/', {
-        user_id: article.authorID,
+        user_id: userStore.currentUser.id,
         title: article.title,
         picture_path: article.picturePath,
         picture_alt: article.pictureAlt,
@@ -136,11 +136,7 @@ class ArticleStore {
         content: article.text,
         importance: article.importance,
         category: article.category
-      }, { // TODO wrap in a function somewhere...
-        headers: {
-          'x-access-token': userStore.token
-        }
-      })
+      }, userStore.getTokenHeader())
       .then(response => response.data.id);
   }
 

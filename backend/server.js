@@ -39,7 +39,7 @@ if (app.get('env') === 'production') {
 app.use(session(sess));
 // end of TODO replace
 
-const TOKEN_EXPIRE_TIME = 60;
+const TOKEN_EXPIRE_TIME = 60*5;
 const PUBLIC_KEY = 'totally legit certificate';
 const PRIVATE_KEY = PUBLIC_KEY;
 
@@ -386,12 +386,12 @@ app.delete('/articles/:id(\\d+)', async (req, res) => {
 
 app.post(
   '/articles/:id(\\d+)/comments',
-  /*authLogin, */ async (req, res) => {
+  authenticate, async (req, res) => {
     if (!req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
     const { content } = req.body;
-    console.log(`Got POST request from ${req.session.user} to add ${content} as comment to article ${req.params.id}`);
+    console.log(`Got POST request to add ${content} as comment to article ${req.params.id}`);
     try {
-      const { insertId } = await commentDAO.addOne({ article_id: req.params.id, user_id: req.session.userId, content });
+      const { insertId } = await commentDAO.addOne({ article_id: req.params.id, user_id: req.body.user_id, content });
       if (insertId > 0) {
         res.status(201).json({ message: 'POST successful' });
       } else {

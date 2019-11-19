@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
-import Form from './../shared/Form';
+import Form from '../../shared/Form';
 import { createHashHistory } from 'history';
-import Notifier from '../shared/Notifier';
-import { userStore } from '../../stores/userStore';
+import Notifier from '../../shared/Notifier';
+import { userStore } from '../../../stores/userStore';
 import './Login.css';
-import Icon from "../shared/Icon";
+import Icon from '../../shared/Icon';
 
 const history = createHashHistory();
 
@@ -45,9 +45,9 @@ export default class Login extends Component {
           <Form.Submit disabled={this.pending}>Log In</Form.Submit>
           {this.pending ? (
             <span>
-            {' '}
+              {' '}
               <Icon.Loading /> Logging in...
-          </span>
+            </span>
           ) : null}
         </form>
       </main>

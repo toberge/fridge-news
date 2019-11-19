@@ -10,10 +10,10 @@ import Icon from '../../shared/Icon';
 import './CommentSection.css';
 import { commentStore } from '../../../stores/commentStore';
 import { userStore } from '../../../stores/userStore';
-import Notifier from "../../shared/Notifier";
+import Notifier from '../../shared/Notifier';
+import { Link } from 'react-router-dom';
 
 export default class CommentSection extends Component<{ articleID: number }> {
-  comment: string = '';
   loading: boolean = false;
   pending: boolean = false;
 
@@ -34,14 +34,29 @@ export default class CommentSection extends Component<{ articleID: number }> {
               <MarkdownRenderer markdown={c.text} />
             </div>
           ))
-        ) : <em>No comments yet.</em>}
+        ) : (
+          <em>No comments yet.</em>
+        )}
         <h2>Leave your own comment</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div className="form-group">
-            <SimpleMDE value={commentStore.draft.text} onChange={this.handleMarkdownChange} label="Comment:" options={{ spellChecker: false }} />
-          </div>
-          <Form.Submit disabled={this.pending || commentStore.draft.text === ''}><Icon.Upload /> Submit</Form.Submit>
-        </form>
+        {userStore.currentUser ? (
+          <form onSubmit={this.handleSubmit}>
+            <div className="form-group">
+              <SimpleMDE
+                value={commentStore.draft.text}
+                onChange={this.handleMarkdownChange}
+                label="Comment:"
+                options={{ spellChecker: false }}
+              />
+            </div>
+            <Form.Submit disabled={this.pending || commentStore.draft.text === ''}>
+              <Icon.Upload /> Submit
+            </Form.Submit>
+          </form>
+        ) : (
+          <p>
+            You must <Link to="/login">log in</Link> to leave a comment
+          </p>
+        )}
       </aside>
     );
   }

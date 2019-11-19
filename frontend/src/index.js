@@ -15,7 +15,8 @@ import ErrorPage from './components/error-page';
 import { articleStore } from './stores/articleStore';
 import NewsFeed from './components/news-feed';
 import Notifier from './components/shared/Notifier';
-import Login from './components/login';
+import Login from './components/user/login';
+import Register from "./components/user/register";
 
 // screw you, oppgavetekst
 articleStore.getCategories().catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));
@@ -31,6 +32,7 @@ if (root)
       <Switch>
         <Route exact path="/" component={FrontPage} />
         <Route exact path="/login" component={Login} />
+        <Route exact path="/register" component={Register} />
         <Route exact path="/articles/write" component={ArticleWriter} />
         <Route exact path="/articles/:id(\d+)" component={ArticleViewer} />
         <Route exact path="/articles/:id(\d+)/edit" component={ArticleEditor} />

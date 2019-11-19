@@ -68,17 +68,22 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
             </dl>
           </aside>
 
-          <aside className="article-buttons">
-            <strong>You may wish to </strong>
-            <Button.Secondary onClick={this.handleEdit}>
-              <Icon.Write /> Edit
-            </Button.Secondary>
-            <strong> or </strong>
-            <Button.Danger onClick={this.handleDelete}>
-              <Icon.Delete /> Delete
-            </Button.Danger>
-            <strong> this article.</strong>
-          </aside>
+          {userStore.currentUser &&
+          userStore.currentAuthor &&
+          userStore.currentUser.id === userStore.currentAuthor.id ? (
+            <aside className="article-buttons">
+              <strong>You may wish to </strong>
+              <Button.Secondary onClick={this.handleEdit}>
+                <Icon.Write /> Edit
+              </Button.Secondary>
+              <strong> or </strong>
+              <Button.Danger onClick={this.handleDelete}>
+                <Icon.Delete /> Delete
+              </Button.Danger>
+              <strong> this article.</strong>
+            </aside>
+          ) : null}
+
           <CommentSection articleID={this.props.match.params.id} />
         </div>
       </main>
