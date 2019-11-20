@@ -27,16 +27,29 @@ describe('CommentSection', () => {
     expect(commentStore.getComments).toHaveBeenCalled();
   });
 
-  it('should render comments when those are present', () => {
+  it('should list author as unknown if not found', () => {
     commentStore.comments.push(
-      new Comment(1, 1, 'I hate this article', new Date(), null),
-      new Comment(1, 1, "There, there... It'll be fine.", new Date(), null)
+      new Comment(1, 1, 'I hate this article', new Date(), null)
     );
+    // supplying no user
     commentSection.update();
     commentSection.instance().forceUpdate();
 
     expect(commentSection.debug()).toMatchSnapshot();
   });
+
+  it('should render comments when those are present', () => {
+    commentStore.comments.push(
+      new Comment(1, 1, "There, there... It'll be fine.", new Date(), null)
+    );
+    userStore.cachedUsers.set(1, new User(1, 'The Fridge', true));
+    commentSection.update();
+    commentSection.instance().forceUpdate();
+
+    expect(commentSection.debug()).toMatchSnapshot();
+  });
+
+
 
   it('should render form when user is logged in', () => {
     // log in

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CommentSection should render comments when those are present 1`] = `
+exports[`CommentSection should list author as unknown if not found 1`] = `
 "<aside className=\\"comments\\">
   <h2>
     Comments
@@ -16,11 +16,40 @@ exports[`CommentSection should render comments when those are present 1`] = `
     </p>
     <MarkdownRenderer markdown=\\"I hate this article\\" />
   </div>
+  <h2>
+    Leave your own comment
+  </h2>
+  <p>
+    You must 
+    <Link to=\\"/login\\">
+      log in
+    </Link>
+     to leave a comment
+  </p>
+</aside>"
+`;
+
+exports[`CommentSection should render comments when those are present 1`] = `
+"<aside className=\\"comments\\">
+  <h2>
+    Comments
+  </h2>
   <div className=\\"comment\\">
     <p>
       <em>
         <span className=\\"author\\">
-          Unknown author
+          The Fridge
+        </span>
+         said:
+      </em>
+    </p>
+    <MarkdownRenderer markdown=\\"I hate this article\\" />
+  </div>
+  <div className=\\"comment\\">
+    <p>
+      <em>
+        <span className=\\"author\\">
+          The Fridge
         </span>
          said:
       </em>
@@ -49,7 +78,7 @@ exports[`CommentSection should render form when user is logged in 1`] = `
     <p>
       <em>
         <span className=\\"author\\">
-          Unknown author
+          The Fridge
         </span>
          said:
       </em>
@@ -60,7 +89,7 @@ exports[`CommentSection should render form when user is logged in 1`] = `
     <p>
       <em>
         <span className=\\"author\\">
-          Unknown author
+          The Fridge
         </span>
          said:
       </em>
