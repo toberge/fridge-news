@@ -97,7 +97,11 @@ export default class Login extends Component {
         Notifier.error('Logging in failed, unknown error.');
       }
     } catch (e) {
-      Notifier.error(`Login failed\n${e.message}`);
+      if (e.message.includes('401')) {
+        Notifier.error('Invalid credentials');
+      } else {
+        Notifier.error(`Login failed\n${e.message}`);
+      }
     }
     this.pending = false;
   }

@@ -43,7 +43,7 @@ class UserStore {
       this.loggedIn = true;
       this.token = response.data.jwt;
       this.startTokenInterval();
-      return this.currentUser? this.currentUser.id : -1; // TODO temp hack...
+      return this.currentUser ? this.currentUser.id : -1; // TODO temp hack...
     });
   }
 
@@ -56,7 +56,7 @@ class UserStore {
   }
 
   startTokenInterval() {
-    this.tokenInterval = setInterval(this.refreshToken, 1000*60*4);
+    this.tokenInterval = setInterval(this.refreshToken, 1000 * 60 * 4);
   }
 
   refreshToken() {

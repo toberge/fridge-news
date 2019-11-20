@@ -64,18 +64,18 @@ const commentDAO = new CommentDAO(pool);
 
 /* ----------------- DAO METHOD WRAPPERS ----------------- */
 
-const performSingleRowQuery = async (res, func, context: string, ...params) => {
+const performSingleRowQuery = async (res: express$Response, func, context: string, ...params) => {
   func(...params)
     .then(rows => {
       if (rows) {
-        res.status(200).json(rows);
+        return res.status(200).json(rows);
       } else {
-        res.status(404).json({ error: `GET request failed, invalid ID for ${context}` });
+        return res.status(404).json({ error: `GET request failed, invalid ID for ${context}` });
       }
     })
     .catch(e => {
       console.error(e, `Error occurred while fetching ${context}`);
-      res.status(404).json({ error: 'GET failed', details: e.toString() });
+      return res.status(404).json({ error: 'GET failed', details: e.toString() });
     });
 };
 
@@ -85,14 +85,14 @@ const performMultiRowQuery = async (res, func: any => Promise<*[]>, context: str
     .then(rows => {
       console.log(`${rows.length} rows found`);
       if (rows.length > 0) {
-        res.status(200).json(rows);
+        return res.status(200).json(rows);
       } else {
-        res.status(404).json({ error: `GET request failed for ${context}${params ? ', invalid ID(s)' : ''}` });
+        return res.status(404).json({ error: `GET request failed for ${context}${params ? ', invalid ID(s)' : ''}` });
       }
     })
     .catch(e => {
       console.error(e, `Error occurred while fetching ${context}`);
-      res.status(404).json({ error: 'GET failed', details: e.toString() });
+      return res.status(404).json({ error: 'GET failed', details: e.toString() });
     });
 };
 
@@ -125,7 +125,7 @@ app.get('/articles/categories', async (req, res) => {
 });
 
 app.get('/articles/categories/:name([a-z]+)', async (req, res) => {
-  await performMultiRowQuery(res, articleDAO.getByCategory, 'articles by category', req.params.name);
+  await performMultiRowQuery(res, articleDAO.getByCategory, `articles by category ${req.params.name}`, req.params.name);
 });
 
 /* ----------------- GET COMMENTS ----------------- */

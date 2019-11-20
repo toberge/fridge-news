@@ -1,6 +1,6 @@
 // @flow
 
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import { Article, ArticleBase, NewsFeedArticle } from '../data/Article';
 import { sharedComponentData } from 'react-simplified';
 import {userStore} from "./userStore";
@@ -152,7 +152,7 @@ class ArticleStore {
         importance: article.importance,
         category: article.category
       })
-      .then(response => response.status === 200);
+      .then((response: AxiosResponse) => response.status === 200);
   }
 
   deleteArticle(): Promise<boolean> {

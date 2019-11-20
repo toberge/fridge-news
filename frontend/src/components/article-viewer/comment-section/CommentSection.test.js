@@ -5,46 +5,60 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import CommentSection from './CommentSection';
 import Comment from '../../../data/Comment';
-import { shallow, mount, ShallowWrapper, ReactWrapper, render } from 'enzyme';
-import {commentStore, CommentStore} from "../../../stores/commentStore";
-// jest.spyOn(commentStore, 'comments', 'get').mockReturnValue([new Comment(1, 2, 'shabalang', new Date(), null)]);
-const spyGetComments = jest.spyOn(CommentStore.prototype, 'getComments').mockImplementation(async () => 0);
+import { shallow, ShallowWrapper } from 'enzyme';
+import { commentStore } from '../../../stores/commentStore';
+import { userStore } from '../../../stores/userStore';
+import User from '../../../data/User';
 
-/*const comarr = new Array<Comment>(1);
-comarr.push(new Comment(1, 2, 'shabalang', new Date(), null));
-const mockGetComments = jest.fn();
-jest.mock('../../../stores/commentStore', () => {
-  return function () {
-    return {
-      comments: comarr,
-      getComments: mockGetComments
-    };
-  };
-});*/
+jest.mock('../../../stores/commentStore');
 
-// TODO if I bother
 describe('CommentSection', () => {
   const commentSection: ShallowWrapper = shallow(<CommentSection articleID={1} />);
 
-  it('should render as intended', () => {
+  it('should render no comments when none is present', () => {
     expect(commentSection.debug()).toMatchSnapshot();
   });
 
-  it('should fetch comments when mounting', () => {
-    // expect(mockGetComments).toHaveBeenCalled();
-    // expect(spyGetComments).toHaveBeenCalled();
+  it('should not be loading when getComments() is mocked', () => {
+    expect(commentSection.instance().loading).toBe(false);
   });
 
-  it('should not upload w/o input', () => {
-    // console.log(commentSection.instance().handleSubmit);
-    // const mockStuff = jest.fn();
-    // commentSection.instance().handleSubmit = mockStuff;
-    // const spy = jest.spyOn(commentSection.instance(), 'handleSubmit');
+  it('should fetch comments when mounting', () => {
+    expect(commentStore.getComments).toHaveBeenCalled();
+  });
+
+  it('should render comments when those are present', () => {
+    commentStore.comments.push(
+      new Comment(1, 1, 'I hate this article', new Date(), null),
+      new Comment(1, 1, "There, there... It'll be fine.", new Date(), null)
+    );
+    commentSection.update();
+    commentSection.instance().forceUpdate();
+
+    expect(commentSection.debug()).toMatchSnapshot();
+  });
+
+  it('should render form when user is logged in', () => {
+    // log in
+    userStore.currentUser = new User(1, 'The Fridge', true);
+    commentSection.update();
+    commentSection.instance().forceUpdate();
+
+    expect(commentSection.debug()).toMatchSnapshot();
+  });
+
+  // it('should not upload w/o input', () => {
+  it('should call handleSubmit() when submit is pressed', () => {
+    // spy on dat method, mocking it to prevent the actual method from being called
+    const submitSpy = jest.spyOn(commentSection.instance(), 'handleSubmit').mockImplementation(() => null);
+    // log in
+    userStore.currentUser = new User(1, 'The Fridge', true);
+    commentSection.update();
+    commentSection.instance().forceUpdate();
+
+    //click and inspect
+    expect(submitSpy).not.toHaveBeenCalled();
     commentSection.find('form').simulate('submit');
-    // console.log(commentSection.find('form').debug())
-    // expect(spy).toHaveBeenCalled();
-    // expect(mockStuff).toHaveBeenCalled();
-    // console.log(commentSection);
-    // expect(commentSection.state('handleSubmit')).toHaveBeenCalled();
+    expect(submitSpy).toHaveBeenCalled();
   });
 });

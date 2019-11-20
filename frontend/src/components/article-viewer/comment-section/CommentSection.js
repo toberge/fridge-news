@@ -25,7 +25,7 @@ export default class CommentSection extends Component<{ articleID: number }> {
           <em>Loading...</em>
         ) : commentStore.comments.length > 0 ? (
           commentStore.comments.map(c => (
-            <div className="comment">
+            <div className="comment" key={c.uploadTime.getDate() /*bogus key*/}>
               <p>
                 <em>
                   <span className="author">{this.getAuthor(c.authorID)}</span> said:

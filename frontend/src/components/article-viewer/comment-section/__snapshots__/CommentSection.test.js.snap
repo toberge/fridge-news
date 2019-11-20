@@ -1,13 +1,72 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CommentSection should render as intended 1`] = `
+exports[`CommentSection should render comments when those are present 1`] = `
 "<aside className=\\"comments\\">
   <h2>
     Comments
   </h2>
-  <em>
-    Loading...
-  </em>
+  <div className=\\"comment\\">
+    <p>
+      <em>
+        <span className=\\"author\\">
+          Unknown author
+        </span>
+         said:
+      </em>
+    </p>
+    <MarkdownRenderer markdown=\\"I hate this article\\" />
+  </div>
+  <div className=\\"comment\\">
+    <p>
+      <em>
+        <span className=\\"author\\">
+          Unknown author
+        </span>
+         said:
+      </em>
+    </p>
+    <MarkdownRenderer markdown=\\"There, there... It\\\\'ll be fine.\\" />
+  </div>
+  <h2>
+    Leave your own comment
+  </h2>
+  <p>
+    You must 
+    <Link to=\\"/login\\">
+      log in
+    </Link>
+     to leave a comment
+  </p>
+</aside>"
+`;
+
+exports[`CommentSection should render form when user is logged in 1`] = `
+"<aside className=\\"comments\\">
+  <h2>
+    Comments
+  </h2>
+  <div className=\\"comment\\">
+    <p>
+      <em>
+        <span className=\\"author\\">
+          Unknown author
+        </span>
+         said:
+      </em>
+    </p>
+    <MarkdownRenderer markdown=\\"I hate this article\\" />
+  </div>
+  <div className=\\"comment\\">
+    <p>
+      <em>
+        <span className=\\"author\\">
+          Unknown author
+        </span>
+         said:
+      </em>
+    </p>
+    <MarkdownRenderer markdown=\\"There, there... It\\\\'ll be fine.\\" />
+  </div>
   <h2>
     Leave your own comment
   </h2>
@@ -20,5 +79,26 @@ exports[`CommentSection should render as intended 1`] = `
        Submit
     </FormSubmit>
   </form>
+</aside>"
+`;
+
+exports[`CommentSection should render no comments when none is present 1`] = `
+"<aside className=\\"comments\\">
+  <h2>
+    Comments
+  </h2>
+  <em>
+    No comments yet.
+  </em>
+  <h2>
+    Leave your own comment
+  </h2>
+  <p>
+    You must 
+    <Link to=\\"/login\\">
+      log in
+    </Link>
+     to leave a comment
+  </p>
 </aside>"
 `;
