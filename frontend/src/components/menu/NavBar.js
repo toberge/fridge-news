@@ -43,11 +43,6 @@ export default class NavBar extends Component<{ brand?: React.Node, children: Re
   render() {
     return (
       <nav className="my-navbar">
-        {' '}
-        {/* navbar-expand-sm bg-light navbar-light*/}
-        {/*<NavLink id="logo" className="navbar-brand" activeClassName="active" exact to="/">*/}
-        {/*  Fridge News*/}
-        {/*</NavLink>*/}
         <ul className="navbar-nav">{this.props.children}</ul>
       </nav>
     );

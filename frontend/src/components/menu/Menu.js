@@ -23,7 +23,7 @@ export default class Menu extends Component {
         ))}
         <NavBar.Separator />
         {userStore.currentUser ? (
-          <NavBar.Link to="/nahduh">
+          <NavBar.Link to="">
             <Icon.User /> {' ' + userStore.currentUser.name}
           </NavBar.Link>
         ) : (

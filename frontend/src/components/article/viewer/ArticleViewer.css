@@ -1,9 +1,9 @@
-article.hidden {
+.wrapper.hidden {
   opacity: 0;
   pointer-events: none;
 }
 
-article {
+.wrapper {
   -webkit-transition: opacity 0.5s;
   -moz-transition: opacity 0.5s;
   -ms-transition: opacity 0.5s;

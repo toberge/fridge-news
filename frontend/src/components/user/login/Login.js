@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
+import { Link } from 'react-router-dom';
 import Form from '../../shared/Form';
 import { createHashHistory } from 'history';
 import Notifier from '../../shared/Notifier';
@@ -20,6 +21,7 @@ export default class Login extends Component {
       <main>
         <h1>Log In</h1>
         <form onSubmit={this.handleLogIn} style={{ margin: '0 auto', width: '80%' }}>
+          <p>Don't have an account? Go <Link to="/register">register yourself</Link>.</p>
           <Form.Input
             name="username"
             label="Username"

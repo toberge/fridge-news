@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
+import { Link } from 'react-router-dom';
 import Form from '../../shared/Form';
 import { createHashHistory } from 'history';
 import Notifier from '../../shared/Notifier';
@@ -21,6 +22,7 @@ export default class Register extends Component {
       <main>
         <h1>Register</h1>
         <form onSubmit={this.handleRegister} style={{ margin: '0 auto', width: '80%' }}>
+          <p>Already have an account? You can <Link to="/login">log in here</Link>.</p>
           <Form.Input
             name="username"
             label="Username"
@@ -48,7 +50,7 @@ export default class Register extends Component {
             type="password"
             placeholder="The same password"
             helpText=""
-            value={this.password}
+            value={this.secondPassword}
             onChange={this.handleSecondPasswordChange}
             inputCols={9}
             required
@@ -122,7 +124,11 @@ export default class Register extends Component {
         Notifier.error('Registration failed, unknown error.');
       }
     } catch (e) {
-      Notifier.error(`Registration failed\n${e.message}`);
+      if (e.message.includes('403')) {
+        Notifier.error('Username already exists');
+      } else {
+        Notifier.error(`Registration failed\n${e.message}`);
+      }
     }
     this.pending = false;
   }

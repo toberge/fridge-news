@@ -175,7 +175,8 @@ app.post('/users', async (req: Request, res: Response) => {
     res.status(201).json({ message: 'POST successful', insertId: insertId, jwt: token });
   } catch (e) {
     console.trace(e, 'Error occurred during /users/');
-    res.json({ error: 'Error occurred during registration', details: e.toString() });
+    // assuming it's due to already present username
+    res.status(403).json({ error: 'Error occurred during registration', details: e.toString() });
   }
 });
 
