@@ -34,8 +34,10 @@ Some *real good text*
 `it gets better`
 ## would you believe it', '2019-11-04 21:29:08', 1, 'politics');
 
+INSERT INTO users(name, password, admin) VALUES
+('The Fridge', '$2b$10$FNbU/tFeJZk4DgV2SpiBxehi5FrjMaqjAKRxbV87wvEB0duahUyZy', 1);
+
 INSERT INTO users(name) VALUES
-('The Fridge'),
 ('Thonk Face'),
 ('Alfred Barskknaus'),
 ('Donaldo Ducke');

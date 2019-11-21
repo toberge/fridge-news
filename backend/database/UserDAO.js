@@ -13,6 +13,11 @@ module.exports = class UserDAO extends DAO {
     super(pool);
   }
 
+  getAll = async (): Promise<User[]> => {
+    const [[rows]] = await super.execute('SELECT user_id, name, admin FROM users');
+    return rows;
+  };
+
   getOne = async (id: number): Promise<User> => {
     const [[rows]] = await super.execute('SELECT user_id, name, admin FROM users WHERE user_id = ?', id);
     return rows[0];

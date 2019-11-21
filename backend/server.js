@@ -3,7 +3,6 @@
 // SERVER
 const express = require('express');
 const path = require('path');
-const session = require('express-session'); // TODO don't actually use this next time, use JWT stuffs
 const bodyParser = require('body-parser');
 // DB
 const mysql = require('mysql2/promise');
@@ -124,6 +123,10 @@ app.get('/articles/categories/:name([a-z]+)', async (req: Request, res: Response
 
 /* ----------------- GET USER(S) ----------------- */
 
+app.get('/users/', async (req: Request, res: Response) => {
+  await performMultiRowQuery(res, userDAO.getAll, 'all users');
+});
+
 app.get('/users/:id(\\d+)', async (req: Request, res: Response) => {
   await performSingleRowQuery(res, userDAO.getOne, 'one user', parseInt(req.params.id));
 });
@@ -172,11 +175,11 @@ app.post('/users', async (req: Request, res: Response) => {
     const token = jwt.sign({ username: name }, PRIVATE_KEY, {
       expiresIn: TOKEN_EXPIRE_TIME
     });
-    res.status(201).json({ message: 'POST successful', insertId: insertId, jwt: token });
+    return res.status(201).json({ message: 'POST successful', insertId: insertId, jwt: token });
   } catch (e) {
     console.trace(e, 'Error occurred during /users/');
     // assuming it's due to already present username
-    res.status(403).json({ error: 'Error occurred during registration', details: e.toString() });
+    return res.status(403).json({ error: 'Error occurred during registration', details: e.toString() });
   }
 });
 
@@ -193,14 +196,14 @@ app.post('/login', async (req: Request, res: Response) => {
       const token = jwt.sign({ username: name }, PRIVATE_KEY, {
         expiresIn: TOKEN_EXPIRE_TIME
       });
-      res.status(201).json({ message: 'Login successful', jwt: token, user_id: user.user_id });
+      return res.status(201).json({ message: 'Login successful', jwt: token, user_id: user.user_id });
     } else {
       console.log('Credentials WRONG');
-      res.status(401).json({ error: 'Login failed, wrong credentials' });
+      return res.status(401).json({ error: 'Login failed, wrong credentials' });
     }
   } catch (e) {
     console.error(e, 'Error occured during login');
-    res.status(401).json({ error: 'Error occured during login', details: e.toString() });
+    return res.status(401).json({ error: 'Error occured during login', details: e.toString() });
   }
 });
 
@@ -210,13 +213,13 @@ app.get('/token', (req: Request, res: Response) => {
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
       console.log('Token NOT okay');
-      res.status(401).json({ error: 'Not authorized' }); // or 403...
+      return res.status(401).json({ error: 'Not authorized' }); // or 403...
     } else {
       console.log('Decoded token for ' + decoded.username + ', regenerating...');
       token = jwt.sign({ username: decoded.username }, PRIVATE_KEY, {
         expiresIn: TOKEN_EXPIRE_TIME
       });
-      res.status(200).json({ message: 'Regenerated token', jwt: token });
+      return res.status(200).json({ message: 'Regenerated token', jwt: token });
     }
   });
 });
@@ -230,44 +233,42 @@ const authenticate: express$Middleware<express$Request> = (
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
       console.log('Token NOT okay');
-      res.status(401).json({ error: 'Not authorized' }); // or 403...
+      return res.status(401).json({ error: 'Not authorized' }); // or 403...
     } else {
       console.log(`${decoded.username} is authorized, proceeding...`);
-      next();
+      return next();
     }
   });
 };
 
-// this turned out to not be necessary (after intense wrestling with Flow)
-// auth routes
-// const authenticator = express.Router();
-// authenticator.post('/articles', authenticate);
-
-// use that middleware
-// app.use(authenticator);
-
-/* ----------------- GET ROWS ----------------- */
-
-// dis one is old TODO dao or die
-const multiRowResources = [{ endpoint: '/users', query: 'SELECT user_id, name FROM users' }];
-
-for (const { endpoint, query } of multiRowResources) {
-  app.get(endpoint, async (req: Request, res: Response) => {
-    console.log(`Got GET request at ${endpoint}`);
-    try {
-      const rows = await multiRowQuery(query);
-      console.log(`${rows.length} rows found`);
-      if (rows.length > 0) {
-        res.status(200).json(rows);
-      } else {
-        res.status(503).json({ error: `Nothing found at ${endpoint}, is the database down?` });
+const checkIfOwnerOfArticle: express$Middleware<express$Request> = async (
+  req: express$Request,
+  res: express$Response,
+  next: express$NextFunction
+) => {
+  const token = req.headers['x-access-token'];
+  jwt.verify(token, PUBLIC_KEY, async (err, decoded) => {
+    if (err) {
+      console.log('Token NOT okay');
+      return res.status(401).json({ error: 'Not authorized' });
+    } else {
+      try {
+        const user = await userDAO.getOneByName(decoded.username);
+        const article = await articleDAO.getOne(parseInt(req.params.id));
+        if (user.user_id === article.user_id) {
+          console.log(`${decoded.username} is author of the article, proceeding...`);
+          return next();
+        } else {
+          return res.status(401).json({ error: 'Not authorized' });
+        }
+      } catch (e) {
+        return res.status(500).json({ error: 'Not authorized' });
       }
-    } catch (e) {
-      console.trace(e, `Error occurred during ${endpoint}:`);
-      res.status(503).send('GET request failed');
     }
   });
-}
+};
+
+/* ----------------- GET ROWS ----------------- */
 
 // TODO only delete when things are handled...
 app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
@@ -276,28 +277,10 @@ app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
     const rows = await commentDAO.getByArticle(parseInt(req.params.id));
     console.log(`${rows.length} rows found`);
     // gotta send the data even if there is none, let the client handle it
-    res.status(200).json(rows);
+    return res.status(200).json(rows);
   } catch (e) {
     console.trace(e, 'Error occurred while fetching comments');
-    res.status(503).send('GET request failed');
-  }
-});
-
-/* ----------------- GET ONE ROW ----------------- */
-
-app.get('/articles/:articleId/comments/:commentId', async (req: Request, res: Response) => {
-  try {
-    console.log(`Got GET request at ${req.path}`);
-    const row = await commentDAO.getOne(parseInt(req.params.commentId));
-    if (row) {
-      console.log('Found a comment');
-      res.status(200).json(row);
-    } else {
-      res.status(404).json({ error: 'GET request failed, invalid ID' });
-    }
-  } catch (e) {
-    console.error(e, 'Error occured during ');
-    res.status(404).json({ error: 'GET failed' });
+    return res.status(503).send('GET request failed');
   }
 });
 
@@ -323,17 +306,17 @@ app.post('/articles', authenticate, async (req: Request, res: Response) => {
       category
     });
     if (insertId > 0) {
-      res.status(201).json({ message: 'POST successful', id: insertId });
+      return res.status(201).json({ message: 'POST successful', id: insertId });
     } else {
-      res.status(400).json({ message: 'Could not POST article' });
+      return res.status(400).json({ message: 'Could not POST article' });
     }
   } catch (e) {
     console.trace(e, 'Failed to POST article');
-    res.status(400).json({ error: 'Failed to POST article' });
+    return res.status(400).json({ error: 'Failed to POST article' });
   }
 });
 
-app.put('/articles/:id(\\d+)', async (req: Request, res: Response) => {
+app.put('/articles/:id(\\d+)', checkIfOwnerOfArticle, async (req: Request, res: Response) => {
   if (!(req.body && req.body.title && req.body.content && req.body.importance && req.body.category))
     return res.status(400).json({ error: 'Insufficient data in request body' });
   const { title, content, importance, category } = req.body;
@@ -353,13 +336,13 @@ app.put('/articles/:id(\\d+)', async (req: Request, res: Response) => {
       category
     });
     if (fields.affectedRows === 1) {
-      res.status(200).json({ message: 'PUT successful' });
+      return res.status(200).json({ message: 'PUT successful' });
     } else {
-      res.status(400).json({ message: 'Could not PUT article' });
+      return res.status(400).json({ message: 'Could not PUT article' });
     }
   } catch (e) {
     console.trace(e, 'Failed to PUT article');
-    res.status(400).json({ error: 'Failed to PUT article' });
+    return res.status(400).json({ error: 'Failed to PUT article' });
   }
 });
 

@@ -156,7 +156,7 @@ class ArticleStore {
         content: article.text,
         importance: article.importance,
         category: article.category
-      })
+      }, userStore.getTokenHeader())
       .then((response: AxiosResponse) => response.status === 200);
   }
 
