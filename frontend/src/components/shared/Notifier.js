@@ -18,7 +18,11 @@ notifier.configure({
 export default class Notifier {
   static notifs: number[] = [];
 
-  static error(msg: string) {
+  static error(msg: string, error: ?Error) {
+    if (error) {
+      console.error(error, msg);
+      msg = msg + ' ' + error.message;
+    }
     this.notifs.push(
       notifier.error(msg, {
         autoClose: 4000

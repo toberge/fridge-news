@@ -33,7 +33,7 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
     const category = this.props.match.params.id;
     articleStore
       .getCategory(category)
-      .catch((error: Error) => Notifier.error(`Could not fetch categories\n${error.message}`));
+      .catch((error: Error) => Notifier.error(`Could not fetch categories`, error));
     document.title = `${capitalizeFirstLetter(category)} - Fridge News`;
   }
 }

@@ -8,7 +8,7 @@ type MinimalArticle = {
   picture_alt: string | null,
   picture_caption: string | null,
   content: string,
-  importance: 1 | 2,
+  importance: number,
   category: string
 };
 

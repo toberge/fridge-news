@@ -13,6 +13,9 @@ const fs = require('file-system');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+type Response = express$Response;
+type Request = express$Request;
+
 /* ----------------- GENERAL CONFIG ----------------- */
 
 const publicPath = path.join(__dirname, '../frontend/build');
@@ -22,22 +25,6 @@ app.use(express.static(publicPath));
 app.use(bodyParser.json());
 
 /* ----------------- TOKEN SETUP ----------------- */
-
-// from express-session's thing TODO replace with JWT
-const sess = {
-  secret: 'Let the Dragon ride again on the winds of time',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {}
-};
-
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1); // trust first proxy
-  sess.cookie.secure = true; // serve secure cookies
-}
-
-app.use(session(sess));
-// end of TODO replace
 
 const TOKEN_EXPIRE_TIME = 60 * 5;
 const PUBLIC_KEY = 'totally legit certificate';
@@ -64,7 +51,7 @@ const commentDAO = new CommentDAO(pool);
 
 /* ----------------- DAO METHOD WRAPPERS ----------------- */
 
-const performSingleRowQuery = async (res: express$Response, func, context: string, ...params) => {
+const performSingleRowQuery = async (res: Response, func: any => Promise<{}>, context: string, ...params) => {
   func(...params)
     .then(rows => {
       if (rows) {
@@ -79,7 +66,7 @@ const performSingleRowQuery = async (res: express$Response, func, context: strin
     });
 };
 
-const performMultiRowQuery = async (res, func: any => Promise<*[]>, context: string, ...params) => {
+const performMultiRowQuery = async (res: Response, func: any => Promise<*[]>, context: string, ...params) => {
   console.log(`Got GET request for ${context}`);
   func(...params)
     .then(rows => {
@@ -104,44 +91,42 @@ const performMultiRowQuery = async (res, func: any => Promise<*[]>, context: str
 
 /* ----------------- GET ARTICLE(S) ----------------- */
 
-app.get('/articles/:id(\\d+)', async (req, res) => {
+app.get('/articles/:id(\\d+)', async (req: Request, res: Response) => {
   await performSingleRowQuery(res, articleDAO.getOne, 'one article', parseInt(req.params.id));
 });
 
-app.get('/articles', async (req, res) => {
+app.get('/articles', async (req: Request, res: Response) => {
   await performMultiRowQuery(res, articleDAO.getAll, 'all articles');
 });
 
-app.get('/articles/front_page', async (req, res) => {
+app.get('/articles/front_page', async (req: Request, res: Response) => {
   await performMultiRowQuery(res, articleDAO.getFrontPage, 'front page');
 });
 
-app.get('/articles/news_feed', async (req, res) => {
+app.get('/articles/news_feed', async (req: Request, res: Response) => {
   await performMultiRowQuery(res, articleDAO.getNewsFeed, 'news feed');
 });
 
-app.get('/articles/categories', async (req, res) => {
+app.get('/articles/categories', async (req: Request, res: Response) => {
   await performMultiRowQuery(res, articleDAO.getCategories, 'all categories');
 });
 
-app.get('/articles/categories/:name([a-z]+)', async (req, res) => {
+app.get('/articles/categories/:name([a-z]+)', async (req: Request, res: Response) => {
   await performMultiRowQuery(res, articleDAO.getByCategory, `articles by category ${req.params.name}`, req.params.name);
 });
 
 /* ----------------- GET COMMENTS ----------------- */
 
 // TODO possible special case when no comments...
-// app.get('/articles/:id(\\d+)/comments', async (req, res) => {
+// app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
 //   await performMultiRowQuery(res, commentDAO.getOne, 'comments on article', parseInt(req.params.id));
 // });
 
 /* ----------------- GET USER(S) ----------------- */
 
-app.get('/users/:id(\\d+)', async (req, res) => {
+app.get('/users/:id(\\d+)', async (req: Request, res: Response) => {
   await performSingleRowQuery(res, userDAO.getOne, 'one user', parseInt(req.params.id));
 });
-
-/* TODO end of mess... */
 
 /* ----------------- SQL shortcuts - DEPRECATED ----------------- */
 
@@ -175,12 +160,16 @@ const updateQuery = async (query, ...params) => {
 
 /* ----------------- LOGIN - NOW USING JWT! ----------------- */
 
-app.post('/users', async (req, res) => {
-  console.log(`Got POST request to add ${req.body.name} to users`);
+app.post('/users', async (req: Request, res: Response) => {
+  if (!(req.body && req.body.name && req.body.password)) return res.status(400).json({ error: 'Insufficient data in request body' });
+  const { name, password } = req.body;
+  if (!(typeof name === 'string' && typeof password === 'string')) return res.status(400).json({ error: 'Invalid types of request data' });
+
+  console.log(`Got POST request to add ${name} to users`);
   try {
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const { insertId } = await userDAO.addOne({ name: req.body.name, password: hash });
-    const token = jwt.sign({ username: req.body.name }, PRIVATE_KEY, {
+    const hash = await bcrypt.hash(password, 10);
+    const { insertId } = await userDAO.addOne({ name: name, password: hash });
+    const token = jwt.sign({ username: name }, PRIVATE_KEY, {
       expiresIn: TOKEN_EXPIRE_TIME
     });
     res.status(201).json({ message: 'POST successful', insertId: insertId, jwt: token });
@@ -190,15 +179,17 @@ app.post('/users', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', async (req: Request, res: Response) => {
+  if (!(typeof req.body === 'object') || !req.body) return;
   if (!req.body.name || !req.body.password) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { password, name } = req.body;
+  if (!(typeof name === 'string' && typeof password === 'string')) return res.status(400).json({ error: 'Invalid types of request data' });
   console.log(`Got login request for user ${name}`);
   try {
-    const user = await userDAO.getOneByName(req.body.name);
+    const user = await userDAO.getOneByName(name);
     if (await bcrypt.compare(password, user.password)) {
       console.log('Credentials OK, signing token...');
-      const token = jwt.sign({ username: req.body.name }, PRIVATE_KEY, {
+      const token = jwt.sign({ username: name }, PRIVATE_KEY, {
         expiresIn: TOKEN_EXPIRE_TIME
       });
       res.status(201).json({ message: 'Login successful', jwt: token, user_id: user.user_id });
@@ -213,7 +204,7 @@ app.post('/login', async (req, res) => {
 });
 
 // regen endpoint (or append to all? ...no.)
-app.get('/token', (req: express$Request, res) => {
+app.get('/token', (req: Request, res: Response) => {
   let token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
@@ -260,7 +251,7 @@ const authenticate: express$Middleware<express$Request> = (
 const multiRowResources = [{ endpoint: '/users', query: 'SELECT user_id, name FROM users' }];
 
 for (const { endpoint, query } of multiRowResources) {
-  app.get(endpoint, async (req, res) => {
+  app.get(endpoint, async (req: Request, res: Response) => {
     console.log(`Got GET request at ${endpoint}`);
     try {
       const rows = await multiRowQuery(query);
@@ -278,7 +269,7 @@ for (const { endpoint, query } of multiRowResources) {
 }
 
 // TODO only delete when things are handled...
-app.get('/articles/:id(\\d+)/comments', async (req, res) => {
+app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
   console.log(`Got GET request at ${req.path}`);
   try {
     const rows = await commentDAO.getByArticle(parseInt(req.params.id));
@@ -293,7 +284,7 @@ app.get('/articles/:id(\\d+)/comments', async (req, res) => {
 
 /* ----------------- GET ONE ROW ----------------- */
 
-app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
+app.get('/articles/:articleId/comments/:commentId', async (req: Request, res: Response) => {
   try {
     console.log(`Got GET request at ${req.path}`);
     const row = await commentDAO.getOne(parseInt(req.params.commentId));
@@ -311,20 +302,21 @@ app.get('/articles/:articleId/comments/:commentId', async (req, res) => {
 
 /* ----------------- POST REQUESTS ----------------- */
 
-// TODO put the auths back in when refactored & all done
-app.post('/articles', authenticate, async (req, res) => {
-  const { user_id, title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
-  if (!(user_id && title && content && importance && category))
+app.post('/articles', authenticate, async (req: Request, res: Response) => {
+  if (!(req.body && req.body.user_id && req.body.title && req.body.content && req.body.importance && req.body.category))
     return res.status(400).json({ error: 'Insufficient data in request body' });
-  // console.log(`Got POST request from ${req.session.user} to add ${title} as article`);
+  const { user_id, title, content, importance, category } = req.body;
+  if (!(typeof title === 'string' && typeof user_id === 'number' && typeof content === 'string' && typeof importance === 'number' && typeof category === 'string'))
+    return res.status(400).json({ error: 'Invalid types of request data' });
+
   console.log(`Got POST request from ${user_id} to add ${title} as article`);
   try {
     const { insertId } = await articleDAO.addOne({
       user_id,
       title,
-      picture_path,
-      picture_alt,
-      picture_caption,
+      picture_path: req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
+      picture_alt: req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
+      picture_caption: req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string' ? req.body.picture_caption : null,
       content,
       importance,
       category
@@ -340,19 +332,21 @@ app.post('/articles', authenticate, async (req, res) => {
   }
 });
 
-app.put('/articles/:id(\\d+)', async (req, res) => {
-  const { title, picture_path, picture_alt, picture_caption, content, importance, category } = req.body;
-  if (!(title && content && importance && category))
+app.put('/articles/:id(\\d+)', async (req: Request, res: Response) => {
+  if (!(req.body && req.body.title && req.body.content && req.body.importance && req.body.category))
     return res.status(400).json({ error: 'Insufficient data in request body' });
-  const id = parseInt(req.params.id);
+  const { title, content, importance, category } = req.body;
+  if (!(typeof title === 'string' && typeof content === 'string' && typeof importance === 'number' && typeof category === 'string'))
+    return res.status(400).json({ error: 'Invalid types of request data' });
+
   console.log(`Got PUT request to update article ${title}`);
   try {
     let fields = await articleDAO.updateOne({
-      article_id: id,
+      article_id: parseInt(req.params.id),
       title,
-      picture_path,
-      picture_alt,
-      picture_caption,
+      picture_path: req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
+      picture_alt: req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
+      picture_caption: req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string' ? req.body.picture_caption : null,
       content,
       importance,
       category
@@ -368,44 +362,47 @@ app.put('/articles/:id(\\d+)', async (req, res) => {
   }
 });
 
-app.delete('/articles/:id(\\d+)', async (req, res) => {
+app.delete('/articles/:id(\\d+)', async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   console.log(`Got request to DELETE article ${id}`);
   try {
     let fields = await articleDAO.deleteOne(id);
     if (fields.affectedRows === 1) {
-      res.status(200).json({ message: 'DELETE successful' });
+      return res.status(200).json({ message: 'DELETE successful' });
     } else {
-      res.status(400).json({ message: 'Could not DELETE article' });
+      return res.status(400).json({ message: 'Could not DELETE article' });
     }
   } catch (e) {
     console.trace(e, 'Failed to DELETE article');
-    res.status(400).json({ error: 'Failed to DELETE article' });
+    return res.status(400).json({ error: 'Failed to DELETE article' });
   }
 });
 
-app.post('/articles/:id(\\d+)/comments', authenticate, async (req, res) => {
-  if (!req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
-  const { content } = req.body;
+app.post('/articles/:id(\\d+)/comments', authenticate, async (req: Request, res: Response) => {
+  if (!(req.body && req.body.content && req.body.user_id))
+    return res.status(400).json({ error: 'Insufficient data in request body' });
+  const { content, user_id } = req.body;
+  if (!(typeof content === 'string' && typeof user_id === 'number'))
+    return res.status(400).json({ error: 'Wrong type(s) of data' });
   console.log(`Got POST request to add ${content} as comment to article ${req.params.id}`);
   try {
-    const { insertId } = await commentDAO.addOne({ article_id: req.params.id, user_id: req.body.user_id, content });
+    const { insertId } = await commentDAO.addOne({ article_id: parseInt(req.params.id), user_id: user_id, content });
     if (insertId > 0) {
-      res.status(201).json({ message: 'POST successful' });
+      return res.status(201).json({ message: 'POST successful' });
     } else {
-      res.status(400).json({ message: 'Could not POST comment' });
+      return res.status(400).json({ message: 'Could not POST comment' });
     }
   } catch (e) {
     console.trace('Failed to POST comment');
-    res.status(400).json({ error: 'Failed to POST comment' });
+    return res.status(400).json({ error: 'Failed to POST comment' });
   }
 });
 
 // ratings are TODO if I get time for 'em
 // will fail if used as update
-app.post(
+/*app.post(
   '/articles/:id(\\d+)/ratings',
-  /*authLogin, */ async (req, res) => {
+  /!*authLogin, *!/ async (req: Request, res: Response) => {
     if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
     console.log(
       `Got POST request from ${req.session.user} to rate article ${req.params.id} a ${req.body.value} out of 5`
@@ -432,7 +429,7 @@ app.post(
 
 app.put(
   '/articles/:articleId(\\d+)/ratings/:userId(\\d+)',
-  /*authLogin, */ async (req, res) => {
+  /!*authLogin, *!/ async (req: Request, res: Response) => {
     // the session has number, param has string
     if (req.session.userId !== parseInt(req.params.userId))
       return res.status(400).json({ error: "Cannot change another user's rating" });
@@ -458,7 +455,7 @@ app.put(
       res.status(400).json({ error: 'Failed to UPDATE rating' });
     }
   }
-);
+);*/
 
 /* ----------------- THAT'S IT ----------------- */
 

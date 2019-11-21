@@ -18,7 +18,8 @@
   },
   "scripts": {
     "test": "jest --detectOpenHandles",
-    "start": "nodemon --exec babel-node server.js"
+    "start": "nodemon --exec babel-node server.js",
+    "flow-coverage": "flow-coverage-report -i server.js \"database/**.js\""
   },
   "description": "Simple backend for serving fresh news from the fridge",
   "version": "1.0.0",

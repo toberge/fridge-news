@@ -19,7 +19,7 @@ test_backend:
         - npm install
         - npm test
         - flow check
-        - flow-coverage-report -i "**/**.js"
+        - npm run flow-coverage
     artifacts:
         paths:
             - backend/coverage/
@@ -32,7 +32,7 @@ test_frontend:
         - npm install
         - npm test
         - flow check src
-        - flow-coverage-report -i "src/**/*.js"
+        - npm run flow-coverage
     artifacts:
         paths:
             - frontend/coverage/
