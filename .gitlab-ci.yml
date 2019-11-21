@@ -15,10 +15,11 @@ test_backend:
         MYSQL_ROOT_PASSWORD: "fish"
     script:
         - cd backend
-        - npm install -g flow-bin
+        - npm install -g flow-bin flow-coverage-report
         - npm install
         - npm test
         - flow check
+        - flow-coverage-report -i "**/**.js"
     artifacts:
         paths:
             - backend/coverage/
@@ -27,10 +28,11 @@ test_frontend:
     stage: test
     script:
         - cd frontend
-        - npm install -g flow-bin
+        - npm install -g flow-bin flow-coverage-report
         - npm install
         - npm test
         - flow check src
+        - flow-coverage-report -i "src/**/*.js"
     artifacts:
         paths:
             - frontend/coverage/

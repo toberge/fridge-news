@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArticleViewer should hide controls when user is NOT author of article 1`] = `
+"<main>
+  <div className=\\"\\">
+    <article>
+      <header>
+        <h1>
+          whatever
+        </h1>
+      </header>
+      <MarkdownRenderer markdown=\\"blablabla\\" />
+    </article>
+    <aside className=\\"details\\">
+      <dl className=\\"dateline\\">
+        <dt>
+          Author:
+        </dt>
+        <dd>
+          Author of Articles
+        </dd>
+        <dt>
+          Published:
+        </dt>
+        <dd>
+          2/23/1997, 4:04:04 AM
+        </dd>
+      </dl>
+    </aside>
+    <CommentSection articleID={1} />
+  </div>
+</main>"
+`;
+
+exports[`ArticleViewer should show controls when user is author of article 1`] = `
+"<main>
+  <div className=\\"\\">
+    <article>
+      <header>
+        <h1>
+          whatever
+        </h1>
+      </header>
+      <MarkdownRenderer markdown=\\"blablabla\\" />
+    </article>
+    <aside className=\\"details\\">
+      <dl className=\\"dateline\\">
+        <dt>
+          Author:
+        </dt>
+        <dd>
+          Author of Articles
+        </dd>
+        <dt>
+          Published:
+        </dt>
+        <dd>
+          2/23/1997, 4:04:04 AM
+        </dd>
+      </dl>
+    </aside>
+    <aside className=\\"article-buttons\\">
+      <strong>
+        You may wish to 
+      </strong>
+      <ButtonLight onClick={[Function: bound handleEdit]}>
+        <WriteIcon />
+         Edit
+      </ButtonLight>
+      <strong>
+         or 
+      </strong>
+      <ButtonDanger onClick={[Function: bound handleDelete]}>
+        <DeleteIcon />
+         Delete
+      </ButtonDanger>
+      <strong>
+         this article.
+      </strong>
+    </aside>
+    <CommentSection articleID={1} />
+  </div>
+</main>"
+`;
