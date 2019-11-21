@@ -95,5 +95,5 @@ CREATE VIEW news_feed AS(
     FROM articles
     ORDER BY upload_time DESC,
              importance ASC
-    LIMIT 20
+    LIMIT 14
 );

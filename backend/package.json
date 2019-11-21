@@ -17,7 +17,7 @@
     ]
   },
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest --verbose --detectOpenHandles",
     "start": "nodemon --exec babel-node server.js",
     "flow-coverage": "flow-coverage-report -i server.js \"database/**.js\""
   },

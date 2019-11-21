@@ -3,7 +3,7 @@
 import * as React from 'react';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { shallow, ShallowWrapper, mount } from 'enzyme/build';
+import { shallow, ShallowWrapper } from 'enzyme/build';
 import ArticleViewer from './ArticleViewer';
 import { articleStore } from '../../../stores/articleStore';
 import { userStore } from '../../../stores/userStore';
@@ -62,12 +62,27 @@ describe('ArticleViewer', () => {
     userStore.currentUser = userStore.currentAuthor;
     const spy = jest.spyOn(articleStore, 'deleteArticle').mockResolvedValue();
     expect(spy).not.toHaveBeenCalled();
-    // crappy way of calling onClick function since it's a child component
-    // - since "mounted.find('button.btn-danger').simulate('click');" does not work
+    // diving down to shallowly render button and click it
     articleViewer
       .find(Button.Danger)
-      .props()
-      .onClick();
+      .dive()
+      .simulate('click');
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should show picture when the article has one', () => {
+    articleStore.currentArticle.picturePath = 'https://bogus.com/image.jåddpegg';
+    articleStore.currentArticle.pictureAlt = 'intense bogus';
+    articleStore.currentArticle.pictureCapt = 'Look at this INTENSITY';
+    update();
+    expect(articleViewer.find('figure')).toHaveLength(1);
+    expect(articleViewer.debug()).toMatchSnapshot();
+  });
+
+  it('should not show picture when the article does not have one', () => {
+    articleStore.currentArticle.picturePath = null;
+    update();
+    expect(articleViewer.find('figure')).toHaveLength(0);
+    expect(articleViewer.debug()).toMatchSnapshot();
   });
 });

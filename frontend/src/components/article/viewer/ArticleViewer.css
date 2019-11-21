@@ -36,7 +36,8 @@ figure img {
     text-align: center;
   }
 
-  .dateline dt, .dateline dd {
+  .dateline dt,
+  .dateline dd {
     display: inline-block;
   }
 

@@ -2,7 +2,7 @@
 
 exports[`ArticleViewer should hide controls when user is NOT author of article 1`] = `
 "<main>
-  <div className=\\"\\">
+  <div className=\\"wrapper\\">
     <article>
       <header>
         <h1>
@@ -32,15 +32,128 @@ exports[`ArticleViewer should hide controls when user is NOT author of article 1
 </main>"
 `;
 
-exports[`ArticleViewer should show controls when user is author of article 1`] = `
+exports[`ArticleViewer should not show picture when the article does not have one 1`] = `
 "<main>
-  <div className=\\"\\">
+  <div className=\\"wrapper\\">
     <article>
       <header>
         <h1>
           whatever
         </h1>
       </header>
+      <MarkdownRenderer markdown=\\"blablabla\\" />
+    </article>
+    <aside className=\\"details\\">
+      <dl className=\\"dateline\\">
+        <dt>
+          Author:
+        </dt>
+        <dd>
+          Author of Articles
+        </dd>
+        <dt>
+          Published:
+        </dt>
+        <dd>
+          2/23/1997, 4:04:04 AM
+        </dd>
+      </dl>
+    </aside>
+    <aside className=\\"article-buttons\\">
+      <strong>
+        You may wish to 
+      </strong>
+      <ButtonLight onClick={[Function: bound handleEdit]}>
+        <WriteIcon />
+         Edit
+      </ButtonLight>
+      <strong>
+         or 
+      </strong>
+      <ButtonDanger onClick={[Function: bound handleDelete]}>
+        <DeleteIcon />
+         Delete
+      </ButtonDanger>
+      <strong>
+         this article.
+      </strong>
+    </aside>
+    <CommentSection articleID={1} />
+  </div>
+</main>"
+`;
+
+exports[`ArticleViewer should show controls when user is author of article 1`] = `
+"<main>
+  <div className=\\"wrapper\\">
+    <article>
+      <header>
+        <h1>
+          whatever
+        </h1>
+      </header>
+      <MarkdownRenderer markdown=\\"blablabla\\" />
+    </article>
+    <aside className=\\"details\\">
+      <dl className=\\"dateline\\">
+        <dt>
+          Author:
+        </dt>
+        <dd>
+          Author of Articles
+        </dd>
+        <dt>
+          Published:
+        </dt>
+        <dd>
+          2/23/1997, 4:04:04 AM
+        </dd>
+      </dl>
+    </aside>
+    <aside className=\\"article-buttons\\">
+      <strong>
+        You may wish to 
+      </strong>
+      <ButtonLight onClick={[Function: bound handleEdit]}>
+        <WriteIcon />
+         Edit
+      </ButtonLight>
+      <strong>
+         or 
+      </strong>
+      <ButtonDanger onClick={[Function: bound handleDelete]}>
+        <DeleteIcon />
+         Delete
+      </ButtonDanger>
+      <strong>
+         this article.
+      </strong>
+    </aside>
+    <CommentSection articleID={1} />
+  </div>
+</main>"
+`;
+
+exports[`ArticleViewer should show picture when the article has one 1`] = `
+"<main>
+  <div className=\\"wrapper\\">
+    <article>
+      <header>
+        <h1>
+          whatever
+        </h1>
+      </header>
+      <figure>
+        <img src=\\"https://bogus.com/image.jåddpegg\\" alt=\\"intense bogus\\" />
+        <figcaption>
+          <p>
+            <em>
+              Image:
+            </em>
+             Look at this INTENSITY
+          </p>
+        </figcaption>
+      </figure>
       <MarkdownRenderer markdown=\\"blablabla\\" />
     </article>
     <aside className=\\"details\\">
