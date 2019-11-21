@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom';
 import * as React from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import Menu from './components/menu';
-import { ArticleEditor, ArticleWriter } from './components/article-editor';
-import ArticleViewer from './components/article-viewer';
+import { ArticleEditor, ArticleWriter } from './components/article/editor';
+import ArticleViewer from './components/article/viewer';
 import FrontPage from './components/front-page';
 import CategoryPage from './components/category-page';
 import Footer from './components/footer';
@@ -16,7 +16,7 @@ import { articleStore } from './stores/articleStore';
 import NewsFeed from './components/news-feed';
 import Notifier from './components/shared/Notifier';
 import Login from './components/user/login';
-import Register from "./components/user/register";
+import Register from './components/user/register';
 
 // screw you, oppgavetekst
 articleStore.getCategories().catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));

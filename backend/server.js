@@ -39,7 +39,7 @@ if (app.get('env') === 'production') {
 app.use(session(sess));
 // end of TODO replace
 
-const TOKEN_EXPIRE_TIME = 60*5;
+const TOKEN_EXPIRE_TIME = 60 * 5;
 const PUBLIC_KEY = 'totally legit certificate';
 const PRIVATE_KEY = PUBLIC_KEY;
 
@@ -384,25 +384,22 @@ app.delete('/articles/:id(\\d+)', async (req, res) => {
   }
 });
 
-app.post(
-  '/articles/:id(\\d+)/comments',
-  authenticate, async (req, res) => {
-    if (!req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
-    const { content } = req.body;
-    console.log(`Got POST request to add ${content} as comment to article ${req.params.id}`);
-    try {
-      const { insertId } = await commentDAO.addOne({ article_id: req.params.id, user_id: req.body.user_id, content });
-      if (insertId > 0) {
-        res.status(201).json({ message: 'POST successful' });
-      } else {
-        res.status(400).json({ message: 'Could not POST comment' });
-      }
-    } catch (e) {
-      console.trace('Failed to POST comment');
-      res.status(400).json({ error: 'Failed to POST comment' });
+app.post('/articles/:id(\\d+)/comments', authenticate, async (req, res) => {
+  if (!req.body.content) return res.status(400).json({ error: 'Insufficient data in request body' });
+  const { content } = req.body;
+  console.log(`Got POST request to add ${content} as comment to article ${req.params.id}`);
+  try {
+    const { insertId } = await commentDAO.addOne({ article_id: req.params.id, user_id: req.body.user_id, content });
+    if (insertId > 0) {
+      res.status(201).json({ message: 'POST successful' });
+    } else {
+      res.status(400).json({ message: 'Could not POST comment' });
     }
+  } catch (e) {
+    console.trace('Failed to POST comment');
+    res.status(400).json({ error: 'Failed to POST comment' });
   }
-);
+});
 
 // ratings are TODO if I get time for 'em
 // will fail if used as update

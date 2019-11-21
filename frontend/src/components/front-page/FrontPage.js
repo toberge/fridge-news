@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Component } from 'react-simplified';
 import { ArticleCard, CardHolder } from '../shared/Cards';
 import { articleStore } from '../../stores/articleStore';
-import Notifier from "../shared/Notifier";
+import Notifier from '../shared/Notifier';
 
 export default class FrontPage extends Component {
   render() {

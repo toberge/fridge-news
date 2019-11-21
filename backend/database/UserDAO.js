@@ -6,7 +6,7 @@ type User = {
   user_id: number,
   name: string,
   password: string
-}
+};
 
 module.exports = class UserDAO extends DAO {
   constructor(pool: mysql.PromisePool) {
@@ -24,9 +24,8 @@ module.exports = class UserDAO extends DAO {
     return rows[0];
   };
 
-  addOne = async ({name, password} : {name: string, password: string}) => {
+  addOne = async ({ name, password }: { name: string, password: string }) => {
     const [[fields]] = await super.execute('INSERT INTO users(name, password) VALUES (?, ?)', name, password);
     return fields;
-  }
-
+  };
 };

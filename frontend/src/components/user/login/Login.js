@@ -6,7 +6,6 @@ import Form from '../../shared/Form';
 import { createHashHistory } from 'history';
 import Notifier from '../../shared/Notifier';
 import { userStore } from '../../../stores/userStore';
-import './Login.css';
 import Icon from '../../shared/Icon';
 
 const history = createHashHistory();

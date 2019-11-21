@@ -20,7 +20,6 @@ export default class ErrorPage extends Component {
   }
 
   mounted() {
-    document.title = '404 Not Found - Fridge News'
+    document.title = '404 Not Found - Fridge News';
   }
-
 }

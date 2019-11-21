@@ -5,7 +5,7 @@ import { Component } from 'react-simplified';
 import { ArticleCard, CardHolder } from '../shared/Cards';
 import { articleStore } from '../../stores/articleStore';
 import { capitalizeFirstLetter } from '../../data/Article';
-import Notifier from "../shared/Notifier";
+import Notifier from '../shared/Notifier';
 
 export default class CategoryPage extends Component<{ match: { params: { id: string } } }> {
   render() {
@@ -31,7 +31,9 @@ export default class CategoryPage extends Component<{ match: { params: { id: str
 
   mounted(): void {
     const category = this.props.match.params.id;
-    articleStore.getCategory(category).catch((error: Error) => Notifier.error(`Could not fetch categories\n${error.message}`));
+    articleStore
+      .getCategory(category)
+      .catch((error: Error) => Notifier.error(`Could not fetch categories\n${error.message}`));
     document.title = `${capitalizeFirstLetter(category)} - Fridge News`;
   }
 }

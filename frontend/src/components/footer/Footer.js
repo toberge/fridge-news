@@ -20,8 +20,8 @@ export default class Footer extends Component {
           Current placeholder image is public domain and does not require contribution.
           <br />
           Regardless, I found it on <a href="https://www.pexels.com/photo/office-disk-storage-data-41290/">
-          Pexels
-        </a>{' '}
+            Pexels
+          </a>{' '}
           and it seems to be from{' '}
           <a href="https://www.publicdomainpictures.net/en/view-image.php?image=14548">Public Domain Pictures</a>
         </p>

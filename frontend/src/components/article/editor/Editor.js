@@ -1,16 +1,16 @@
 // @flow
 
 import * as React from 'react';
-import { Component } from 'react-simplified';
+import { Component } from 'react-simplified/lib/index';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import { capitalizeFirstLetter } from '../../data/Article';
-import { articleStore } from '../../stores/articleStore';
-import Form from './../shared/Form';
+import { capitalizeFirstLetter } from '../../../data/Article';
+import { articleStore } from '../../../stores/articleStore';
+import Form from '../../shared/Form';
 import { createHashHistory } from 'history';
-import Icon from '../shared/Icon';
-import Notifier from '../shared/Notifier';
-import {userStore} from "../../stores/userStore";
+import Icon from '../../shared/Icon';
+import Notifier from '../../shared/Notifier';
+import { userStore } from '../../../stores/userStore';
 
 const history = createHashHistory();
 

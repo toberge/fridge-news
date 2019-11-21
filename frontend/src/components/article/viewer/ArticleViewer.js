@@ -1,18 +1,18 @@
 // @flow
 
 import * as React from 'react';
-import { Component } from 'react-simplified';
+import { Component } from 'react-simplified/lib/index';
 import MarkdownRenderer from 'react-markdown-renderer';
 import 'easymde/dist/easymde.min.css';
-import { articleStore } from '../../stores/articleStore';
+import { articleStore } from '../../../stores/articleStore';
 import './ArticleViewer.css';
-import { Button } from '../widgets';
+import Button from '../../shared/Button';
 import { createHashHistory } from 'history';
 import CommentSection from './comment-section';
-import Notifier from '../shared/Notifier';
-import { userStore } from '../../stores/userStore';
-import Icon from '../shared/Icon';
-import { capitalizeFirstLetter } from '../../data/Article';
+import Notifier from '../../shared/Notifier';
+import { userStore } from '../../../stores/userStore';
+import Icon from '../../shared/Icon';
+import { capitalizeFirstLetter } from '../../../data/Article';
 
 const history = createHashHistory();
 
@@ -91,7 +91,6 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
   }
 
   handleEdit() {
-    // TODO prevent this from being necessary?
     if (articleStore.currentArticle.picturePath === null) {
       articleStore.currentArticle.picturePath = '';
       articleStore.currentArticle.pictureAlt = '';

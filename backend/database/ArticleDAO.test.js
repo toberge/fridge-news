@@ -113,7 +113,7 @@ describe('ArticleDAO', () => {
         title: 'What a wonderful Snore',
         picture_path: 'https://nothing.com/image.jpg',
         picture_alt: 'ja ja ja',
-        picture_caption: 'btw I don\'t use arch',
+        picture_caption: "btw I don't use arch",
         content: 'Zzzzzzzzzzzzzzzz...',
         importance: 2,
         category: 'culture'
@@ -124,7 +124,7 @@ describe('ArticleDAO', () => {
       const after = await articleDAO.getOne(insertId);
       expect(after.picture_path).toBe('https://nothing.com/image.jpg');
       expect(after.picture_alt).toBe('ja ja ja');
-    })
+    });
   });
 
   describe('.updateOne()', () => {

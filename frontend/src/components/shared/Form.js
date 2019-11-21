@@ -23,7 +23,7 @@ class FormInput extends Component<{
   placeholder: string,
   value: string,
   onChange: (SyntheticInputEvent<HTMLInputElement>) => void,
-  required?: boolean,
+  required?: boolean
 }> {
   render() {
     return (
@@ -31,15 +31,15 @@ class FormInput extends Component<{
         <label htmlFor={this.props.name} className="form-label">
           {this.props.label}
         </label>
-          <input
-            id={this.props.name}
-            className="form-control"
-            placeholder={this.props.placeholder}
-            type={this.props.type ? this.props.type : 'text'}
-            value={this.props.value}
-            onChange={this.props.onChange}
-            required={this.props.required}
-          />
+        <input
+          id={this.props.name}
+          className="form-control"
+          placeholder={this.props.placeholder}
+          type={this.props.type ? this.props.type : 'text'}
+          value={this.props.value}
+          onChange={this.props.onChange}
+          required={this.props.required}
+        />
       </div>
     );
   }

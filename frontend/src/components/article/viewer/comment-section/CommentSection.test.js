@@ -4,11 +4,11 @@ import * as React from 'react';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import CommentSection from './CommentSection';
-import Comment from '../../../data/Comment';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { commentStore } from '../../../stores/commentStore';
-import { userStore } from '../../../stores/userStore';
-import User from '../../../data/User';
+import Comment from '../../../../data/Comment';
+import { shallow, ShallowWrapper } from 'enzyme/build';
+import { commentStore } from '../../../../stores/commentStore';
+import { userStore } from '../../../../stores/userStore';
+import User from '../../../../data/User';
 
 jest.mock('../../../stores/commentStore');
 
@@ -28,9 +28,7 @@ describe('CommentSection', () => {
   });
 
   it('should list author as unknown if not found', () => {
-    commentStore.comments.push(
-      new Comment(1, 1, 'I hate this article', new Date(), null)
-    );
+    commentStore.comments.push(new Comment(1, 1, 'I hate this article', new Date(), null));
     // supplying no user
     commentSection.update();
     commentSection.instance().forceUpdate();
@@ -39,17 +37,13 @@ describe('CommentSection', () => {
   });
 
   it('should render comments when those are present', () => {
-    commentStore.comments.push(
-      new Comment(1, 1, "There, there... It'll be fine.", new Date(), null)
-    );
+    commentStore.comments.push(new Comment(1, 1, "There, there... It'll be fine.", new Date(), null));
     userStore.cachedUsers.set(1, new User(1, 'The Fridge', true));
     commentSection.update();
     commentSection.instance().forceUpdate();
 
     expect(commentSection.debug()).toMatchSnapshot();
   });
-
-
 
   it('should render form when user is logged in', () => {
     // log in

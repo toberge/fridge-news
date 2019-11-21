@@ -1,6 +1,6 @@
 {
-    "host": "host.domain.stuff",
-    "user": "username",
-    "password": "password",
-    "database": "username"
+  "host": "host.domain.stuff",
+  "user": "username",
+  "password": "password",
+  "database": "username"
 }

@@ -1,9 +1,9 @@
 // @flow
 
-import axios, {AxiosResponse} from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Article, ArticleBase, NewsFeedArticle } from '../data/Article';
 import { sharedComponentData } from 'react-simplified';
-import {userStore} from "./userStore";
+import { userStore } from './userStore';
 
 const placeholder = new Article(
   1,
@@ -124,19 +124,24 @@ class ArticleStore {
   }
 
   addArticle(): Promise<number | void> {
-    if (!userStore.loggedIn || !userStore.currentUser) return Promise.reject(new Error('Must be logged in to add article'));
+    if (!userStore.loggedIn || !userStore.currentUser)
+      return Promise.reject(new Error('Must be logged in to add article'));
     const article = this.currentArticle;
     return axios
-      .post('/articles/', {
-        user_id: userStore.currentUser.id,
-        title: article.title,
-        picture_path: article.picturePath,
-        picture_alt: article.pictureAlt,
-        picture_caption: article.pictureCapt,
-        content: article.text,
-        importance: article.importance,
-        category: article.category
-      }, userStore.getTokenHeader())
+      .post(
+        '/articles/',
+        {
+          user_id: userStore.currentUser.id,
+          title: article.title,
+          picture_path: article.picturePath,
+          picture_alt: article.pictureAlt,
+          picture_caption: article.pictureCapt,
+          content: article.text,
+          importance: article.importance,
+          category: article.category
+        },
+        userStore.getTokenHeader()
+      )
       .then(response => response.data.id);
   }
 
@@ -192,11 +197,6 @@ class ArticleStore {
         array.push(...this.toArticleArray(response.data));
       }
     });
-    /*.catch(e => {
-        // this is temporary crap
-        this.articles.splice(0, this.articles.length);
-        throw e;
-      })*/
   }
 
   toArticleArray(result: []): ArticleBase[] {

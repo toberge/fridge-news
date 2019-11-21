@@ -19,9 +19,7 @@ class NavBarLink extends Component<{ exact?: boolean, to: string, children: Reac
 
 class NavBarSeparator extends Component {
   render() {
-    return (
-      <li className="separator"></li>
-    );
+    return <li className="separator"></li>;
   }
 }
 

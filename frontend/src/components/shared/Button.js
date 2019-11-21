@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { Component } from 'react-simplified';
+import { Component } from 'react-simplified/lib/index';
 
 class ButtonPrimary extends Component<{
   onClick: () => mixed,
@@ -59,7 +59,7 @@ class ButtonDanger extends Component<{
 /**
  * Button widgets
  */
-export class Button {
+export default class Button {
   static Success = ButtonSuccess;
   static Secondary = ButtonLight;
   static Danger = ButtonDanger;

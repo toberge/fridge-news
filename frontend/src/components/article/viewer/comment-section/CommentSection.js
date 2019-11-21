@@ -1,16 +1,16 @@
 // @flow
 
 import * as React from 'react';
-import { Component } from 'react-simplified';
+import { Component } from 'react-simplified/lib/index';
 import MarkdownRenderer from 'react-markdown-renderer';
 import SimpleMDE from 'react-simplemde-editor';
 import 'easymde/dist/easymde.min.css';
-import Form from '../../shared/Form';
-import Icon from '../../shared/Icon';
+import Form from '../../../shared/Form';
+import Icon from '../../../shared/Icon';
 import './CommentSection.css';
-import { commentStore } from '../../../stores/commentStore';
-import { userStore } from '../../../stores/userStore';
-import Notifier from '../../shared/Notifier';
+import { commentStore } from '../../../../stores/commentStore';
+import { userStore } from '../../../../stores/userStore';
+import Notifier from '../../../shared/Notifier';
 import { Link } from 'react-router-dom';
 
 export default class CommentSection extends Component<{ articleID: number }> {
@@ -25,7 +25,7 @@ export default class CommentSection extends Component<{ articleID: number }> {
           <em>Loading...</em>
         ) : commentStore.comments.length > 0 ? (
           commentStore.comments.map(c => (
-            <div className="comment" key={c.uploadTime.getDate() /*bogus key*/}>
+            <div className="comment">
               <p>
                 <em>
                   <span className="author">{this.getAuthor(c.authorID)}</span> said:
