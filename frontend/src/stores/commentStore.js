@@ -5,7 +5,7 @@ import { sharedComponentData } from 'react-simplified';
 import Comment from '../data/Comment';
 import { userStore } from './userStore';
 
-const empty = new Comment(-1, 1, '', new Date(), null);
+const empty = new Comment(-1, -1, 1, '', new Date(), null);
 
 export class CommentStore {
   draft: Comment = empty;
@@ -56,8 +56,8 @@ export class CommentStore {
 
   toCommentArray(result: []): Comment[] {
     return result.map(e => {
-      const { article_id, user_id, content, upload_time, update_time } = e;
-      return new Comment(article_id, user_id, content, upload_time, update_time);
+      const { comment_id, article_id, user_id, content, upload_time, update_time } = e;
+      return new Comment(comment_id, article_id, user_id, content, upload_time, update_time);
     });
   }
 }
