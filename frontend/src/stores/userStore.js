@@ -71,7 +71,7 @@ class UserStore {
       this.token = response.data.jwt;
       this.startTokenInterval();
       this.saveUser();
-      return this.currentUser ? this.currentUser.id : -1; // TODO temp hack...
+      return this.currentUser ? this.currentUser.id : -1; // temp hack...
     });
   }
 

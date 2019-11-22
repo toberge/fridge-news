@@ -5,7 +5,7 @@ import { ArticleCard } from './Cards';
 import { ArticleBase } from '../../data/Article';
 import { shallow, mount, ShallowWrapper, render } from 'enzyme';
 
-describe('Card', () => {
+describe('ArticleCard', () => {
   const TITLE = 'There is food';
   const ARTICLE = new ArticleBase(1, TITLE, '', '', 'culture');
 
@@ -22,8 +22,6 @@ describe('Card', () => {
   });
 
   it('has a title', done => {
-    // TODO why did teacher suggest setTimeout here?
-    //  --> because Alert uses setTimeout itself...
     const instance = ArticleCard.instance();
     expect(typeof instance).toEqual('object');
     // total bogus test

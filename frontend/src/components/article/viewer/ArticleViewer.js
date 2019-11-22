@@ -33,7 +33,6 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
     return (
       <main>
         <div className={'wrapper' + (this.hidden || articleStore.loadingArticle ? ' hidden' : '')}>
-          {/* TODO split into ArticleRenderer to be used for preview in editor */}
           <article>
             <header>
               <h1>{title}</h1>
@@ -104,10 +103,9 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
       .deleteArticle()
       .then(() => {
         Notifier.success('Successfully deleted article');
-        history.push('/'); // TODO handle other page I guess
+        history.push('/'); // could handle other page, I guess
       })
       .catch((e: Error) => Notifier.error(`Could not delete article\n${e.message}`));
-    // TODO maybe don't push immediately
   }
 
   async mounted() {

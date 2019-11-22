@@ -10,7 +10,6 @@
   margin: 0;
   padding: 0.3rem 0.3rem;
 
-  /* TODO limited scrolling */
   overflow: visible;
   display: flex;
   flex-direction: row;
@@ -38,6 +37,7 @@
   }
 }
 
+/* sweep 2 right
 @keyframes sweep {
   100% {
     transform: translateX(0%);

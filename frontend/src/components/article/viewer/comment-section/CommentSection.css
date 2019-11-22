@@ -17,6 +17,7 @@
 }
 
 /* TODO remove or keep and make generic? --> replace bootstrap? (fitting more in with my design) */
+/* this is an UNUSED button */
 
 #comment-submit {
   background-color: var(--button-background);

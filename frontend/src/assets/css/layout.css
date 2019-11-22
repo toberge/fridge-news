@@ -2,7 +2,6 @@
    grid + media queries
 \*======================*/
 
-/* TODO navbar can be squeezed at 62rem or something instead */
 @media screen and (min-width: 65rem) {
   /* margin around articles on wider screens */
   main {
@@ -27,14 +26,12 @@
 
 @media screen and (max-width: 65rem) {
   /* tiny margin around content on narrow screens */
-  /* TODO rem instead */
   main {
     padding: 0 2%;
     background-color: var(--content-background);
-    /* TODO I know about that */
   }
-  /* TODO add hamborger */
 
+  /* cheap solution for responsive navbar */
   .my-navbar ul {
     flex-direction: column;
   }

@@ -303,7 +303,6 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             <label htmlFor="category">Category</label>
             <select
               className="custom-select"
-              // onInvalid={event => console.log('TODO')}
               id="category"
               value={articleStore.currentArticle.category}
               onChange={(event: SyntheticInputEvent<HTMLInputElement>) => {

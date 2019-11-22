@@ -7,8 +7,6 @@ import { articleStore } from '../../stores/articleStore';
 import './NewsFeed.css';
 import Notifier from '../shared/Notifier';
 
-// TODO stupid edgecase when writing article where entire array is shown duped...
-
 export default class NewsFeed extends Component {
   interval: IntervalID = setInterval(this.poll, 5000);
 

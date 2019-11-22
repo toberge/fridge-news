@@ -160,7 +160,6 @@ class ArticleStore {
     return axios.delete(`/articles/${this.currentArticle.id}`, userStore.getTokenHeader()).then(response => response.status === 200);
   }
 
-  // TODO this is excessively complex while avoiding the matter of updating the content of the newsfeed...
   getNewsFeed(): Promise<NewsFeedArticle[]> {
     return axios
       .get('/articles/news_feed')

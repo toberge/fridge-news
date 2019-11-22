@@ -25,5 +25,4 @@
     'Noto Sans', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif;
   /* override bootstrap like ez */
   --font-family-sans-serif: var(--sans-serif-font);
-  --serif-font: Georgia, 'Liberation Serif', 'DejaVu Serif', serif; /* TODO */
 }
