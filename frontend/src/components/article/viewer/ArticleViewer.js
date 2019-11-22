@@ -70,7 +70,7 @@ export default class ArticleViewer extends Component<{ match: { params: { id: nu
 
           {userStore.currentUser &&
           userStore.currentAuthor &&
-          userStore.currentUser.id === userStore.currentAuthor.id ? (
+          (userStore.currentUser.admin || userStore.currentUser.id === userStore.currentAuthor.id) ? (
             <aside className="article-buttons">
               <strong>You may wish to </strong>
               <Button.Secondary onClick={this.handleEdit}>
