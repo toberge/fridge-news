@@ -46,7 +46,8 @@ https://jsfiddle.net/joshnh/srNVQ/
   flex: auto;
 }
 
-.my-navbar a {
+.my-navbar a,
+.my-navbar span {
   background: var(--section-background);
   color: var(--section-text);
   display: block;

@@ -17,9 +17,13 @@ import NewsFeed from './components/news-feed';
 import Notifier from './components/shared/Notifier';
 import Login from './components/user/login';
 import Register from './components/user/register';
+import { userStore } from './stores/userStore';
 
 // screw you, oppgavetekst
 articleStore.getCategories().catch(e => Notifier.error(`Fatal error: Could not fetch categories!\n${e.message}`));
+
+// load logged in user if existing
+userStore.loadUser();
 
 const root = document.getElementById('root');
 if (root)

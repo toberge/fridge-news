@@ -37,11 +37,7 @@ const empty = new Article(
   '',
   '',
   '',
-  `*Begin your article with an ingress*
-    
-## Use headers of level 2 and below
-
-write some **good** text`,
+  '',
   '',
   new Date(),
   null,
@@ -124,7 +120,7 @@ class ArticleStore {
   }
 
   addArticle(): Promise<number | void> {
-    if (!userStore.loggedIn || !userStore.currentUser)
+    if (!userStore.currentUser)
       return Promise.reject(new Error('Must be logged in to add article'));
     const article = this.currentArticle;
     return axios

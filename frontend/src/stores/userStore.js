@@ -9,20 +9,46 @@ class UserStore {
   // login state
   currentUser: ?User;
   token: ?string;
-  loggedIn: boolean = false;
   tokenInterval: ?IntervalID = null;
   // other users
   currentAuthor: User = new User(1, 'The Fridge', true);
   cachedUsers: Map<number, User> = new Map<number, User>();
+
+  loadUser() {
+    const username = sessionStorage.getItem('username');
+    const id = sessionStorage.getItem('userID');
+    const token = sessionStorage.getItem('token');
+    if (username && id && token) {
+      // set temp user
+      this.currentUser = new User(parseInt(id), username, false);
+      this.token = token;
+      // load user from DB
+      this.getUser(parseInt(id))
+        .then(user => this.currentUser = user)
+        .catch(error => {
+          console.log(error);
+          this.currentUser = null;
+        });
+    }
+  }
+
+  saveUser() {
+    if (this.currentUser && this.token) {
+      sessionStorage.setItem('username', this.currentUser.name);
+      // excessive checks because Flow is stupid sometimes
+      if (this.currentUser) sessionStorage.setItem('userID', `${this.currentUser.id}`);
+      if (this.token) sessionStorage.setItem('token', this.token);
+    }
+  }
 
   logIn(name: string, password: string) {
     return axios.post('/login', { name, password }).then(async (response: AxiosResponse) => {
       // already okay
       console.log(response.data);
       this.currentUser = await this.getUser(response.data.user_id);
-      this.loggedIn = true;
       this.token = response.data.jwt;
       this.startTokenInterval();
+      this.saveUser();
       return true;
     });
   }
@@ -31,7 +57,6 @@ class UserStore {
    * Just logs off our dear user
    */
   logOut() {
-    this.loggedIn = false;
     this.currentUser = null;
     this.token = null;
     clearInterval(this.tokenInterval);
@@ -40,9 +65,9 @@ class UserStore {
   register(username: string, password: string) {
     return axios.post('/users/', { name: username, password }).then(async response => {
       this.currentUser = await this.getUser(response.data.insertId);
-      this.loggedIn = true;
       this.token = response.data.jwt;
       this.startTokenInterval();
+      this.saveUser();
       return this.currentUser ? this.currentUser.id : -1; // TODO temp hack...
     });
   }

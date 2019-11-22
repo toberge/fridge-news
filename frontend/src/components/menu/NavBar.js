@@ -23,6 +23,18 @@ class NavBarSeparator extends Component {
   }
 }
 
+class NavBarFluff extends Component<{ children: React.Node }> {
+  render() {
+    return (
+      <li>
+        <span>
+          {this.props.children}
+        </span>
+      </li>
+    );
+  }
+}
+
 class NavBarBrand extends Component<{ children: React.Node }> {
   render() {
     return (
@@ -39,6 +51,7 @@ export default class NavBar extends Component<{ brand?: React.Node, children: Re
   static Link = NavBarLink;
   static Brand = NavBarBrand;
   static Separator = NavBarSeparator;
+  static Fluff = NavBarFluff;
 
   render() {
     return (

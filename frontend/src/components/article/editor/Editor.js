@@ -27,7 +27,7 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
   }
 
   mounted() {
-    if (!userStore.loggedIn) history.push('/login');
+    if (!userStore.currentUser) history.push('/login');
     document.title = 'Write Article - Fridge News';
     articleStore.clearArticle();
   }
@@ -113,6 +113,18 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
 
 class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any) => mixed, save?: boolean }> {
   hasPicture: boolean = false;
+
+  mounted() {
+    // ugly solution for making SimpleMDE work
+    const textarea = document.getElementById('original-text-area');
+    if (textarea instanceof HTMLTextAreaElement) {
+      textarea.required = true;
+    }
+    const textarea2 = document.querySelector('.CodeMirror textarea');
+    if (textarea2 instanceof HTMLTextAreaElement) {
+      textarea2.required = true;
+    }
+  }
 
   handleMarkdownChange(value: string) {
     articleStore.currentArticle.text = value;

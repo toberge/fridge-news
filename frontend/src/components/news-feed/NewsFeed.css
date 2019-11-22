@@ -4,6 +4,7 @@
   overflow: hidden;
   border-bottom: solid 0.3rem var(--section-background);
 }
+
 #news-feed ul {
   list-style-type: none;
   margin: 0;
@@ -20,6 +21,7 @@
     min-width: 10rem;
     margin-right: 0.5rem;
     max-height: 3rem;
+    line-height: 1.1rem;
     background: var(--real-background);
     border-radius: 0.3rem;
     border: solid 0.1rem var(--cyan);
@@ -32,12 +34,11 @@
   }
 
   #news-feed ul {
-    animation: sweep 20s 1 linear;
+    animation: sweep 20s 1 ease-in-out;
   }
 }
 
 @keyframes sweep {
-
   100% {
     transform: translateX(0%);
   }

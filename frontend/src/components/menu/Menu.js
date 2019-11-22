@@ -23,15 +23,15 @@ export default class Menu extends Component {
         ))}
         <NavBar.Separator />
         {userStore.currentUser ? (
-          <NavBar.Link to="">
+          <NavBar.Fluff>
             <Icon.User /> {' ' + userStore.currentUser.name}
-          </NavBar.Link>
+          </NavBar.Fluff>
         ) : (
           <NavBar.Link to="/login">
             <Icon.User /> Log In
           </NavBar.Link>
         )}
-        {userStore.loggedIn ? (
+        {userStore.currentUser ? (
           <NavBar.Link to="/articles/write">
             <Icon.Write /> Write
           </NavBar.Link>
