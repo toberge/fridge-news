@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ArticleViewer should render as intended 1`] = `
+exports[`ArticleViewer should render article list as intended 1`] = `
 "<main>
   <h1>
     Fridge News
