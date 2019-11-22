@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Component } from 'react-simplified';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import './NavBar.css';
 
 class NavBarLink extends Component<{ exact?: boolean, to: string, children: React.Node }> {
@@ -12,6 +12,18 @@ class NavBarLink extends Component<{ exact?: boolean, to: string, children: Reac
         <NavLink activeClassName="active" exact={this.props.exact} to={this.props.to}>
           {this.props.children}
         </NavLink>
+      </li>
+    );
+  }
+}
+
+class NavBarButton extends Component<{ onClick: () => mixed, children: React.Node }> {
+  render() {
+    return (
+      <li>
+        <Link to='/' onClick={this.props.onClick}>
+          {this.props.children}
+        </Link>
       </li>
     );
   }
@@ -52,6 +64,7 @@ export default class NavBar extends Component<{ brand?: React.Node, children: Re
   static Brand = NavBarBrand;
   static Separator = NavBarSeparator;
   static Fluff = NavBarFluff;
+  static Button = NavBarButton;
 
   render() {
     return (

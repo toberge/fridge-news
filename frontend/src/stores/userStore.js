@@ -59,6 +59,7 @@ class UserStore {
   logOut() {
     this.currentUser = null;
     this.token = null;
+    sessionStorage.clear();
     clearInterval(this.tokenInterval);
   }
 
