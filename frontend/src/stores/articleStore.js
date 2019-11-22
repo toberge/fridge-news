@@ -157,7 +157,7 @@ class ArticleStore {
   }
 
   deleteArticle(): Promise<boolean> {
-    return axios.delete(`/articles/${this.currentArticle.id}`).then(response => response.status === 200);
+    return axios.delete(`/articles/${this.currentArticle.id}`, userStore.getTokenHeader()).then(response => response.status === 200);
   }
 
   // TODO this is excessively complex while avoiding the matter of updating the content of the newsfeed...
@@ -168,12 +168,11 @@ class ArticleStore {
       .then((rows: []) =>
         rows
           .map(row => new NewsFeedArticle(row.article_id, row.title, new Date(Date.parse(row.upload_time))))
-          .filter(a => !this.newsFeed.find(present => present.id === a.id))
       )
       .then((feed: NewsFeedArticle[]) => {
-        // add feed elements that aren't present to beginning of array
-        this.newsFeed.unshift(...feed);
-        this.feedCount += feed.length; // indicate pushback
+        // just replace array cuz that works
+        this.newsFeed.splice(0, this.newsFeed.length);
+        this.newsFeed.push(...feed);
         return this.newsFeed;
       });
   }

@@ -116,10 +116,22 @@ app.get('/articles/categories/:name([a-z]+)', async (req: Request, res: Response
 
 /* ----------------- GET COMMENTS ----------------- */
 
-// TODO possible special case when no comments...
+// TODO not using this because client has possible special case when no comments...
 // app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
 //   await performMultiRowQuery(res, commentDAO.getOne, 'comments on article', parseInt(req.params.id));
 // });
+app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
+  console.log(`Got GET request at ${req.path}`);
+  try {
+    const rows = await commentDAO.getByArticle(parseInt(req.params.id));
+    console.log(`${rows.length} rows found`);
+    // gotta send the data even if there is none, let the client handle it
+    return res.status(200).json(rows);
+  } catch (e) {
+    console.trace(e, 'Error occurred while fetching comments');
+    return res.status(503).send('GET request failed');
+  }
+});
 
 /* ----------------- GET USER(S) ----------------- */
 
@@ -131,42 +143,14 @@ app.get('/users/:id(\\d+)', async (req: Request, res: Response) => {
   await performSingleRowQuery(res, userDAO.getOne, 'one user', parseInt(req.params.id));
 });
 
-/* ----------------- SQL shortcuts - DEPRECATED ----------------- */
-
-const multiRowQuery = async (query, ...params) => {
-  let connection = null;
-  try {
-    connection = await pool.getConnection();
-    const [rows] = await connection.execute(query, params);
-    // connection.release();
-    return rows;
-  } catch (e) {
-    console.error(e, `SQL query ${query} failed with ${e.code}`);
-    throw e;
-  } finally {
-    if (connection) connection.release();
-  }
-};
-
-const updateQuery = async (query, ...params) => {
-  let connection = null;
-  try {
-    connection = await pool.getConnection();
-    return await connection.execute(query, params);
-  } catch (e) {
-    console.error(e, `SQL query ${query} failed with ${e.code}`);
-    throw e;
-  } finally {
-    if (connection) connection.release();
-  }
-};
-
 /* ----------------- LOGIN - NOW USING JWT! ----------------- */
 
 app.post('/users', async (req: Request, res: Response) => {
-  if (!(req.body && req.body.name && req.body.password)) return res.status(400).json({ error: 'Insufficient data in request body' });
+  if (!(req.body && req.body.name && req.body.password))
+    return res.status(400).json({ error: 'Insufficient data in request body' });
   const { name, password } = req.body;
-  if (!(typeof name === 'string' && typeof password === 'string')) return res.status(400).json({ error: 'Invalid types of request data' });
+  if (!(typeof name === 'string' && typeof password === 'string'))
+    return res.status(400).json({ error: 'Invalid types of request data' });
 
   console.log(`Got POST request to add ${name} to users`);
   try {
@@ -184,10 +168,11 @@ app.post('/users', async (req: Request, res: Response) => {
 });
 
 app.post('/login', async (req: Request, res: Response) => {
-  if (!(typeof req.body === 'object') || !req.body) return;
-  if (!req.body.name || !req.body.password) return res.status(400).json({ error: 'Insufficient data in request body' });
+  if (!req.body || !req.body.name || !req.body.password) return res.status(400).json({ error: 'Insufficient data in request body' });
   const { password, name } = req.body;
-  if (!(typeof name === 'string' && typeof password === 'string')) return res.status(400).json({ error: 'Invalid types of request data' });
+  if (!(typeof name === 'string' && typeof password === 'string'))
+    return res.status(400).json({ error: 'Invalid types of request data' });
+
   console.log(`Got login request for user ${name}`);
   try {
     const user = await userDAO.getOneByName(name);
@@ -212,7 +197,7 @@ app.get('/token', (req: Request, res: Response) => {
   let token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
-      console.log('Token NOT okay');
+      console.log("It's NOT okay to refresh this token");
       return res.status(401).json({ error: 'Not authorized' }); // or 403...
     } else {
       console.log('Decoded token for ' + decoded.username + ', regenerating...');
@@ -224,6 +209,8 @@ app.get('/token', (req: Request, res: Response) => {
   });
 });
 
+/* ----------------- AUTHENTICATION ----------------- */
+
 const authenticate: express$Middleware<express$Request> = (
   req: express$Request,
   res: express$Response,
@@ -232,8 +219,8 @@ const authenticate: express$Middleware<express$Request> = (
   const token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
     if (err) {
-      console.log('Token NOT okay');
-      return res.status(401).json({ error: 'Not authorized' }); // or 403...
+      console.log('Token NOT okay during general auth');
+      return res.status(401).json({ error: 'Not authorized' });
     } else {
       console.log(`${decoded.username} is authorized, proceeding...`);
       return next();
@@ -241,7 +228,7 @@ const authenticate: express$Middleware<express$Request> = (
   });
 };
 
-const checkIfOwnerOfArticle: express$Middleware<express$Request> = async (
+const authenticateAsOwnerOfArticle: express$Middleware<express$Request> = (
   req: express$Request,
   res: express$Response,
   next: express$NextFunction
@@ -249,40 +236,29 @@ const checkIfOwnerOfArticle: express$Middleware<express$Request> = async (
   const token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, async (err, decoded) => {
     if (err) {
-      console.log('Token NOT okay');
+      console.log('Token NOT okay during author auth');
       return res.status(401).json({ error: 'Not authorized' });
     } else {
       try {
         const user = await userDAO.getOneByName(decoded.username);
         const article = await articleDAO.getOne(parseInt(req.params.id));
+
         if (user.user_id === article.user_id) {
           console.log(`${decoded.username} is author of the article, proceeding...`);
           return next();
+        } else if (user.admin) {
+          console.log(`${decoded.username} is admin, bypassing requirement...`);
+          return next();
         } else {
+          console.log(`${decoded.username} was rejected...`);
           return res.status(401).json({ error: 'Not authorized' });
         }
       } catch (e) {
-        return res.status(500).json({ error: 'Not authorized' });
+        return res.status(500).json({ error: 'Not authorized or server failure' });
       }
     }
   });
 };
-
-/* ----------------- GET ROWS ----------------- */
-
-// TODO only delete when things are handled...
-app.get('/articles/:id(\\d+)/comments', async (req: Request, res: Response) => {
-  console.log(`Got GET request at ${req.path}`);
-  try {
-    const rows = await commentDAO.getByArticle(parseInt(req.params.id));
-    console.log(`${rows.length} rows found`);
-    // gotta send the data even if there is none, let the client handle it
-    return res.status(200).json(rows);
-  } catch (e) {
-    console.trace(e, 'Error occurred while fetching comments');
-    return res.status(503).send('GET request failed');
-  }
-});
 
 /* ----------------- POST REQUESTS ----------------- */
 
@@ -290,7 +266,15 @@ app.post('/articles', authenticate, async (req: Request, res: Response) => {
   if (!(req.body && req.body.user_id && req.body.title && req.body.content && req.body.importance && req.body.category))
     return res.status(400).json({ error: 'Insufficient data in request body' });
   const { user_id, title, content, importance, category } = req.body;
-  if (!(typeof title === 'string' && typeof user_id === 'number' && typeof content === 'string' && typeof importance === 'number' && typeof category === 'string'))
+  if (
+    !(
+      typeof title === 'string' &&
+      typeof user_id === 'number' &&
+      typeof content === 'string' &&
+      typeof importance === 'number' &&
+      typeof category === 'string'
+    )
+  )
     return res.status(400).json({ error: 'Invalid types of request data' });
 
   console.log(`Got POST request from ${user_id} to add ${title} as article`);
@@ -298,9 +282,14 @@ app.post('/articles', authenticate, async (req: Request, res: Response) => {
     const { insertId } = await articleDAO.addOne({
       user_id,
       title,
-      picture_path: req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
-      picture_alt: req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
-      picture_caption: req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string' ? req.body.picture_caption : null,
+      picture_path:
+        req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
+      picture_alt:
+        req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
+      picture_caption:
+        req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string'
+          ? req.body.picture_caption
+          : null,
       content,
       importance,
       category
@@ -316,11 +305,18 @@ app.post('/articles', authenticate, async (req: Request, res: Response) => {
   }
 });
 
-app.put('/articles/:id(\\d+)', checkIfOwnerOfArticle, async (req: Request, res: Response) => {
+app.put('/articles/:id(\\d+)', authenticateAsOwnerOfArticle, async (req: Request, res: Response) => {
   if (!(req.body && req.body.title && req.body.content && req.body.importance && req.body.category))
     return res.status(400).json({ error: 'Insufficient data in request body' });
   const { title, content, importance, category } = req.body;
-  if (!(typeof title === 'string' && typeof content === 'string' && typeof importance === 'number' && typeof category === 'string'))
+  if (
+    !(
+      typeof title === 'string' &&
+      typeof content === 'string' &&
+      typeof importance === 'number' &&
+      typeof category === 'string'
+    )
+  )
     return res.status(400).json({ error: 'Invalid types of request data' });
 
   console.log(`Got PUT request to update article ${title}`);
@@ -328,9 +324,14 @@ app.put('/articles/:id(\\d+)', checkIfOwnerOfArticle, async (req: Request, res: 
     let fields = await articleDAO.updateOne({
       article_id: parseInt(req.params.id),
       title,
-      picture_path: req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
-      picture_alt: req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
-      picture_caption: req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string' ? req.body.picture_caption : null,
+      picture_path:
+        req.body && req.body.picture_path && typeof req.body.picture_path === 'string' ? req.body.picture_path : null,
+      picture_alt:
+        req.body && req.body.picture_alt && typeof req.body.picture_alt === 'string' ? req.body.picture_alt : null,
+      picture_caption:
+        req.body && req.body.picture_caption && typeof req.body.picture_caption === 'string'
+          ? req.body.picture_caption
+          : null,
       content,
       importance,
       category
@@ -346,7 +347,7 @@ app.put('/articles/:id(\\d+)', checkIfOwnerOfArticle, async (req: Request, res: 
   }
 });
 
-app.delete('/articles/:id(\\d+)', async (req: Request, res: Response) => {
+app.delete('/articles/:id(\\d+)', authenticateAsOwnerOfArticle, async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   console.log(`Got request to DELETE article ${id}`);
   try {

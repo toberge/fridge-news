@@ -22,12 +22,14 @@ class UserStore {
       // set temp user
       this.currentUser = new User(parseInt(id), username, false);
       this.token = token;
+      // making sure token is OK then start refresh interval
+      this.refreshToken().then(this.startTokenInterval);
       // load user from DB
       this.getUser(parseInt(id))
-        .then(user => this.currentUser = user)
+        .then(user => (this.currentUser = user))
         .catch(error => {
           console.log(error);
-          this.currentUser = null;
+          this.logOut();
         });
     }
   }
@@ -64,7 +66,7 @@ class UserStore {
   }
 
   register(username: string, password: string) {
-    return axios.post('/users/', { name: username, password }).then(async response => {
+    return axios.post('/users/', { name: username, password }).then(async (response: AxiosResponse) => {
       this.currentUser = await this.getUser(response.data.insertId);
       this.token = response.data.jwt;
       this.startTokenInterval();
@@ -86,7 +88,7 @@ class UserStore {
   }
 
   refreshToken() {
-    axios
+    return axios
       .get('/token/', this.getTokenHeader())
       .then((response: AxiosResponse) => {
         if (response.data.jwt) this.token = response.data.jwt;
@@ -103,7 +105,7 @@ class UserStore {
     if (user) {
       return new Promise<User>(resolve => resolve(user));
     } else {
-      return axios.get('/users/' + id).then(response => {
+      return axios.get('/users/' + id).then((response: AxiosResponse) => {
         const { user_id, name, admin } = response.data;
         const newUser = new User(user_id, name, admin);
         this.cachedUsers.set(id, newUser);
