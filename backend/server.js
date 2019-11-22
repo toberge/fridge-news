@@ -1,5 +1,6 @@
 // @flow
 
+/* ----------------- IMPORTS ----------------- */
 // SERVER
 const express = require('express');
 const path = require('path');
@@ -12,20 +13,22 @@ const fs = require('file-system');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+/* ----------------- TYPE ALIASES ----------------- */
+
 type Response = express$Response;
 type Request = express$Request;
+type NextFunction = express$NextFunction;
 
-/* ----------------- GENERAL CONFIG ----------------- */
+/* ----------------- EXPRESS SETUP ----------------- */
 
 const publicPath = path.join(__dirname, '../frontend/build');
-// const publicPath = path.join(__dirname, '../frontend/public');
 const app = express();
 app.use(express.static(publicPath));
 app.use(bodyParser.json());
 
 /* ----------------- TOKEN SETUP ----------------- */
 
-const TOKEN_EXPIRE_TIME = 60 * 5;
+const TOKEN_EXPIRE_TIME = 60 * 5; // five minutes
 const PUBLIC_KEY = 'totally legit certificate';
 const PRIVATE_KEY = PUBLIC_KEY;
 
@@ -87,6 +90,7 @@ const performMultiRowQuery = async (res: Response, func: any => Promise<*[]>, co
 // I somehow managed to get it to accept usernames with %20 but the group needs to be (%20 w/o the last )
 // see https://www.npmjs.com/package/path-to-regexp for info
 // "All parameters can have a custom regexp, which overrides the default match ([^/]+)."
+// this also means I can be sure that IDs can be parsed as integers, since they match \d+
 
 /* ----------------- GET ARTICLE(S) ----------------- */
 
@@ -168,7 +172,8 @@ app.post('/users', async (req: Request, res: Response) => {
 });
 
 app.post('/login', async (req: Request, res: Response) => {
-  if (!req.body || !req.body.name || !req.body.password) return res.status(400).json({ error: 'Insufficient data in request body' });
+  if (!req.body || !req.body.name || !req.body.password)
+    return res.status(400).json({ error: 'Insufficient data in request body' });
   const { password, name } = req.body;
   if (!(typeof name === 'string' && typeof password === 'string'))
     return res.status(400).json({ error: 'Invalid types of request data' });
@@ -211,10 +216,10 @@ app.get('/token', (req: Request, res: Response) => {
 
 /* ----------------- AUTHENTICATION ----------------- */
 
-const authenticate: express$Middleware<express$Request> = (
-  req: express$Request,
-  res: express$Response,
-  next: express$NextFunction
+const authenticate: express$Middleware<Request> = (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   const token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, (err, decoded) => {
@@ -228,10 +233,10 @@ const authenticate: express$Middleware<express$Request> = (
   });
 };
 
-const authenticateAsOwnerOfArticle: express$Middleware<express$Request> = (
-  req: express$Request,
-  res: express$Response,
-  next: express$NextFunction
+const authenticateAsOwnerOfArticle: express$Middleware<Request> = (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   const token = req.headers['x-access-token'];
   jwt.verify(token, PUBLIC_KEY, async (err, decoded) => {
@@ -260,7 +265,9 @@ const authenticateAsOwnerOfArticle: express$Middleware<express$Request> = (
   });
 };
 
-/* ----------------- POST REQUESTS ----------------- */
+/* ----------------- MODIFY ARTICLES (requires authentication) ----------------- */
+
+/* FYI: Flow requires that I verify content of req.body before using it, since express$Request.body is of type mixed */
 
 app.post('/articles', authenticate, async (req: Request, res: Response) => {
   if (!(req.body && req.body.user_id && req.body.title && req.body.content && req.body.importance && req.body.category))
@@ -363,6 +370,8 @@ app.delete('/articles/:id(\\d+)', authenticateAsOwnerOfArticle, async (req: Requ
   }
 });
 
+/* ----------------- POST COMMENTS (requires authentication) ----------------- */
+
 app.post('/articles/:id(\\d+)/comments', authenticate, async (req: Request, res: Response) => {
   if (!(req.body && req.body.content && req.body.user_id))
     return res.status(400).json({ error: 'Insufficient data in request body' });
@@ -384,6 +393,7 @@ app.post('/articles/:id(\\d+)/comments', authenticate, async (req: Request, res:
 });
 
 // ratings are TODO if I get time for 'em
+// I keep 'em here for now
 // will fail if used as update
 /*app.post(
   '/articles/:id(\\d+)/ratings',
