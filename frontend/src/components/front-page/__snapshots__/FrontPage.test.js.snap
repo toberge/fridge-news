@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArticleViewer should render as intended 1`] = `
+"<main>
+  <h1>
+    Fridge News
+  </h1>
+  <CardHolder>
+    <ArticleCard article={{...}} showCategory={true} />
+    <ArticleCard article={{...}} showCategory={true} />
+  </CardHolder>
+</main>"
+`;
