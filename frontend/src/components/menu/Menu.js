@@ -41,10 +41,6 @@ export default class Menu extends Component {
             <Icon.Write /> Write
           </NavBar.Link>
         ) : null}
-
-        <NavBar.Link to="/search">
-          <Icon.Search /> Search
-        </NavBar.Link>
       </NavBar>
     );
   }

@@ -84,6 +84,8 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
     event.preventDefault();
     // no need to validate (except image?) - already done by form
 
+    if (articleStore.currentArticle.text === '') return Notifier.error('No text supplied');
+
     // disable button (+ possible additional effects)
     this.pending = true;
 
@@ -113,18 +115,6 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
 
 class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any) => mixed, save?: boolean }> {
   hasPicture: boolean = false;
-
-  mounted() {
-    // ugly solution for making SimpleMDE work
-    const textarea = document.getElementById('original-text-area');
-    if (textarea instanceof HTMLTextAreaElement) {
-      textarea.required = true;
-    }
-    const textarea2 = document.querySelector('.CodeMirror textarea');
-    if (textarea2 instanceof HTMLTextAreaElement) {
-      textarea2.required = true;
-    }
-  }
 
   handleMarkdownChange(value: string) {
     articleStore.currentArticle.text = value;

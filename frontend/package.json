@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --verbose --color",
+    "test": "TZ=UTC jest --verbose --color",
     "flow-coverage": "flow-coverage-report -i \"src/**/*.js\""
   },
   "proxy": "http://localhost:8080",

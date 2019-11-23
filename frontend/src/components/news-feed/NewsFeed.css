@@ -37,7 +37,7 @@
   }
 }
 
-/* sweep 2 right
+/* sweep 2 right */
 @keyframes sweep {
   100% {
     transform: translateX(0%);

@@ -28,12 +28,6 @@ class UploadIcon extends Component {
   }
 }
 
-class SearchIcon extends Component {
-  render() {
-    return <i className="fas fa-search"></i>;
-  }
-}
-
 class UserIcon extends Component {
   render() {
     return <i className="fas fa-user"></i>;
@@ -58,7 +52,6 @@ export default class Icon {
   static Upload = UploadIcon;
   static Save = SaveIcon;
   static Delete = DeleteIcon;
-  static Search = SearchIcon;
   static User = UserIcon;
   static Email = EmailIcon;
 }
