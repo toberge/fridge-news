@@ -199,6 +199,16 @@ class ArticleStore {
       return new ArticleBase(article_id, title, picture_path, picture_alt, category);
     });
   }
+
+  async testIfImageExists(): Promise<boolean> {
+    try {
+      const response = await axios.get(this.currentArticle.picturePath);
+      return response.headers['content-type'].includes('image');
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
 }
 
 export const articleStore = sharedComponentData(new ArticleStore());

@@ -50,16 +50,17 @@ class FormInputRow extends Component<{
   name: string,
   label: string,
   placeholder: string,
-  helpText: string,
+  helpText: string | React.Node,
   value: string,
   onChange: (SyntheticInputEvent<HTMLInputElement>) => void,
   required?: boolean,
+  labelCols?: number,
   inputCols?: number
 }> {
   render() {
     return (
       <div className="row">
-        <label htmlFor={this.props.name} className="col-auto col-form-label">
+        <label htmlFor={this.props.name} className={`col${this.props.labelCols ? '-' + this.props.labelCols : ''} col-form-label`}>
           {this.props.label}
         </label>
         <div className={`col-${this.props.inputCols ? this.props.inputCols : 10}`}>

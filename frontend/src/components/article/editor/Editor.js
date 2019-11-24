@@ -36,6 +36,8 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
     event.preventDefault();
     // no need to validate (except image?) - already done by form
 
+    if (articleStore.currentArticle.text === '') return Notifier.error('No text supplied');
+
     // disable button (+ possible additional effects)
     this.pending = true;
 
@@ -44,8 +46,10 @@ export class ArticleWriter extends Component<{ match: { params: { id: number } }
       articleStore.currentArticle.picturePath = null;
       articleStore.currentArticle.pictureAlt = null;
       articleStore.currentArticle.pictureCapt = null;
-    } else {
-      // TODO test if image exists, run a GET request?
+    } else if (!(await articleStore.testIfImageExists())) {
+      Notifier.error("Image does not exist or file isn't an image!");
+      this.pending = false;
+      return;
     }
 
     // actually POST the article, moving user to article page afterwards
@@ -80,7 +84,7 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
     document.title = 'Edit Article - Fridge News';
   }
 
-  async handleSave(event: SyntheticInputEvent<HTMLFormElement>) {
+  async handleSave(event: SyntheticInputEvent<HTMLFormElement>): void {
     event.preventDefault();
     // no need to validate (except image?) - already done by form
 
@@ -94,8 +98,10 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
       articleStore.currentArticle.picturePath = null;
       articleStore.currentArticle.pictureAlt = null;
       articleStore.currentArticle.pictureCapt = null;
-    } else {
-      // TODO test if image exists, run a GET request?
+    } else if (!(await articleStore.testIfImageExists())) {
+      Notifier.error("Image does not exist or file isn't an image!");
+      this.pending = false;
+      return;
     }
 
     try {
@@ -122,7 +128,7 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
 
   handleTitleChange(event: SyntheticInputEvent<HTMLInputElement>) {
     const value = event.target.value;
-    if (value !== null && value.length < 64) {
+    if (value !== null && value.length <= 64) {
       articleStore.currentArticle.title = value;
       if (value.length === 0) {
         event.target.setCustomValidity('Title must not be empty');
@@ -137,7 +143,7 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
 
   handlePicturePathChange(event: SyntheticInputEvent<HTMLInputElement>) {
     const value = event.target.value;
-    if (value && value.length < 256) {
+    if (value && value.length <= 2083) {
       this.hasPicture = true;
     } else if (!value) {
       this.hasPicture = false;
@@ -147,14 +153,14 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
 
   handlePictureAltChange(event: SyntheticInputEvent<HTMLInputElement>) {
     const value = event.target.value;
-    if (this.hasPicture && value != null && value.length < 64) {
+    if (this.hasPicture && value != null && value.length <= 64) {
       articleStore.currentArticle.pictureAlt = value;
     }
   }
 
   handlePictureCaptChange(event: SyntheticInputEvent<HTMLInputElement>) {
     const value = event.target.value;
-    if (this.hasPicture && value != null && value.length < 64) {
+    if (this.hasPicture && value != null && value.length <= 64) {
       articleStore.currentArticle.pictureCapt = value;
     }
   }
@@ -185,7 +191,8 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             </div>
           </div>
         </Form.Group>
-        {/*====== image (needs image preview) ======*/}
+
+        {/*====== image ======*/}
         <div className="form-group">
           {/*<div className="input-group">
               <div className="input-group-prepend">
@@ -207,77 +214,45 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
                 </label>
               </div>
             </div>*/}
-          <div className="row">
-            <label htmlFor="imgPath" className="col col-form-label">
-              Image URL
-            </label>
-            <div className="col-10">
-              <input
-                id="imgPath"
-                className="form-control"
-                type="text"
-                placeholder="https://stuff.com/pictures/123456789.jpg"
-                value={articleStore.currentArticle.picturePath}
-                onChange={this.handlePicturePathChange}
-                aria-describedby="imgPathHelp"
-                required={this.hasPicture}
-              />
-              <small id="imgPathHelp" className="form-text text-muted">
+          <Form.Input
+            name="imgPath"
+            label="Image URL"
+            placeholder="https://stuff.com/pictures/123456789.jpg"
+            helpText={
+              <>
                 Provide a URL to an image - <strong>if you do, alt and caption are required too!</strong>
-              </small>
-            </div>
-          </div>
+              </>
+            }
+            value={articleStore.currentArticle.picturePath}
+            onChange={this.handlePicturePathChange}
+            required={this.hasPicture}
+          />
           {/*====== image preview ======*/}
           <div className="card align-items-center p-3 text-center">
             <img src={articleStore.currentArticle.picturePath} className="card-img w-25" alt="[ Preview ]" />
           </div>
           <p></p>
-          {/* shitty hack */}
-          <div className="row">
-            <label htmlFor="imgAlt" className="col col-form-label">
-              Alt-Text
-            </label>
-            <div className="col-10">
-              <input
-                id="imgAlt"
-                className="form-control"
-                type="text"
-                placeholder="Image content description"
-                value={articleStore.currentArticle.pictureAlt}
-                onChange={this.handlePictureAltChange}
-                aria-describedby="imgAltHelp"
-                required={this.hasPicture}
-              />
-              <small id="imgAltHelp" className="form-text text-muted">
-                An alt-text will let people with bad vision get an idea of what it depicts (or if it does not load)
-              </small>
-            </div>
-          </div>
+          <Form.Input
+            name="imgAlt"
+            label="Alt-Text"
+            placeholder="Image content description"
+            helpText="An alt-text will let people with bad vision get an idea of what it depicts (or if it does not load)"
+            value={articleStore.currentArticle.pictureAlt}
+            onChange={this.handlePictureAltChange}
+            required={this.hasPicture}
+          />
           <p></p>
-          {/* shitty hack */}
-          <div className="row">
-            <label htmlFor="imgCapt" className="col col-form-label">
-              Image Caption
-            </label>
-            <div className="col-10">
-              <input
-                id="imgCapt"
-                className="form-control"
-                type="text"
-                placeholder="Image caption"
-                value={articleStore.currentArticle.pictureCapt}
-                onChange={(event: SyntheticInputEvent<HTMLInputElement>) =>
-                  (articleStore.currentArticle.pictureCapt = event.target.value)
-                }
-                aria-describedby="imgCaptHelp"
-                required={this.hasPicture}
-              />
-              <small id="imgCaptHelp" className="form-text text-muted">
-                Please provide a caption for your image, containing further details
-              </small>
-            </div>
-          </div>
+          <Form.Input
+            name="imgCapt"
+            label="Image Caption"
+            placeholder="Image caption"
+            helpText="Please provide a caption for your image, containing further details"
+            value={articleStore.currentArticle.pictureCapt}
+            onChange={this.handlePictureCaptChange}
+            required={this.hasPicture}
+          />
         </div>
+
         {/*====== markdown text ======*/}
         <Form.Group>
           <SimpleMDE
@@ -287,7 +262,8 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             options={{ spellChecker: false }}
           />
         </Form.Group>
-        {/*====== category and tags ======*/}
+
+        {/*====== category and importance ======*/}
         <Form.Group>
           <div className="col-3">
             <label htmlFor="category">Category</label>
@@ -324,7 +300,8 @@ class EditorForm extends Component<{ pending: boolean, handleUpload: (event: any
             </select>
           </div>
         </Form.Group>
-        {/*<Form.Submit disabled={this.props.pending} value={this.props.buttonText} />*/}
+
+        {/*====== submission ======*/}
         <Form.Submit disabled={this.props.pending}>
           {this.props.save ? <Icon.Save /> : <Icon.Upload />}
           {this.props.save ? ' Save' : ' Upload'}

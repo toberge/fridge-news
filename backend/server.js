@@ -392,66 +392,6 @@ app.post('/articles/:id(\\d+)/comments', authenticate, async (req: Request, res:
   }
 });
 
-// ratings are TODO if I get time for 'em
-// I keep 'em here for now
-// will fail if used as update
-/*app.post(
-  '/articles/:id(\\d+)/ratings',
-  /!*authLogin, *!/ async (req: Request, res: Response) => {
-    if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
-    console.log(
-      `Got POST request from ${req.session.user} to rate article ${req.params.id} a ${req.body.value} out of 5`
-    );
-    try {
-      if (
-        await updateQuery(
-          'INSERT INTO ratings(article_id, user_id, value) VALUES(?, ?, ?)',
-          req.params.id,
-          req.session.userId,
-          req.body.value
-        )
-      ) {
-        res.status(201).json({ message: 'POST successful' });
-      } else {
-        res.status(400).json({ message: 'Could not POST rating' });
-      }
-    } catch (e) {
-      console.trace('Failed to POST rating');
-      res.status(400).json({ error: 'Failed to POST rating' });
-    }
-  }
-);
-
-app.put(
-  '/articles/:articleId(\\d+)/ratings/:userId(\\d+)',
-  /!*authLogin, *!/ async (req: Request, res: Response) => {
-    // the session has number, param has string
-    if (req.session.userId !== parseInt(req.params.userId))
-      return res.status(400).json({ error: "Cannot change another user's rating" });
-    if (!req.body.value) return res.status(400).json({ error: 'Insufficient data in request body' });
-    console.log(
-      `Got UPDATE request from ${req.session.user} to change rating for article ${req.params.articleId} to ${req.body.value} out of 5`
-    );
-    try {
-      if (
-        await updateQuery(
-          'UPDATE ratings SET value = ? WHERE article_id = ? AND user_id = ?',
-          req.body.value,
-          req.params.articleId,
-          req.params.userId
-        )
-      ) {
-        res.status(201).json({ message: 'UPDATE successful' });
-      } else {
-        res.status(400).json({ message: 'Could not UPDATE rating' });
-      }
-    } catch (e) {
-      console.trace('Failed to UPDATE rating');
-      res.status(400).json({ error: 'Failed to UPDATE rating' });
-    }
-  }
-);*/
-
 /* ----------------- THAT'S IT ----------------- */
 
 app.listen(8080);
