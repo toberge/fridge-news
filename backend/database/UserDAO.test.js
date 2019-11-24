@@ -19,7 +19,7 @@ describe('UserDAO', () => {
     it('finds the correct set of users', async () => {
       const users = await userDAO.getAll();
       expect(users[0].name).toBe('The Fridge');
-      expect(users[2].name).toBe('Alfred Barskknaus');
+      expect(users[2].name).toBe('Colonel Sanders');
     });
   });
 
