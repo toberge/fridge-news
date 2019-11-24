@@ -27,6 +27,12 @@ export default class Menu extends Component {
         <NavBar.Separator />
 
         {userStore.currentUser ? (
+          <NavBar.Link to="/articles/write">
+            <Icon.Write /> Write
+          </NavBar.Link>
+        ) : null}
+
+        {userStore.currentUser ? (
           <NavBar.Fluff>
             <Icon.User /> {' ' + userStore.currentUser.name + ' '}
           </NavBar.Fluff>
@@ -36,11 +42,6 @@ export default class Menu extends Component {
           </NavBar.Link>
         )}
         {userStore.currentUser ? <NavBar.Button onClick={userStore.logOut}>Log Out</NavBar.Button> : null}
-        {userStore.currentUser ? (
-          <NavBar.Link to="/articles/write">
-            <Icon.Write /> Write
-          </NavBar.Link>
-        ) : null}
       </NavBar>
     );
   }
