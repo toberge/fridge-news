@@ -51,7 +51,7 @@ class FormInputRow extends Component<{
   label: string,
   placeholder: string,
   helpText: string | React.Node,
-  value: string,
+  value: ?string,
   onChange: (SyntheticInputEvent<HTMLInputElement>) => void,
   required?: boolean,
   labelCols?: number,

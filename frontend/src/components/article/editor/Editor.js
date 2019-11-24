@@ -84,7 +84,7 @@ export class ArticleEditor extends Component<{ match: { params: { id: number } }
     document.title = 'Edit Article - Fridge News';
   }
 
-  async handleSave(event: SyntheticInputEvent<HTMLFormElement>): void {
+  async handleSave(event: SyntheticInputEvent<HTMLFormElement>) {
     event.preventDefault();
     // no need to validate (except image?) - already done by form
 
