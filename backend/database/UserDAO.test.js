@@ -15,8 +15,16 @@ afterAll(() => {
 });
 
 describe('UserDAO', () => {
+  describe('.getAll()', () => {
+    it('finds the correct set of users', async () => {
+      const users = await userDAO.getAll();
+      expect(users[0].name).toBe('The Fridge');
+      expect(users[2].name).toBe('Alfred Barskknaus');
+    });
+  });
+
   describe('.getOne()', () => {
-    it('finds the corect user', async () => {
+    it('finds the correct user', async () => {
       const user = await userDAO.getOne(1);
       expect(user.user_id).toBe(1);
       expect(user.name).toBe('The Fridge');
@@ -24,7 +32,7 @@ describe('UserDAO', () => {
   });
 
   describe('.getOneByName()', () => {
-    it('finds the corect user', async () => {
+    it('finds the correct user', async () => {
       const user = await userDAO.getOneByName('The Fridge');
       expect(user.user_id).toBe(1);
       expect(user.name).toBe('The Fridge');

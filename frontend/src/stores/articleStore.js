@@ -57,7 +57,6 @@ class ArticleStore {
 
   categories: string[] = ['loading categories...'];
 
-  // wow shit why must I be forced to do this...
   getCategories() {
     return axios
       .get('/articles/categories/')
