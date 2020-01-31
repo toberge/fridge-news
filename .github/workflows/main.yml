@@ -8,14 +8,14 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
+      - name: Shutdown default MySQL service
+          run: sudo service mysql stop
       # Set up MySQL database
       - uses: mirromutth/mysql-action@v1.1
         with:
-          host port: 80
           mysql version: '5.7'
           mysql database: 'fridge'
           mysql root password: 'fish'
-      - run: cd backend
       - name: Install dependencies
         run: cd backend && npm install && sudo npm install -g flow-bin flow-coverage-report
       - name: Perform tests
@@ -30,13 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-      - run: cd frontend
-      # Install dependencies
-      - run: sudo npm install -g flow-bin flow-coverage-report
-      - run: npm install
-      # Perform tests
-      - run: npm test
-      # Perform typechecking
-      - run: flow check src
-      # Analyze flow coverage
-      - run: npm run flow-coverage
+      - name: Install dependencies
+        run: cd frontend && npm install && sudo npm install -g flow-bin flow-coverage-report
+      - name: Perform tests
+        run: cd frontend && npm test
+      - name: Perform typechecking
+        run: cd frontend && flow check src
+      - name: Analyze flow coverage
+        run: cd frontend && npm run flow-coverage
