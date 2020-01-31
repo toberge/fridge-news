@@ -17,13 +17,13 @@ jobs:
           mysql root password: 'fish'
       - run: cd backend
       - name: Install dependencies
-        run: npm install && sudo npm install -g flow-bin flow-coverage-report
+        run: cd backend && npm install && sudo npm install -g flow-bin flow-coverage-report
       - name: Perform tests
-        run: npm test
+        run: cd backend && npm test
       - name: Perform typechecking
-        run: flow check src
+        run: cd backend && flow check src
       - name: Analyze flow coverage
-        run: npm run flow-coverage
+        run: cd backend && npm run flow-coverage
 
   test_frontend:
     runs-on: ubuntu-latest
