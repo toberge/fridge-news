@@ -13,7 +13,12 @@
   }
 
   .my-navbar ul {
+    display: flex !important;
     flex-direction: row;
+  }
+
+  .my-navbar button {
+    display: none;
   }
 
   /* sticky navbar since screen is wide enough to fit it */
@@ -56,7 +61,9 @@ main {
   padding-bottom: 2rem;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   text-align: center;
 }
 

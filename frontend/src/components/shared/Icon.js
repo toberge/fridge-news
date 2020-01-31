@@ -46,6 +46,12 @@ class DeleteIcon extends Component {
   }
 }
 
+class HamburgerIcon extends Component {
+  render() {
+    return <i className="fas fa-bars"></i>;
+  }
+}
+
 export default class Icon {
   static Loading = LoadingIcon;
   static Write = WriteIcon;
@@ -54,4 +60,5 @@ export default class Icon {
   static Delete = DeleteIcon;
   static User = UserIcon;
   static Email = EmailIcon;
+  static Hamburger = HamburgerIcon;
 }

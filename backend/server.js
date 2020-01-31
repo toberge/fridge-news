@@ -10,7 +10,7 @@ const mysql = require('mysql2/promise');
 // MISC
 const fs = require('file-system');
 // LOGIN
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 /* ----------------- TYPE ALIASES ----------------- */

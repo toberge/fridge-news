@@ -4,6 +4,13 @@ basically a reworked version of
 https://jsfiddle.net/joshnh/srNVQ/
 \*===================*/
 
+
+@media screen and (max-width: 65rem) {
+  .my-navbar button {
+    width: 100%;
+  }
+}
+
 #masthead {
   /*position: sticky;*/
   top: 0;
@@ -47,7 +54,8 @@ https://jsfiddle.net/joshnh/srNVQ/
 }
 
 .my-navbar a,
-.my-navbar span {
+.my-navbar span,
+.my-navbar button {
   background: var(--section-background);
   color: var(--section-text);
   display: block;
