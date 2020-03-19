@@ -246,7 +246,7 @@ const authenticateAsOwnerOfArticle: express$Middleware<Request> = (
     } else {
       try {
         const user = await userDAO.getOneByName(decoded.username);
-        const article = await articleDAO.getOne(parseInt(req.params.id));
+        const article = await articleDAO.getOne(parseInt(req.params.id || req.params.articleId));
 
         if (user.user_id === article.user_id) {
           console.log(`${decoded.username} is author of the article, proceeding...`);
