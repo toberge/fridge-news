@@ -9,7 +9,7 @@ module.exports = class RatingDAO extends DAO {
     super(pool);
   }
 
-  getOne = async (article_id: number, user_id: number) => {
+  getOne = async (article_id: number, user_id: number): Promise<Rating> => {
     const [[rows]] = await super.execute(
       'SELECT * FROM ratings WHERE article_id = ? AND user_id = ?',
       article_id,

@@ -18,13 +18,13 @@ describe('RatingDAO', () => {
   describe('.getOne()', () => {
     it('gets the correct rating', async () => {
       const rating = await ratingDAO.getOne(1, 3);
-      expect(rating.user_id).toBe(1);
-      expect(rating.article_id).toBe(3);
+      expect(rating.article_id).toBe(1);
+      expect(rating.user_id).toBe(3);
       expect(rating.value).toBe(5);
     });
 
     it('fails at invalid ID pair', async () => {
-      expect(ratingDAO.getOne(99, 68)).toThrow();
+      await expect(ratingDAO.getOne(99, 68)).rejects.toThrow()
     });
   });
 
@@ -33,7 +33,6 @@ describe('RatingDAO', () => {
       const rating = { article_id: 2, user_id: 2, value: 4 };
       const fields = await ratingDAO.addOne(rating);
       expect(fields.affectedRows).toBe(1);
-      expect(fields.insertId).toBeGreaterThan(3);
     });
   });
 
