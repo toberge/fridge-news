@@ -5,6 +5,8 @@ on: [push]
 jobs:
   test_backend:
     runs-on: ubuntu-latest
+    # for the sake of MySQL sanity
+    container: ubuntu
 
     services:
       mysql:
@@ -18,10 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-#      - name: Verify MySQL connection from container
-#        run: |
-#          apt-get update && apt-get install -y mysql-client
-#          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot --password=fish -e "SHOW DATABASES"
+      - name: Verify MySQL connection from container
+        run: |
+          apt-get update && apt-get install -y mysql-client
+          mysql --host mysql -uroot -pfish -e "SHOW DATABASES"
       - name: Install dependencies
         run: |
           cd backend
@@ -30,7 +32,8 @@ jobs:
       - name: Perform tests
         run: |
           cd backend
-          sed 's/mysql/127.0.0.1/' database/test-properties.json > database/test-properties.json
+          # This turned out to be unnecessary:
+          # echo -e "$(sed 's/mysql/127.0.0.1/' database/test-properties.json)" > database/test-properties.json
           npm test
       - name: Perform typechecking
         run: cd backend && flow check src
