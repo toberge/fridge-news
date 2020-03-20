@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
+      - name: Verify MySQL connection from container
+        run: |
+          apt-get update && apt-get install -y mysql-client
+          mysql --host mysql -uroot --password=fish -e "SHOW DATABASES"
       - name: Install dependencies
         run: |
           cd backend
