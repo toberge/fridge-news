@@ -18,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-      - name: Verify MySQL connection from container
-        run: |
-          apt-get update && apt-get install -y mysql-client
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot --password=fish -e "SHOW DATABASES"
+#      - name: Verify MySQL connection from container
+#        run: |
+#          apt-get update && apt-get install -y mysql-client
+#          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot --password=fish -e "SHOW DATABASES"
       - name: Install dependencies
         run: |
           cd backend
@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: cd frontend && npm install && sudo npm install -g flow-bin flow-coverage-report
       - name: Perform tests
-        run: cd frontend && npm test
+        run: cd frontend && npm install && npm test
       - name: Perform typechecking
         run: cd frontend && flow check src
       - name: Analyze flow coverage
