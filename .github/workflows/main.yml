@@ -28,7 +28,10 @@ jobs:
           npm install
           sudo npm install -g flow-bin flow-coverage-report
       - name: Perform tests
-        run: cd backend && npm test
+        run: |
+          cd backend
+          sed 's/mysql/127.0.0.1/' database/test-properties.json > database/test-properties.json
+          npm test
       - name: Perform typechecking
         run: cd backend && flow check src
       - name: Analyze flow coverage
