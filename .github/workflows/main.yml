@@ -16,26 +16,22 @@ jobs:
         env:
           MYSQL_DATABASE: 'fridge'
           MYSQL_ROOT_PASSWORD: 'fish'
+        # Health check that ensures the service is up and running before tests start to run
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
-      - name: Verify MySQL connection from container
-        run: |
-          apt-get update && apt-get install -y mysql-client
-          mysql --host mysql -uroot -pfish -e "SHOW DATABASES"
-        env:
-          DB_PORT: ${{ job.services.mysql.ports[3306] }}
       - name: Install dependencies
         run: |
           cd backend
           npm install
           npm install -g flow-bin flow-coverage-report
+          apt-get update && apt-get upgrade -y
+          apt-get install -y libatomic1
       - name: Perform tests
         run: |
           cd backend
-          # This turned out to be unnecessary:
-          # echo -e "$(sed 's/mysql/127.0.0.1/' database/test-properties.json)" > database/test-properties.json
           npm test
         env:
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
@@ -50,7 +46,11 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
       - name: Install dependencies
-        run: cd frontend && npm install && sudo npm install -g flow-bin flow-coverage-report
+        run: |
+          cd frontend
+          npm install
+          npm install -g flow-bin flow-coverage-report
+          apt-get install -y libatomic
       - name: Perform tests
         run: cd frontend && npm install && npm test
       - name: Perform typechecking
