@@ -24,7 +24,7 @@ describe('RatingDAO', () => {
     });
 
     it('fails at invalid ID pair', async () => {
-      await expect(ratingDAO.getOne(99, 68)).rejects.toThrow()
+      await expect(ratingDAO.getOne(99, 68)).resolves.toBeUndefined();
     });
   });
 
