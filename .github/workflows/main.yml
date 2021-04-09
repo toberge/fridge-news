@@ -24,17 +24,21 @@ jobs:
         run: |
           apt-get update && apt-get install -y mysql-client
           mysql --host mysql -uroot -pfish -e "SHOW DATABASES"
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
       - name: Install dependencies
         run: |
           cd backend
           npm install
-          sudo npm install -g flow-bin flow-coverage-report
+          npm install -g flow-bin flow-coverage-report
       - name: Perform tests
         run: |
           cd backend
           # This turned out to be unnecessary:
           # echo -e "$(sed 's/mysql/127.0.0.1/' database/test-properties.json)" > database/test-properties.json
           npm test
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
       - name: Perform typechecking
         run: cd backend && flow check src
       - name: Analyze flow coverage
