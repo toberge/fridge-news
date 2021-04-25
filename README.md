@@ -2,6 +2,10 @@
 
 \- Serving fresh news from the fridge -
 
+![front page](showcase/screenshot_frontpage.png)
+
+![comment section](showcase/screenshot_comments.png)
+
 Coverage report for
 [server](http://toberge.pages.stud.idi.ntnu.no/fridge-news/backend/)
 and
