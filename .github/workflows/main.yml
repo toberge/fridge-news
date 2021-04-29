@@ -36,7 +36,7 @@ jobs:
         env:
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
       - name: Perform typechecking
-        run: cd backend && flow check src
+        run: cd backend && flow check .
       - name: Analyze flow coverage
         run: cd backend && npm run flow-coverage
 
