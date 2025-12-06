@@ -46,6 +46,8 @@ const pool = mysql.createPool({
 
 const ArticleDAO = require('./database/ArticleDAO');
 const articleDAO = new ArticleDAO(pool);
+const RatingDAO = require('./database/RatingDAO');
+const ratingDAO = new RatingDAO(pool);
 const UserDAO = require('./database/UserDAO');
 const userDAO = new UserDAO(pool);
 const CommentDAO = require('./database/CommentDAO');
@@ -53,7 +55,7 @@ const commentDAO = new CommentDAO(pool);
 
 /* ----------------- DAO METHOD WRAPPERS ----------------- */
 
-const performSingleRowQuery = async (res: Response, func: any => Promise<{}>, context: string, ...params) => {
+const performSingleRowQuery = async (res: Response, func: (any, any) => Promise<{}>, context: string, ...params) => {
   func(...params)
     .then(rows => {
       if (rows) {
@@ -96,6 +98,10 @@ const performMultiRowQuery = async (res: Response, func: any => Promise<*[]>, co
 
 app.get('/articles/:id(\\d+)', async (req: Request, res: Response) => {
   await performSingleRowQuery(res, articleDAO.getOne, 'one article', parseInt(req.params.id));
+});
+
+app.get('/articles/:article_id(\\d+)/ratings/user_id(\\d+)', async (req: Request, res: Response) => {
+  await performSingleRowQuery(res, ratingDAO.getOne, 'one article', parseInt(req.params.article_id), parseInt(req.params.user_id));
 });
 
 app.get('/articles', async (req: Request, res: Response) => {
@@ -246,7 +252,7 @@ const authenticateAsOwnerOfArticle: express$Middleware<Request> = (
     } else {
       try {
         const user = await userDAO.getOneByName(decoded.username);
-        const article = await articleDAO.getOne(parseInt(req.params.id || req.params.articleId));
+        const article = await articleDAO.getOne(parseInt(req.params.id || req.params.article_id));
 
         if (user.user_id === article.user_id) {
           console.log(`${decoded.username} is author of the article, proceeding...`);
@@ -387,9 +393,32 @@ app.post('/articles/:id(\\d+)/comments', authenticate, async (req: Request, res:
       return res.status(400).json({ message: 'Could not POST comment' });
     }
   } catch (e) {
-    console.trace('Failed to POST comment');
+    console.trace(e, 'Failed to POST comment');
     return res.status(400).json({ error: 'Failed to POST comment' });
   }
+});
+
+/* ----------------- UPDATE RATING ----------------- */
+
+app.put('/articles/:article_id(\d+)/ratings/user_id(\d+)', authenticate, async (req: Request, res: Response) => {
+  if (!(req.body && req.body.value))
+    return res.status(400).json({ error: 'Insufficient data in request body' });
+  const { value } = req.body;
+  if (!typeof value !== 'number')
+    return res.status(400).json({ error: 'Invalid types of request data' });
+
+  console.log(`Got PUT request to update rating for article ${req.params.article_id}`);
+  try {
+    const fields = await ratingDAO.updateOne({
+      article_id: parseInt(req.params.article_id),
+      user_id: parseInt(req.params.user_id),
+      value: parseInt(value)
+    });
+  } catch (e) {
+    console.trace(e, 'Failed to PUT rating');
+    return res.status(400).json({ error: 'Failed to PUT rating' });
+  }
+
 });
 
 /* ----------------- THAT'S IT ----------------- */
